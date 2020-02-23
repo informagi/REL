@@ -1,0 +1,31 @@
+
+
+ed
+
+Request: AnnotatedDocumentImpl [uri=http://www.aksw.org/gerbil/NifWebService/request_228, text=SOCCER - PSV HIT VOLENDAM FOR SIX. AMSTERDAM 1996-12-07 Brazilian striker Marcelo and Yugoslav midfielder Zeljko Petrovic each scored twice as Dutch first division leaders PSV Eindhoven romped to a 6-0 win over Volendam on Saturday. Their other marksmen were Brazilian defender Vampeta and Belgian striker Luc Nilis, his 14th of the season. PSV, well on the way to their 14th league title, outgunned Volendam in every department of the game. They boast a nine-point lead over Feyenoord, who have two games in hand, and are 16 points clear of champions Ajax Amsterdam, who have played 18 matches compared to PSV's 19. Ajax face AZ Alkmaar away on Sunday and Feyenoord, eliminated from the UEFA Cup after losing 4-2 on aggregate to Tenerife on Tuesday, travel to De Graafschap Doetinchem. The Doetinchem side, dubbed "The Super Peasants", are one of the surprise packages of the season. They are fourth in the table., markings=[(400, 8), (17, 8), (552, 14), (341, 3), (56, 9), (791, 10), (306, 9), (627, 10), (278, 7), (259, 9), (106, 15), (657, 9), (607, 3), (761, 24), (290, 7), (74, 7), (476, 9), (172, 13), (730, 8), (617, 4), (86, 8), (211, 8), (143, 5), (35, 9), (816, 18), (9, 3), (688, 8)]]
+2018-02-05 20:05:08,337 DEBUG [org.aksw.gerbil.ws4test.EDResource] - <Result: AnnotatedDocumentImpl [uri=http://www.aksw.org/gerbil/NifWebService/request_225, text=BOXING - SCHULZ DEFEATS RIBALTA IN IBF HEAVYWEIGHT FIGHT. VIENNA 1996-12-07 German Axel Schulz outpointed Cuba's Jose Ribalta in their International Boxing Federation non-title 10-round heavyweight fight on Saturday., markings=[(35, 3), (106, 4), (24, 7), (9, 6), (83, 11), (76, 6), (113, 12), (58, 6), (135, 31)]]>
+Result: AnnotatedDocumentImpl [uri=http://www.aksw.org/gerbil/NifWebService/request_225, text=BOXING - SCHULZ DEFEATS RIBALTA IN IBF HEAVYWEIGHT FIGHT. VIENNA 1996-12-07 German Axel Schulz outpointed Cuba's Jose Ribalta in their International Boxing Federation non-title 10-round heavyweight fight on Saturday., markings=[(35, 3), (106, 4), (24, 7), (9, 6), (83, 11), (76, 6), (113, 12), (58, 6), (135, 31)]]
+2018-02-05 20:05:08,343 DEBUG [org.aksw.gerbil.ws4test.EDResource] - <Request: AnnotatedDocumentImpl [uri=http://www.aksw.org/gerbil/NifWebService/request_226, text=SOCCER - SPANISH FIRST DIVISION SUMMARY. MADRID 1996-12-07 Summary of Saturday's Spanish first division match : Real Madrid 2 (Davor Suker 24, Predrag Mijatovic 48) Barcelona 0. Halftime 1-0. Attendance 106,000., markings=[(41, 6), (127, 11), (165, 9), (9, 7), (81, 7), (143, 17), (112, 11)]]>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
