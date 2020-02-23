@@ -1,0 +1,7 @@
+tiny-tokenizer
+flair
+unidecode
+segtok
+pillow==6.1
+torch
+sqlite3
