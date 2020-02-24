@@ -8,8 +8,8 @@ from flair.models import SequenceTagger
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.server import make_handler
 
-
 flair.device = torch.device('cpu')
+
 def user_func(text):
     spans = [(0, 5), (17, 7), (50, 6)]
     return spans

@@ -76,6 +76,9 @@ def make_handler(
 
             n_words = len(text.split())
 
+            if len(text) == 0:
+                return []
+
             start = time.time()
             if (self.mode == "ED") or self.custom_ner:
                 if self.custom_ner:
@@ -121,7 +124,6 @@ def make_handler(
                 include_conf=self.include_conf,
             )
 
-            result = result[GERBIL]
             self.doc_cnt += 1
             return result
 

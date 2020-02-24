@@ -8,7 +8,7 @@ base_url = "C:/Users/mickv/desktop/data_back/"
 wiki_version = "wiki_2019"
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()['aida_testB']
 
-random_docs = np.random.choice(list(datasets.keys()), 100)
+random_docs = np.random.choice(list(datasets.keys()), 50)
 
 docs = {}
 for i, doc in enumerate(random_docs):
@@ -17,21 +17,22 @@ for i, doc in enumerate(random_docs):
         if x['sentence'] not in sentences:
             sentences.append(x['sentence'])
     text = '. '.join([x for x in sentences])
-    docs[doc] = [text, []]
-    # Demo script that can be used to query the API.
-    myjson = {
-        "text": text,
-        "spans": [
-            # {"start": 41, "length": 16}
-        ],
-    }
-    print('----------------------------')
-    print('Input API:')
-    print(myjson)
+    if len(text) > 0:
+        docs[doc] = [text, []]
+        # Demo script that can be used to query the API.
+        myjson = {
+            "text": text,
+            "spans": [
+                # {"start": 41, "length": 16}
+            ],
+        }
+        print('----------------------------')
+        print('Input API:')
+        print(myjson)
 
-    print('Output API:')
-    print(requests.post("http://localhost:5555", json=myjson).json())
-    print('----------------------------')
+        print('Output API:')
+        print(requests.post("http://localhost:5555", json=myjson).json())
+        print('----------------------------')
 
 
 # --------------------- Now total --------------------------------
