@@ -35,12 +35,10 @@ class WikipediaYagoFreq:
             "entity_word_embedding",
             "{}/{}/generated/".format(self.base_url, self.wiki_version),
             table_name="wiki",
-            reset=True,
             columns={"p_e_m": "blob", "lower": "text", "freq": "INTEGER"},
-            batch_size=50000,
         )
 
-        wiki_db.load_wiki(self.p_e_m, self.mention_freq)
+        wiki_db.load_wiki(self.p_e_m, self.mention_freq, batch_size=50000, reset=True)
 
     def compute_wiki(self):
         """

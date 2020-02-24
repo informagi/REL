@@ -108,7 +108,7 @@ class GenericLookup(DB):
 
         if batch:
             self.insert_batch_emb(batch)
-        self.create_index()
+        # self.create_index()
 
     def load_wiki(self, p_e_m_index, mention_total_freq, batch_size=5000, reset=False):
         if reset:
@@ -134,28 +134,28 @@ class GenericLookup(DB):
         self.create_index()
 
 if __name__ == "__main__":
-    save_dir = "C:/test"
+    save_dir = "C:/Users/mickv/Desktop/data_back/wiki_2019/generated"
 
     # Test data
-    ent_p_e_m_index = {
-        "Netherlands": {32796504: 1 / 3, 32796504: 2 / 3},
-        "Netherlands2": {32796504: 1 / 3, 32796504: 2 / 3},
-    }
-    mention_total_freq = {"Netherlands": 10, "Netherlands2": 100}
-
-    # Wiki load.
-    wiki = GenericLookup('entity_word_embedding', save_dir=save_dir, table_name='wiki',
-                         columns={"p_e_m": "blob", "lower": "text", "freq": "INTEGER"})
-    wiki.load_wiki(ent_p_e_m_index, mention_total_freq, reset=True)
-
-    # Query
-    p_e_m = wiki.wiki("Netherlands", "wiki")
-    freq = wiki.wiki("Netherlands", "wiki", "freq")
-    lowercase = wiki.wiki("Netherlands".lower(), "wiki", "lower")
+    # ent_p_e_m_index = {
+    #     "Netherlands": {32796504: 1 / 3, 32796504: 2 / 3},
+    #     "Netherlands2": {32796504: 1 / 3, 32796504: 2 / 3},
+    # }
+    # mention_total_freq = {"Netherlands": 10, "Netherlands2": 100}
+    #
+    # # Wiki load.
+    # wiki = GenericLookup('entity_word_embedding', save_dir=save_dir, table_name='wiki',
+    #                      columns={"p_e_m": "blob", "lower": "text", "freq": "INTEGER"})
+    # wiki.load_wiki(ent_p_e_m_index, mention_total_freq, reset=True)
+    #
+    # # Query
+    # p_e_m = wiki.wiki("Netherlands", "wiki")
+    # freq = wiki.wiki("Netherlands", "wiki", "freq")
+    # lowercase = wiki.wiki("Netherlands".lower(), "wiki", "lower")
 
     # Embedding load.
     emb = GenericLookup('entity_word_embedding', save_dir=save_dir, table_name='embeddings')
-    emb.load_word2emb('D:/enwiki-20190701-model-w2v-dim300', batch_size=5000, limit=100000, reset=True)
+    emb.load_word2emb('D:/enwiki-20190701-model-w2v-dim300', batch_size=5000, reset=True)
 
     # Query
     import torch

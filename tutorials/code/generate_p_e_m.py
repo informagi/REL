@@ -1,8 +1,8 @@
 from REL.wikipedia import Wikipedia
 from REL.wikipedia_yago_freq import WikipediaYagoFreq
 
-base_url = "C:/Users/mickv/Google Drive/projects/entity_tagging/deep-ed/data/"
-wiki_version = "wiki_2014"
+base_url = "C:/Users/mickv/desktop/data_back/"
+wiki_version = "wiki_2019"
 
 # 1. Import helper functions; store p(e|m) index etc in class.
 print("Loading wikipedia files")

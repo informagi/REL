@@ -1,13 +1,13 @@
 import numpy as np
 
-base_url = "C:/Users/mickv/Google Drive/projects/entity_tagging/deep-ed/data/wiki_2019/"
+base_url = "C:/Users/mickv/Desktop/data_back/wiki_2019/"
 
 n_mentions = []
 n_words = []
 time_md = []
 time_ed = []
 
-with open("{}/generated/efficiency_gpu_w_emb_load.txt".format(base_url), "r", encoding="utf-8") as f:
+with open("{}/generated/efficiency_gpu.txt".format(base_url), "r", encoding="utf-8") as f:
     for line in f:
         splt = line.split()
 
@@ -23,5 +23,5 @@ print(
     np.round(np.mean(n_mentions)),
     np.round(np.std(n_mentions)),
 )
-print("statistics time md", np.round(np.mean(time_md), 4), np.round(np.std(time_md), 4))
-print("statistics time ed", np.round(np.mean(time_ed), 4), np.round(np.std(time_ed), 4))
+print("statistics time md", np.round(np.mean(time_md), 4), np.round(np.std(time_md), 4), np.sum(time_md))
+print("statistics time ed", np.round(np.mean(time_ed), 4), np.round(np.std(time_ed), 4), np.sum(time_ed))

@@ -1,29 +1,31 @@
 from http.server import HTTPServer
+
+import flair
+import torch
+
 from flair.models import SequenceTagger
 
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.server import make_handler
 
+
+flair.device = torch.device('cpu')
 def user_func(text):
     spans = [(0, 5), (17, 7), (50, 6)]
     return spans
 
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
-base_url = "C:/Users/mickv/Google Drive/projects/entity_tagging/deep-ed/data/"
-
+base_url = "C:/Users/mickv/desktop/data_back/"
 wiki_subfolder = "wiki_2019"
 
 # 1. Init model, where user can set his/her own config that will overwrite the default config.
 # If mode is equal to 'eval', then the model_path should point to an existing model.
 config = {
     "mode": "eval",
-    # "model_path": "{}/generated/model_27_01_2020".format(base_url),
-    # "model_path": "{}/generated/model_GPU_28_02_2019".format(base_url),
     "model_path": "{}/{}/generated/model".format(
         base_url, wiki_subfolder
     ),
-    # "model_path": "{}/generated/model_w2v_08_02_2019_1".format(base_url),
 }
 
 model = EntityDisambiguation(base_url, wiki_subfolder, config)

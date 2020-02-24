@@ -44,16 +44,23 @@ class DB:
         return db
 
     def create_index(self, columns=None, table_name=None):
-        if columns:
-            self.columns = columns
-            self.table_name = table_name
-
+        # if columns:
+        #     self.columns = columns
+        #     self.table_name = table_name
+        #
         c = self.db.cursor()
-        for i, (k, v) in enumerate(self.columns.items()):
-            createSecondaryIndex = "CREATE INDEX if not exists idx_{} ON {}({})".format(
-                k, self.table_name, k
-            )
-            c.execute(createSecondaryIndex)
+        # for i, (k, v) in enumerate(self.columns.items()):
+        #     createSecondaryIndex = "CREATE INDEX if not exists idx_{} ON {}({})".format(
+        #         k, self.table_name, k
+        #     )
+        #     print(createSecondaryIndex)
+        #     c.execute(createSecondaryIndex)
+        createSecondaryIndex = "CREATE INDEX if not exists idx_{} ON {}({})".format('lower',
+                                                                                    'wiki',
+                                                                                    'lower'
+                                                                                    )
+        print(createSecondaryIndex)
+        c.execute(createSecondaryIndex)
 
     def clear(self):
         """
