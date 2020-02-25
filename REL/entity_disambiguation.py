@@ -37,7 +37,7 @@ class EntityDisambiguation:
         self.embeddings = {}
         self.config = self.__get_config(user_config)
 
-        self.device = 'cpu' #torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.prerank_model = None
         self.model = None
         self.reset_embeddings = reset_embeddings

@@ -1,4 +1,4 @@
-# REL: Radboud Entity Linking
+# REL: Radboud Entity Linker
 REL is a modular Entity Linking package that can both be integrated in existing pipelines or be used as an API. REL has various meanings, one might first notice that it stands for relation, which is a suiting name for
 the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
 
