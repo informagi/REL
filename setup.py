@@ -3,6 +3,9 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open("requirements.txt") as f:
+    required = f.read().splitlines()
+
 setuptools.setup(
      name='REL',
      version='0.2',
@@ -19,6 +22,7 @@ setuptools.setup(
          "License :: OSI Approved :: MIT License",
          "Operating System :: OS Independent",
      ],
-    install_requires=['tiny-tokenizer', 'flair', 'unidecode', 'segtok', 'pillow', 'torch'],
+    install_requires=required,
+    include_package_data=True,
     python_requires='>=3.6',
 )
