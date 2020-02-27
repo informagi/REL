@@ -13,7 +13,7 @@ def example_preprocessing():
     return processed
 
 
-base_url = "C:/Users/mickv/Desktop/data_back/"
+base_url = "/mnt/c/Users/mickv/Desktop/data_back/"
 wiki_subfolder = "wiki_2019"
 
 # 1. Input sentences when using Flair.

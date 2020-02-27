@@ -4,3 +4,4 @@ unidecode
 segtok
 pillow==6.1
 torch
+nltk

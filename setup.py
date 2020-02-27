@@ -8,7 +8,7 @@ with open("requirements.txt") as f:
 
 setuptools.setup(
      name='REL',
-     version='0.2',
+     version='0.0.1',
      # scripts=['dokr'] ,
      author="Johannes Michael",
      author_email="mick.vanhulst@gmail.com",
