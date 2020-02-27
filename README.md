@@ -2,8 +2,6 @@
 REL is a modular Entity Linking package that can both be integrated in existing pipelines or be used as an API. REL has various meanings, one might first notice that it stands for relation, which is a suiting name for
 the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
 
-# Results
-
 # Setup
 ## Installation
 Please run the following command in a terminal to install REL:
@@ -42,11 +40,4 @@ How to cite us.
 Please email your questions or comments to [Mick van Hulst]('mick.vanhulst@gmail.com)
 
 # Acknowledgements
-Our thanks go out to many authors that open-sourced their code, enabling us to this package that can hopefully be of service to many.
-
-In specific, we would like to thank ZalandoResearch for their  Flair package, Le et al. for open-sourcing their
-ED code, Kolitsas et al. for providing trained embeddings and a framework that could be used to connect with the GERBIL API, 
-Ganea et al. for developing the code required to train the embeddings that were used for the Wikipedia 2014 corpus, and finally the team
-behind Wikipedia2Vec that made it possible to develop embeddings for new Wikipedia corpuses.
-
-# License 
+Our thanks go out to the authors that open-sourced their code, enabling us to this package that can hopefully be of service to many.
