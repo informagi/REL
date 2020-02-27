@@ -6,7 +6,7 @@ the problems that can be tackled with this package. Additionally, in Dutch a 're
 ## Installation
 Please run the following command in a terminal to install REL:
 ```
-pip install git+https://github.com/mickvanhulst/REL
+pip install git+https://github.com/informagi/REL
 ```
 
 ## Download
