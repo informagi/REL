@@ -13,7 +13,7 @@ def example_preprocessing():
     return processed
 
 
-base_url = "/mnt/c/Users/mickv/Desktop/back_data/"
+base_url = "C:/Users/mickv/Desktop/data_back/"
 wiki_subfolder = "wiki_2019"
 
 # 1. Input sentences when using Flair.
@@ -33,7 +33,7 @@ mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ner
 # 3. Load model.
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model_colab_28_02_2019".format(
+    "model_path": "{}/{}/generated/model".format(
         base_url, wiki_subfolder
     ),
 }
