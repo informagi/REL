@@ -19,6 +19,6 @@ setuptools.setup(
          "License :: OSI Approved :: MIT License",
          "Operating System :: OS Independent",
      ],
-    install_requires=['tiny-tokenizer', 'flair', 'unidecode', 'segtok', 'pillow', 'torch', 'sqlite3'],
+    install_requires=['tiny-tokenizer', 'flair', 'unidecode', 'segtok', 'pillow', 'torch'],
     python_requires='>=3.6',
 )

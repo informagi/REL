@@ -13,7 +13,7 @@ def example_preprocessing():
     return processed
 
 
-base_url = "C:/Users/mickv/Google Drive/projects/entity_tagging/deep-ed/data/"
+base_url = "/mnt/c/Users/mickv/Desktop/back_data/"
 wiki_subfolder = "wiki_2019"
 
 # 1. Input sentences when using Flair.
