@@ -25,13 +25,15 @@ create an issue, which is much appreciated :)! The first two tutorials are
 for users who simply want to use our package for EL/ED and will be using the data files that we provide. 
 The remainder of the tutorials are optional and for users who wish to e.g. train their own Embeddings.
 
-1. [How to get started (project folder and structure).](https://github.com/mickvanhulst/REL/tree/master/tutorials/01_How_to_get_started.md)
-2. [End-to-End Entity Linking.](https://github.com/mickvanhulst/REL/tree/master/tutorials/02_E2E_Entity_Linking.md)
-3. [(optional) Evaluate on GERBIL.](https://github.com/mickvanhulst/REL/tree/master/tutorials/03_Evaluate_Gerbil.md)
-4. [(optional) Extracting a new Wikipedia corpus and creating a p(e|m) index.](https://github.com/mickvanhulst/REL/tree/master/tutorials/04_Extracting_a_new_Wikipedia_corpus.md)
-5. [(optional) Training your own Embeddings.](https://github.com/mickvanhulst/REL/tree/master/tutorials/05_training_your_own_embeddings.md)
-6. [(optional) Generating training, validation and test files.](https://github.com/mickvanhulst/REL/tree/master/tutorials/06_generating_training_test_files.md)
-7. [(optional) Training your own Entity Disambiguation model.](https://github.com/mickvanhulst/REL/tree/master/tutorials/07_training_your_own_ED_model.md)
+1. [How to get started (project folder and structure).](https://github.com/informagi/REL/tree/master/tutorials/01_How_to_get_started.md)
+2. [End-to-End Entity Linking.](https://github.com/informagi/REL/tree/master/tutorials/02_E2E_Entity_Linking.md)
+3. [Evaluate on GERBIL.](https://github.com/informagi/REL/tree/master/tutorials/03_Evaluate_Gerbil.md)
+4. [Deploy REL for a new Wikipedia corpus](https://github.com/informagi/REL/tree/master/tutorials/deploy_REL_new_Wiki/04_deploy_REL_new_wiki.md):
+    1. [Extracting a new Wikipedia corpus and creating a p(e|m) index.](https://github.com/informagi/REL/tree/master/tutorials/deploy_REL_new_Wiki/04_01_Extracting_a_new_Wikipedia_corpus.md)
+    2. [Training your own Embeddings.](https://github.com/informagi/REL/tree/master/tutorials/deploy_REL_new_Wiki/04_02_training_your_own_embeddings.md)
+    3. [Generating training, validation and test files.](https://github.com/informagi/REL/tree/master/tutorials/deploy_REL_new_Wiki/04_03_generating_training_test_files.md)
+    4. [Training your own Entity Disambiguation model.](https://github.com/informagi/REL/tree/master/tutorials/deploy_REL_new_Wiki/04_04_training_your_own_ED_model.md)
+5. [Reproducing our results](https://github.com/informagi/REL/tree/master/tutorials/05_reproducing_our_results.md)
 
 # Cite
 How to cite us.
