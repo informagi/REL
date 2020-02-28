@@ -47,7 +47,7 @@ Download generic
 Download 2014
 Download 2019.
 
-## Tutorials local-usage package
+## Tutorials
 To promote usage of this package we developed various tutorials. If you simply want to use our API, then 
 we refer to the section above. If you feel one is missing or unclear, then please create an issue, which is much appreciated :)! The first two tutorials are
 for users who simply want to use our package for EL/ED and will be using the data files that we provide. 
