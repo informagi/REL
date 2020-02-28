@@ -8,7 +8,7 @@ After opening the `gerbil_middleware` folder, the user can run the following com
 ```
 mvn clean -Dmaven.tomcat.port=1235 tomcat:run
 ```
-Secondly, we need to enable the API as described in the previous tutorials. Here the respective
+Secondly, we need to [start the API]((https://github.com/informagi/REL/tree/master/tutorials/02_E2E_Entity_Linking.md)) as described in the previous tutorials. Here the respective
 modes are either 'ED' or 'EL', depending on what the user wishes to evaluate.
 
 Finally, the user may open the [GERBIL platform](http://gerbil.aksw.org/gerbil/config) and configure and run an experiment.
