@@ -18,8 +18,8 @@ and `db_name`. The variable `embedding_file` needs to point to the trained Wikip
 from RELdb.generic import GenericLookup
 
 save_dir = "{}/{}/generated/".format(base_url, wiki_version)
-db_name = 'entity_word_embedding'
-embedding_file = './enwiki_w2v_model'
+db_name = "entity_word_embedding"
+embedding_file = "./enwiki_w2v_model"
 
 # Embedding load.
 emb = GenericLookup(db_name, save_dir=save_dir, table_name='embeddings')

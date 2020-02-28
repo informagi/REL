@@ -4,7 +4,7 @@ folder and will be used to store the folders that need to be downloaded from our
 store e.g. generated training and test files.
 
 ```python
-base_url = /home/user/project_folder
+base_url = "/home/user/project_folder"
 ```
 
 The files that are provided on our main Github page can be copied and downloaded into this folder, thus obtaining
