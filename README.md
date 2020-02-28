@@ -2,7 +2,35 @@
 REL is a modular Entity Linking package that can both be integrated in existing pipelines or be used as an API. REL has various meanings, one might first notice that it stands for relation, which is a suiting name for
 the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
 
-# Setup
+
+# Setup API
+## Obtaining a key
+TODO
+
+## Querying our API
+Once a user obtains an API key, the user may query our API by opening a Python script and replacing the `text_doc` 
+variable with their corresponding text. At this point in time, our API focuses solely on End-to-End Entity Linking, meaning that the `spans`
+field should always be left empty as is.
+
+```python
+import requests
+
+IP_ADDRESS = "http://localhost"
+PORT = "5555"
+text_doc = "If you're going to try, go all the way - Charles Bukowski"
+
+document = {
+    "text": text_doc,
+    "spans": [],
+}
+
+API_result = requests.post("{}:{}".format(IP_ADDRESS, PORT), json=document).json()
+```
+
+# Setup package
+The following installation, downloads and installation focuses on the local-usage of our package. If a user wishes
+to use our API, then we refer to the section above.
+
 ## Installation
 Please run the following command in a terminal to install REL:
 ```
@@ -19,9 +47,9 @@ Download generic
 Download 2014
 Download 2019.
 
-## Tutorials
-To promote usage of this package we developed several tutorials. If you feel one is missing or unclear, then please
-create an issue, which is much appreciated :)! The first two tutorials are
+## Tutorials local-usage package
+To promote usage of this package we developed various tutorials. If you simply want to use our API, then 
+we refer to the section above. If you feel one is missing or unclear, then please create an issue, which is much appreciated :)! The first two tutorials are
 for users who simply want to use our package for EL/ED and will be using the data files that we provide. 
 The remainder of the tutorials are optional and for users who wish to e.g. train their own Embeddings.
 
