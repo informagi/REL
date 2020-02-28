@@ -4,7 +4,7 @@ import numpy as np
 
 np.random.seed(seed=42)
 
-base_url = "C:/Users/mickv/desktop/data_back/"
+base_url = ""
 wiki_version = "wiki_2019"
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()['aida_testB']
 

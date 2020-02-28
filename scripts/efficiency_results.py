@@ -1,6 +1,6 @@
 import numpy as np
 
-base_url = "C:/Users/mickv/Desktop/data_back/wiki_2019/"
+base_url = ""
 
 n_mentions = []
 n_words = []

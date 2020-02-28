@@ -1,7 +1,7 @@
 from REL.wikipedia import Wikipedia
 from REL.wikipedia_yago_freq import WikipediaYagoFreq
 
-base_url = "C:/Users/mickv/desktop/data_back/"
+base_url = ""
 wiki_version = "wiki_2019"
 
 # 1. Import helper functions; store p(e|m) index etc in class.

@@ -71,19 +71,23 @@ except KeyboardInterrupt:
 
 Once the server is ready for listening, one or more users may query it for results. Querying the API is straightforward and
 we have added an example below. We believe such an API is especially useful for research groups that want to run a single
-server with our package and query it with multiple people. A user may query the API using the code below, where the "text" 
-field may be replaced with a text for a particular document. At this point in time, a user may only query the server with
+server with our package and query it with multiple people. A user may query the API using the code below, where the `text_doc` 
+variable may be replaced with a text for a particular document. At this point in time, a user may only query the server with
 a single document. We currently added this to make sure that a single user does not overload a particular server.
 
 ```python
 import requests
 
+IP_ADDRESS = "http://localhost"
+PORT = "5555"
+text_doc = "If you're going to try, go all the way - Charles Bukowski"
+
 document = {
-    "text": """If you're going to try, go all the way - Charles Bukowski""",
+    "text": text_doc,
     "spans": [],
 }
 
-API_result = requests.post("http://localhost:5555", json=document).json()
+API_result = requests.post("{}:{}".format(IP_ADDRESS, PORT), json=document).json()
 ```
 
 ## Pipeline integration

@@ -1,7 +1,7 @@
 from REL.training_datasets import TrainingEvaluationDatasets
 from REL.entity_disambiguation import EntityDisambiguation
 
-base_url = "C:/Users/mickv/desktop/data_back/"
+base_url = ""
 wiki_version = "wiki_2019"
 
 # 1. Load datasets # '/mnt/c/Users/mickv/Google Drive/projects/entity_tagging/deep-ed/data/wiki_2019/'
