@@ -2,10 +2,13 @@
 REL is a modular Entity Linking package that can both be integrated in existing pipelines or be used as an API. REL has various meanings, one might first notice that it stands for relation, which is a suiting name for
 the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
 
-
 # Setup API
+This section elaborates on how a user may utilise our API. Steps include obtaining
+a API key and querying our API. Please note that at this point in time we do not require obtaining
+a key and leave it for future work.
+
 ## Obtaining a key
-TODO
+Not necessary at this point in time, please continue to the next step.
 
 ## Querying our API
 Once a user obtains an API key, the user may query our API by opening a Python script and replacing the `text_doc` 
