@@ -46,9 +46,11 @@ the project. This folder includes the GloVe embeddings used by Le et al. and the
 the ED model. The second and third category are Wikipedia corpus related files, which in our case either originate from a 2014 or 
 2019 corpus. Alternatively, users may use their own corpus, for which we refer to the tutorials.
 
-Download generic
-Download 2014
-Download 2019.
+[Download generic files](https://drive.google.com/file/d/15rz-q7ohCIZg-2hVqYojaos4ag79phSd/view?usp=sharing)
+
+[Download Wikipedia corpus (2014)](https://drive.google.com/file/d/1BhUA7h6PaP7ZcFJpLZzXxAH3k_EK1Iw-/view?usp=sharing)
+
+[Download Wikipedia corpus (2014)](https://drive.google.com/file/d/1Baxh36Eg0zhZ60PFRL4bjP8Z7Tz8F4hk/view?usp=sharing)
 
 ## Tutorials
 To promote usage of this package we developed various tutorials. If you simply want to use our API, then 
