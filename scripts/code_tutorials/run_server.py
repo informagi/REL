@@ -8,15 +8,13 @@ from flair.models import SequenceTagger
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.server import make_handler
 
-flair.device = torch.device('cuda:0')
-
 def user_func(text):
     spans = [(0, 5), (17, 7), (50, 6)]
     return spans
 
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
-base_url = ""
+base_url = "/mnt/c/Users/mickv/Desktop/data_back/"
 wiki_subfolder = "wiki_2019"
 
 # 1. Init model, where user can set his/her own config that will overwrite the default config.
@@ -28,6 +26,7 @@ config = {
     ),
 }
 
+print('AAAAA')
 model = EntityDisambiguation(base_url, wiki_subfolder, config)
 
 # 2. Create NER-tagger.
