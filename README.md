@@ -11,15 +11,13 @@ a key and leave it for future work.
 Not necessary at this point in time, please continue to the next step.
 
 ## Querying our API
-Once a user obtains an API key, the user may query our API by opening a Python script and replacing the `text_doc` 
-variable with their corresponding text. At this point in time, our API focuses solely on End-to-End Entity Linking, meaning that the `spans`
-field should always be left empty as is.
+The code to access the API for end-to-end is:
 
 ```python
 import requests
 
-IP_ADDRESS = "http://localhost"
-PORT = "5555"
+IP_ADDRESS = "http://gem.cs.ru.nl/api"
+PORT = "80"
 text_doc = "If you're going to try, go all the way - Charles Bukowski"
 
 document = {
@@ -29,6 +27,8 @@ document = {
 
 API_result = requests.post("{}:{}".format(IP_ADDRESS, PORT), json=document).json()
 ```
+At this point in time, our API focuses solely on End-to-End Entity Linking, meaning that the `spans`
+field should always be left empty as is.
 
 # Setup package
 The following installation, downloads and installation focuses on the local-usage of our package. If a user wishes
