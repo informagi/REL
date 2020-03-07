@@ -91,8 +91,8 @@ def process_results(
                         mention_length,
                         ment['ngram'],
                         pred["prediction"],
-                        ment["conf_md"] if "conf_md" in ment else 1.0,
-                        pred["conf_ed"],
+                        ment["conf_md"] if "conf_md" in ment else -1,
+                        # pred["conf_ed"],
                     )
                 else:
                     temp = (start_pos, mention_length, pred["prediction"])

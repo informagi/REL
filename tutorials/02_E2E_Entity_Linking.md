@@ -45,13 +45,10 @@ users in terms of speed.
 tagger_ner = SequenceTagger.load("ner-fast")
 ```
 
-Our final step consists of starting the server, where we may define our IP-address, port and most importantly the `MODE`
-that we would like to predict in. The available modes are either `EL` or `ED`. In production a user will only want to use
-the `EL` mode, even when using their own MD system. We only used the `ED` mode for GERBIL evaluation. Additionally,
+Our final step consists of starting the server, where we may define our IP-address and port. Additionally,
 the user may choose to include or exclude confidence scores.
 
 ```python
-MODE = "EL"
 INCLUDE_CONF = True
 
 server_address = ("localhost", 5555)
@@ -73,7 +70,9 @@ Once the server is ready for listening, one or more users may query it for resul
 we have added an example below. We believe such an API is especially useful for research groups that want to run a single
 server with our package and query it with multiple people. A user may query the API using the code below, where the `text_doc` 
 variable may be replaced with a text for a particular document. At this point in time, a user may only query the server with
-a single document. We currently added this to make sure that a single user does not overload a particular server.
+a single document. We currently added this to make sure that a single user does not overload a particular server. Additionally,
+if a user wishes to predict in an ED-fashion only, then the spans key should not be left empty and should be filled with tuples
+with integer values `(start_pos, mention_length)` (starting position and length of mention respectively).
 
 ```python
 import requests
@@ -140,7 +139,7 @@ config = {
     "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
 }
 
-model = EntityDisambiguation(base_url, wiki_subfolder, config, reset_embeddings=False)
+model = EntityDisambiguation(base_url, wiki_subfolder, config)
 predictions, timing = model.predict(mentions_dataset)
 ```
 

@@ -11,7 +11,9 @@ a key and leave it for future work.
 Not necessary at this point in time, please continue to the next step.
 
 ## Querying our API
-The code to access the API for end-to-end is:
+Users may access our API by using the example script below. For EL, the user should leave the `spans` field empty. Additionally,
+if a user wishes to predict in an ED-fashion only, then the spans key should not be left empty and should be filled with tuples
+consisting of integer values that represent the starting position and length of the mention respectively.
 
 ```python
 import requests
@@ -20,10 +22,18 @@ IP_ADDRESS = "http://gem.cs.ru.nl/api"
 PORT = "80"
 text_doc = "If you're going to try, go all the way - Charles Bukowski"
 
+# Example EL.
 document = {
     "text": text_doc,
     "spans": [],
 }
+
+# Example ED.
+document = {
+    "text": text_doc,
+    "spans": [(41, 16)],
+}
+
 
 API_result = requests.post("{}:{}".format(IP_ADDRESS, PORT), json=document).json()
 ```

@@ -4,13 +4,13 @@ import numpy as np
 
 np.random.seed(seed=42)
 
-base_url = ""
+base_url = "C:/Users/mickv/Desktop/data_back/"
 wiki_version = "wiki_2019"
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()['aida_testB']
 
 # random_docs = np.random.choice(list(datasets.keys()), 50)
 
-server = False
+server = True
 docs = {}
 for i, doc in enumerate(datasets):
     sentences = []
@@ -39,7 +39,7 @@ for i, doc in enumerate(datasets):
             print(myjson)
 
             print('Output API:')
-            print(requests.post("http://localhost:5555", json=myjson).json())
+            print(requests.post("http://192.168.178.11:1235", json=myjson).json())
             print('----------------------------')
 
 
