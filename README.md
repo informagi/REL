@@ -50,7 +50,7 @@ the ED model. The second and third category are Wikipedia corpus related files, 
 
 [Download Wikipedia corpus (2014)](https://drive.google.com/file/d/1BhUA7h6PaP7ZcFJpLZzXxAH3k_EK1Iw-/view?usp=sharing)
 
-[Download Wikipedia corpus (2014)](https://drive.google.com/file/d/1Baxh36Eg0zhZ60PFRL4bjP8Z7Tz8F4hk/view?usp=sharing)
+[Download Wikipedia corpus (2019)](https://drive.google.com/file/d/1Baxh36Eg0zhZ60PFRL4bjP8Z7Tz8F4hk/view?usp=sharing)
 
 ## Tutorials
 To promote usage of this package we developed various tutorials. If you simply want to use our API, then 
