@@ -217,6 +217,7 @@ class MentionDetection:
                         "end_pos": end_pos,
                         "sentence": sentence,
                         "conf_md": conf,
+                        "tag": entity.tag,
                     }
 
                     result_doc.append(res)
