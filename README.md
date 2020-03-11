@@ -37,8 +37,6 @@ document = {
 
 API_result = requests.post("{}:{}".format(IP_ADDRESS, PORT), json=document).json()
 ```
-At this point in time, our API focuses solely on End-to-End Entity Linking, meaning that the `spans`
-field should always be left empty as is.
 
 # Setup package
 The following installation, downloads and installation focuses on the local-usage of our package. If a user wishes

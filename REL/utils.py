@@ -92,7 +92,7 @@ def process_results(
                         ment['ngram'],
                         pred["prediction"],
                         ment["conf_md"] if "conf_md" in ment else -1,
-                        ment["tag"],
+                        ment["tag"] if "conf_md" in ment else 'NULL',
                         # pred["conf_ed"],
                     )
                 else:
