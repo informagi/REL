@@ -31,7 +31,7 @@ config = {
 model = EntityDisambiguation(base_url, wiki_version, config)
 ```
 
-Our fourth and final step consists of training or evaluating the model. This is dependent on the `mode` that was chosen previously,
+Our fourth step consists of training or evaluating the model. This is dependent on the `mode` that was chosen previously,
 
 ```python
 # 3. Train or evaluate model
@@ -41,4 +41,20 @@ if config["mode"] == "train":
     )
 else:
     model.evaluate({k: v for k, v in datasets.items() if "train" not in k})
+```
+
+Now that we have obtained our model, we want to express how confident we are in our prediction.
+By default this is not integrated in our model, but we implemented an additional step, where we use Logistic Regression
+to obtain confidence scores. However, to obtain such scores, we first need to train the model. This can be done by
+running the code below.
+
+```python
+# 3. Train and predict using LR
+
+model_path_lr = "{}/{}/generated/".format(base_url, wiki_version)
+
+model.train_LR(
+    datasets,
+    model_path_lr
+)
 ```
