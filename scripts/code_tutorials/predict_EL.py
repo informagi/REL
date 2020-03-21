@@ -13,7 +13,7 @@ def example_preprocessing():
     return processed
 
 
-base_url = ""
+base_url = "C:/Users/mickv/Desktop/data_back/"
 wiki_subfolder = "wiki_2019"
 
 # 1. Input sentences when using Flair.
@@ -43,6 +43,6 @@ model = EntityDisambiguation(base_url, wiki_subfolder, config)
 predictions, timing = model.predict(mentions_dataset)
 
 # 5. Optionally use our function to get results in a usable format.
-result = process_results(mentions_dataset, predictions, input, include_conf=True)
+result = process_results(mentions_dataset, predictions, input)
 
 print(result)
