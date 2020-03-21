@@ -58,6 +58,9 @@ class EntityDisambiguation:
         if os.path.exists("{}/{}/generated/lr_model.pkl".format(base_url, wiki_version)):
             with open("{}/{}/generated/lr_model.pkl".format(base_url, wiki_version), 'rb') as f:
                 self.model_lr = pkl.load(f)
+        else:
+            print('No LR model found, confidence scores ED will be set to zero.')
+            self.model_lr = None
 
         if self.config["mode"] == "eval":
             print("Loading model from given path: {}".format(self.config["model_path"]))
@@ -452,8 +455,11 @@ class EntityDisambiguation:
         :return:
         """
         X = np.array([[score[pred]] for score, pred in zip(scores, preds)])
-        preds = self.model_lr.predict_proba(X)
-        confidence_scores = np.array([x[1] for x in preds])
+        if self.model_lr:
+            preds = self.model_lr.predict_proba(X)
+            confidence_scores = [x[1] for x in preds]
+        else:
+            confidence_scores = [0.0 for _ in scores]
         return confidence_scores
 
     def __predict(self, data, include_timing=False, eval_raw=False):
