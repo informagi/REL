@@ -15,14 +15,13 @@ Class/function combination that is used to setup an API that can be used for e.g
 """
 
 def make_handler(
-    base_url, wiki_subfolder, model, tagger_ner, include_conf=False
+    base_url, wiki_subfolder, model, tagger_ner
 ):
     class GetHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             self.model = model
             self.tagger_ner = tagger_ner
 
-            self.include_conf = include_conf
             self.base_url = base_url
             self.wiki_subfolder = wiki_subfolder
 
@@ -111,8 +110,7 @@ def make_handler(
                 mentions_dataset,
                 predictions,
                 processed,
-                include_offset= False if ((len(spans) > 0) or self.custom_ner) else True,
-                include_conf=self.include_conf,
+                include_offset=False if ((len(spans) > 0) or self.custom_ner) else True,
             )
 
             # Singular document.

@@ -1,8 +1,8 @@
 from REL.training_datasets import TrainingEvaluationDatasets
 from REL.entity_disambiguation import EntityDisambiguation
 
-base_url = ""
-wiki_version = "wiki_2019"
+base_url = "C:/Users/mickv/Desktop/data_back/"
+wiki_version = "wiki_2014"
 
 # 1. Load datasets # '/mnt/c/Users/mickv/Google Drive/projects/entity_tagging/deep-ed/data/wiki_2019/'
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()
@@ -16,12 +16,11 @@ config = {
 }
 model = EntityDisambiguation(base_url, wiki_version, config)
 
-# 3. Train or evaluate model.
-if config["mode"] == "train":
-    model.train(
-        datasets["aida_train"], {k: v for k, v in datasets.items() if k != "aida_train"}
-    )
-else:
-    model.evaluate({k: v for k, v in datasets.items() if "train" not in k})
+# 3. Train and predict using LR
 
+model_path_lr = "{}/{}/generated/".format(base_url, wiki_version)
 
+model.train_LR(
+    datasets,
+    model_path_lr
+)

@@ -52,7 +52,7 @@ def preprocess_mention(m, wiki_db):
 
 
 def process_results(
-    mentions_dataset, predictions, processed, include_offset=False, include_conf=True
+    mentions_dataset, predictions, processed, include_offset=False,
 ):
     """
     Function that can be used to process the End-to-End results.
@@ -80,23 +80,19 @@ def process_results(
             else:
                 offset = 0
             start_pos = offset + ment["pos"]
-            end_pos = offset + ment["end_pos"]
             mention_length = int(ment["end_pos"] - ment["pos"])
 
             # self.verify_pos(ment["ngram"], start_pos, end_pos, text)
             if pred["prediction"] != "NIL":
-                if include_conf:
-                    temp = (
-                        start_pos,
-                        mention_length,
-                        ment['ngram'],
-                        pred["prediction"],
-                        ment["conf_md"] if "conf_md" in ment else -1,
-                        ment["tag"] if "conf_md" in ment else 'NULL',
-                        # pred["conf_ed"],
-                    )
-                else:
-                    temp = (start_pos, mention_length, pred["prediction"])
+                temp = (
+                    start_pos,
+                    mention_length,
+                    ment['ngram'],
+                    pred["prediction"],
+                    ment["conf_md"] if "conf_md" in ment else -1,
+                    ment["tag"] if "tag" in ment else 'NULL',
+                    pred["conf_ed"]
+                )
                 res_doc.append(temp)
         res[doc] = res_doc
     return res

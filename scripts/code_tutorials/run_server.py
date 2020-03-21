@@ -37,7 +37,7 @@ server_address = ("192.168.178.11", 1235)
 server = HTTPServer(
     server_address,
     make_handler(
-        base_url, wiki_subfolder, model, tagger_ner, include_conf=True
+        base_url, wiki_subfolder, model, tagger_ner
     ),
 )
 
