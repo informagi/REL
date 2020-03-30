@@ -30,6 +30,24 @@ def make_handler(
 
             super().__init__(*args, **kwargs)
 
+        def do_GET(self):
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(
+                bytes(
+                    json.dumps(
+                        {
+                            "schemaVersion": 1,
+                            "label": "status",
+                            "message": "up",
+                            "color": "green",
+                        }
+                    ),
+                    "utf-8",
+                )
+            )
+            return
+
         def do_POST(self):
             """
             Returns response.
