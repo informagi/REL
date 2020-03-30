@@ -84,7 +84,7 @@ The remainder of the tutorials are optional and for users who wish to e.g. train
 How to cite us.
 
 # Contact
-Please email your questions or comments to [Mick van Hulst]('mick.vanhulst@gmail.com)
+Please email your questions or comments to [Mick van Hulst](mailto:mick.vanhulst@gmail.com)
 
 # Acknowledgements
 Our thanks go out to the authors that open-sourced their code, enabling us to this package that can hopefully be of service to many.
