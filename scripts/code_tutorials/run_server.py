@@ -11,8 +11,8 @@ def user_func(text):
 
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
-base_url = "C:/Users/mickv/Desktop/data_back/"
-wiki_subfolder = "wiki_2019"
+base_url = ""
+wiki_subfolder = ""
 
 # 1. Init model, where user can set his/her own config that will overwrite the default config.
 # If mode is equal to 'eval', then the model_path should point to an existing model.

@@ -10,8 +10,8 @@ from time import time
 np.random.seed(seed=42)
 
 MAX_SIZE_DOCS = 10
-base_url = "/Users/vanhulsm/Desktop/projects/data/"
-wiki_version = "wiki_2014"
+base_url = ""
+wiki_version = ""
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()['aida_testB']
 
 docs = {}

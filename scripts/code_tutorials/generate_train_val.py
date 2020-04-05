@@ -2,7 +2,7 @@ from REL.wikipedia import Wikipedia
 from REL.generate_train_test import GenTrainingTest
 
 base_url = ""
-wiki_version = "wiki_2019/"
+wiki_version = ""
 wikipedia = Wikipedia(base_url, wiki_version)
 
 data_handler = GenTrainingTest(base_url, wiki_version, wikipedia)

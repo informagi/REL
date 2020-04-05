@@ -2,7 +2,7 @@ from REL.wikipedia import Wikipedia
 from REL.wikipedia_yago_freq import WikipediaYagoFreq
 
 base_url = ""
-wiki_version = "wiki_2019"
+wiki_version = ""
 
 # 1. Import helper functions; store p(e|m) index etc in class.
 print("Loading wikipedia files")
