@@ -32,37 +32,37 @@ class MentionDetection:
     #         find_ngram, ngram, find_ngram_ws_invariant, sentence
     #     )
 
-    def split_text(self, dataset):
-        """
-        Splits text into sentences. This behavior is required for the default NER-tagger, which during experiments
-        was experienced to perform more optimally in such a fashion.
-
-        :return: dictionary with sentences and optional given spans per sentence.
-        """
-
-        res = {}
-        for doc in dataset:
-            text, spans = dataset[doc]
-            sentences = split_single(text)
-            res[doc] = {}
-
-            i = 0
-            for sent in sentences:
-                if len(sent.strip()) == 0:
-                    continue
-                # Match gt to sentence.
-                pos_start = text.find(sent)
-                pos_end = pos_start + len(sent)
-
-                # ngram, start_pos, end_pos
-                spans_sent = [
-                    [text[x[0] : x[0] + x[1]], x[0], x[0] + x[1]]
-                    for x in spans
-                    if pos_start <= x[0] < pos_end
-                ]
-                res[doc][i] = [sent, spans_sent]
-                i += 1
-        return res
+    # def split_text(self, dataset):
+    #     """
+    #     Splits text into sentences. This behavior is required for the default NER-tagger, which during experiments
+    #     was experienced to perform more optimally in such a fashion.
+    #
+    #     :return: dictionary with sentences and optional given spans per sentence.
+    #     """
+    #
+    #     res = {}
+    #     for doc in dataset:
+    #         text, spans = dataset[doc]
+    #         sentences = split_single(text)
+    #         res[doc] = {}
+    #
+    #         i = 0
+    #         for sent in sentences:
+    #             if len(sent.strip()) == 0:
+    #                 continue
+    #             # Match gt to sentence.
+    #             pos_start = text.find(sent)
+    #             pos_end = pos_start + len(sent)
+    #
+    #             # ngram, start_pos, end_pos
+    #             spans_sent = [
+    #                 [text[x[0] : x[0] + x[1]], x[0], x[0] + x[1]]
+    #                 for x in spans
+    #                 if pos_start <= x[0] < pos_end
+    #             ]
+    #             res[doc][i] = [sent, spans_sent]
+    #             i += 1
+    #     return res
 
     def _get_ctxt(self, start, end, idx_sent, sentence):
         """
@@ -114,7 +114,7 @@ class MentionDetection:
         :return: Dictionary with mentions per document.
         """
 
-        dataset = self.split_text(dataset)
+        dataset, _, _ = self.split_text(dataset)
         results = {}
         total_ment = 0
 
@@ -151,9 +151,121 @@ class MentionDetection:
             results[doc] = results_doc
         return results, total_ment
 
+    # def find_mentions(self, dataset, tagger_ner=None):
+    #     """
+    #     Responsible for finding mentions given a set of documents. More specifically,
+    #     it returns the mention, its left/right context and a set of candidates.
+    #
+    #     :return: Dictionary with mentions per document.
+    #     """
+    #
+    #     if tagger_ner is None:
+    #         raise Exception(
+    #             "No NER tagger is set, but you are attempting to perform Mention Detection.."
+    #         )
+    #
+    #     dataset, _, _ = self.split_text(dataset)
+    #     results = {}
+    #     total_ment = 0
+    #
+    #     for doc in dataset:
+    #         contents = dataset[doc]
+    #
+    #         self.sentences_doc = [v[0] for v in contents.values()]
+    #         result_doc = []
+    #
+    #         sentences = [
+    #             Sentence(v[0], use_tokenizer=True) for k, v in contents.items()
+    #         ]
+    #
+    #         tagger_ner.predict(sentences)
+    #
+    #         for (idx_sent, (sentence, ground_truth_sentence)), snt in zip(
+    #             contents.items(), sentences
+    #         ):
+    #             illegal = []
+    #             for entity in snt.get_spans("ner"):
+    #                 text, start_pos, end_pos, conf = (
+    #                     entity.text,
+    #                     entity.start_pos,
+    #                     entity.end_pos,
+    #                     entity.score,
+    #                 )
+    #                 total_ment += 1
+    #
+    #                 m = preprocess_mention(text, self.wiki_db)
+    #                 cands = self._get_candidates(m)
+    #
+    #                 if len(cands) == 0:
+    #                     continue
+    #
+    #                 ngram = sentence[start_pos:end_pos]
+    #                 illegal.extend(range(start_pos, end_pos))
+    #
+    #                 left_ctxt, right_ctxt = self._get_ctxt(
+    #                     start_pos, end_pos, idx_sent, sentence
+    #                 )
+    #
+    #                 res = {
+    #                     "mention": m,
+    #                     "context": (left_ctxt, right_ctxt),
+    #                     "candidates": cands,
+    #                     "gold": ["NONE"],
+    #                     "pos": start_pos,
+    #                     "sent_idx": idx_sent,
+    #                     "ngram": ngram,
+    #                     "end_pos": end_pos,
+    #                     "sentence": sentence,
+    #                     "conf_md": conf,
+    #                     "tag": entity.tag,
+    #                 }
+    #
+    #                 result_doc.append(res)
+    #
+    #         results[doc] = result_doc
+    #
+    #     return results, total_ment
+
+    def split_text(self, dataset):
+        """
+        Splits text into sentences. This behavior is required for the default NER-tagger, which during experiments
+        was experienced to perform more optimally in such a fashion.
+
+        :return: dictionary with sentences and optional given spans per sentence.
+        """
+
+        res = {}
+        splits = [0]
+        processed_sentences = []
+        for doc in dataset:
+            text, spans = dataset[doc]
+            sentences = split_single(text)
+            res[doc] = {}
+
+            i = 0
+            for sent in sentences:
+                if len(sent.strip()) == 0:
+                    continue
+                # Match gt to sentence.
+                pos_start = text.find(sent)
+                pos_end = pos_start + len(sent)
+
+                # ngram, start_pos, end_pos
+                spans_sent = [
+                    [text[x[0] : x[0] + x[1]], x[0], x[0] + x[1]]
+                    for x in spans
+                    if pos_start <= x[0] < pos_end
+                ]
+                res[doc][i] = [sent, spans_sent]
+                if len(spans) == 0:
+                    processed_sentences.append(Sentence(sent, use_tokenizer=True))
+                i += 1
+            splits.append(splits[-1] + i)
+        return res, processed_sentences, splits
+
     def find_mentions(self, dataset, tagger_ner=None):
         """
-        Responsible for finding mentions given a set of documents. More specifically,
+        Responsible for finding mentions given a set of documents in a batch-wise manner. More specifically,
         it returns the mention, its left/right context and a set of candidates.
 
         :return: Dictionary with mentions per document.
@@ -164,21 +276,18 @@ class MentionDetection:
                 "No NER tagger is set, but you are attempting to perform Mention Detection.."
             )
 
-        dataset = self.split_text(dataset)
+        dataset, processed_sentences, splits = self.split_text(dataset)
         results = {}
         total_ment = 0
 
-        for doc in dataset:
+        tagger_ner.predict(processed_sentences, mini_batch_size=32)
+
+        for i, doc in enumerate(dataset):
             contents = dataset[doc]
 
             self.sentences_doc = [v[0] for v in contents.values()]
+            sentences = processed_sentences[splits[i]:splits[i+1]]
             result_doc = []
-
-            sentences = [
-                Sentence(v[0], use_tokenizer=True) for k, v in contents.items()
-            ]
-
-            tagger_ner.predict(sentences)
 
             for (idx_sent, (sentence, ground_truth_sentence)), snt in zip(
                 contents.items(), sentences
@@ -225,3 +334,4 @@ class MentionDetection:
             results[doc] = result_doc
 
         return results, total_ment
+

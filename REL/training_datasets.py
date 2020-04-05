@@ -25,14 +25,14 @@ class TrainingEvaluationDatasets:
         """
         datasets = {}
         for ds in [
-            "aida_train",
+            # "aida_train",
             "aida_testA",
             "aida_testB",
-            "wned-ace2004",
-            "wned-aquaint",
-            "wned-clueweb",
-            "wned-msnbc",
-            "wned-wikipedia",
+            # "wned-ace2004",
+            # "wned-aquaint",
+            # "wned-clueweb",
+            # "wned-msnbc",
+            # "wned-wikipedia",
         ]:
 
             print("Loading {}".format(ds))

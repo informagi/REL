@@ -4,8 +4,8 @@ import numpy as np
 
 np.random.seed(seed=42)
 
-base_url = "C:/Users/mickv/Desktop/data_back/"
-wiki_version = "wiki_2019"
+base_url = "/Users/vanhulsm/Desktop/projects/data/"
+wiki_version = "wiki_2014"
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()['aida_testB']
 
 # random_docs = np.random.choice(list(datasets.keys()), 50)

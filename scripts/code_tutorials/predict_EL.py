@@ -13,8 +13,8 @@ def example_preprocessing():
     return processed
 
 
-base_url = "C:/Users/mickv/Desktop/data_back/"
-wiki_subfolder = "wiki_2019"
+base_url = "/Users/vanhulsm/Desktop/projects/data/"
+wiki_subfolder = "wiki_2014"
 
 # 1. Input sentences when using Flair.
 input = example_preprocessing()
@@ -27,8 +27,8 @@ mention_detection = MentionDetection(base_url, wiki_subfolder)
 mentions_dataset, n_mentions = mention_detection.format_spans(input)
 
 # Alternatively use Flair NER tagger.
-tagger_ner = SequenceTagger.load("ner-fast")
-mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ner)
+# tagger_ner = SequenceTagger.load("ner-fast")
+# mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ner)
 
 # 3. Load model.
 config = {
