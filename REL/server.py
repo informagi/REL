@@ -132,8 +132,9 @@ def make_handler(
             )
 
             # Singular document.
-            result = [*result.values()][0]
+            if len(result) > 0:
+                return [*result.values()][0]
 
-            return result
+            return []
 
     return GetHandler
