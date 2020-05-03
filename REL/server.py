@@ -9,7 +9,6 @@ from flair.models import SequenceTagger
 
 API_DOC = "API_DOC"
 
-
 """
 Class/function combination that is used to setup an API that can be used for e.g. GERBIL evaluation.
 """
@@ -55,6 +54,7 @@ def make_handler(
             :return:
             """
             content_length = int(self.headers["Content-Length"])
+            print(content_length)
             post_data = self.rfile.read(content_length)
             self.send_response(200)
             self.end_headers()

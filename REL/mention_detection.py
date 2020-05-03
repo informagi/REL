@@ -3,6 +3,7 @@ from REL.utils import preprocess_mention, split_in_words
 from REL.db.generic import GenericLookup
 from segtok.segmenter import split_single
 from flair.data import Sentence
+from flair.models import SequenceTagger
 
 """
 Class responsible for mention detection. 
@@ -19,51 +20,6 @@ class MentionDetection:
             "{}/{}/generated/".format(base_url, wiki_subfolder),
         )
 
-    # def __verify_pos(self, ngram, start, end, sentence):
-    #     ngram = ngram.lower()
-    #     find_ngram = sentence[start:end].lower()
-    #     find_ngram_ws_invariant = " ".join(
-    #         [x.text for x in Sentence(find_ngram, use_tokenizer=True)]
-    #     ).lower()
-
-    #     assert (find_ngram == ngram) or (
-    #         find_ngram_ws_invariant == ngram
-    #     ), "Mention not found on given position: {};{};{};{}".format(
-    #         find_ngram, ngram, find_ngram_ws_invariant, sentence
-    #     )
-
-    # def split_text(self, dataset):
-    #     """
-    #     Splits text into sentences. This behavior is required for the default NER-tagger, which during experiments
-    #     was experienced to perform more optimally in such a fashion.
-    #
-    #     :return: dictionary with sentences and optional given spans per sentence.
-    #     """
-    #
-    #     res = {}
-    #     for doc in dataset:
-    #         text, spans = dataset[doc]
-    #         sentences = split_single(text)
-    #         res[doc] = {}
-    #
-    #         i = 0
-    #         for sent in sentences:
-    #             if len(sent.strip()) == 0:
-    #                 continue
-    #             # Match gt to sentence.
-    #             pos_start = text.find(sent)
-    #             pos_end = pos_start + len(sent)
-    #
-    #             # ngram, start_pos, end_pos
-    #             spans_sent = [
-    #                 [text[x[0] : x[0] + x[1]], x[0], x[0] + x[1]]
-    #                 for x in spans
-    #                 if pos_start <= x[0] < pos_end
-    #             ]
-    #             res[doc][i] = [sent, spans_sent]
-    #             i += 1
-    #     return res
-
     def _get_ctxt(self, start, end, idx_sent, sentence):
         """
         Retrieves context surrounding a given mention up to 100 words from both sides.
@@ -76,16 +32,16 @@ class MentionDetection:
         if idx_sent > 0:
             i = idx_sent - 1
             while (i >= 0) and (len(left_ctxt) <= 100):
-                left_ctxt = split_in_words(self.sentences_doc[i]) + left_ctxt
+                left_ctxt = split_in_words(self.__sentences_doc[i]) + left_ctxt
                 i -= 1
         left_ctxt = left_ctxt[-100:]
         left_ctxt = " ".join(left_ctxt)
 
         right_ctxt = split_in_words(sentence[end:])
-        if idx_sent < len(self.sentences_doc):
+        if idx_sent < len(self.__sentences_doc):
             i = idx_sent + 1
-            while (i < len(self.sentences_doc)) and (len(right_ctxt) <= 100):
-                right_ctxt = right_ctxt + split_in_words(self.sentences_doc[i])
+            while (i < len(self.__sentences_doc)) and (len(right_ctxt) <= 100):
+                right_ctxt = right_ctxt + split_in_words(self.__sentences_doc[i])
                 i += 1
         right_ctxt = right_ctxt[:100]
         right_ctxt = " ".join(right_ctxt)
@@ -120,7 +76,7 @@ class MentionDetection:
 
         for doc in dataset:
             contents = dataset[doc]
-            self.sentences_doc = [v[0] for v in contents.values()]
+            self.__sentences_doc = [v[0] for v in contents.values()]
 
             results_doc = []
             for idx_sent, (sentence, spans) in contents.items():
@@ -151,85 +107,11 @@ class MentionDetection:
             results[doc] = results_doc
         return results, total_ment
 
-    # def find_mentions(self, dataset, tagger_ner=None):
-    #     """
-    #     Responsible for finding mentions given a set of documents. More specifically,
-    #     it returns the mention, its left/right context and a set of candidates.
-    #
-    #     :return: Dictionary with mentions per document.
-    #     """
-    #
-    #     if tagger_ner is None:
-    #         raise Exception(
-    #             "No NER tagger is set, but you are attempting to perform Mention Detection.."
-    #         )
-    #
-    #     dataset, _, _ = self.split_text(dataset)
-    #     results = {}
-    #     total_ment = 0
-    #
-    #     for doc in dataset:
-    #         contents = dataset[doc]
-    #
-    #         self.sentences_doc = [v[0] for v in contents.values()]
-    #         result_doc = []
-    #
-    #         sentences = [
-    #             Sentence(v[0], use_tokenizer=True) for k, v in contents.items()
-    #         ]
-    #
-    #         tagger_ner.predict(sentences)
-    #
-    #         for (idx_sent, (sentence, ground_truth_sentence)), snt in zip(
-    #             contents.items(), sentences
-    #         ):
-    #             illegal = []
-    #             for entity in snt.get_spans("ner"):
-    #                 text, start_pos, end_pos, conf = (
-    #                     entity.text,
-    #                     entity.start_pos,
-    #                     entity.end_pos,
-    #                     entity.score,
-    #                 )
-    #                 total_ment += 1
-    #
-    #                 m = preprocess_mention(text, self.wiki_db)
-    #                 cands = self._get_candidates(m)
-    #
-    #                 if len(cands) == 0:
-    #                     continue
-    #
-    #                 ngram = sentence[start_pos:end_pos]
-    #                 illegal.extend(range(start_pos, end_pos))
-    #
-    #                 left_ctxt, right_ctxt = self._get_ctxt(
-    #                     start_pos, end_pos, idx_sent, sentence
-    #                 )
-    #
-    #                 res = {
-    #                     "mention": m,
-    #                     "context": (left_ctxt, right_ctxt),
-    #                     "candidates": cands,
-    #                     "gold": ["NONE"],
-    #                     "pos": start_pos,
-    #                     "sent_idx": idx_sent,
-    #                     "ngram": ngram,
-    #                     "end_pos": end_pos,
-    #                     "sentence": sentence,
-    #                     "conf_md": conf,
-    #                     "tag": entity.tag,
-    #                 }
-    #
-    #                 result_doc.append(res)
-    #
-    #         results[doc] = result_doc
-    #
-    #     return results, total_ment
-
-    def split_text(self, dataset):
+    def split_text(self, dataset, is_flair):
         """
-        Splits text into sentences. This behavior is required for the default NER-tagger, which during experiments
-        was experienced to perform more optimally in such a fashion.
+        Splits text into sentences with optional spans (format is a requirement for GERBIL usage).
+        This behavior is required for the default NER-tagger, which during experiments was experienced
+        to achieve higher performance.
 
         :return: dictionary with sentences and optional given spans per sentence.
         """
@@ -258,12 +140,12 @@ class MentionDetection:
                 ]
                 res[doc][i] = [sent, spans_sent]
                 if len(spans) == 0:
-                    processed_sentences.append(Sentence(sent, use_tokenizer=True))
+                    processed_sentences.append(Sentence(sent, use_tokenizer=True) if is_flair else sent)
                 i += 1
             splits.append(splits[-1] + i)
         return res, processed_sentences, splits
 
-    def find_mentions(self, dataset, tagger_ner=None):
+    def find_mentions(self, dataset, tagger=None):
         """
         Responsible for finding mentions given a set of documents in a batch-wise manner. More specifically,
         it returns the mention, its left/right context and a set of candidates.
@@ -271,34 +153,38 @@ class MentionDetection:
         :return: Dictionary with mentions per document.
         """
 
-        if tagger_ner is None:
+        if tagger is None:
             raise Exception(
                 "No NER tagger is set, but you are attempting to perform Mention Detection.."
             )
 
-        dataset, processed_sentences, splits = self.split_text(dataset)
+        # Verify if Flair, else ngram or custom.
+        is_flair = isinstance(tagger, SequenceTagger)
+        dataset, processed_sentences, splits = self.split_text(dataset, is_flair)
         results = {}
         total_ment = 0
 
-        tagger_ner.predict(processed_sentences, mini_batch_size=32)
+        # mini_batch_size default 32. Only if Flair for higher performance (GPU),
+        # else predict on a sentence-level.
+        if is_flair:
+            tagger.predict(processed_sentences)
 
         for i, doc in enumerate(dataset):
             contents = dataset[doc]
-
-            self.sentences_doc = [v[0] for v in contents.values()]
+            self.__sentences_doc = [v[0] for v in contents.values()]
             sentences = processed_sentences[splits[i]:splits[i+1]]
             result_doc = []
 
             for (idx_sent, (sentence, ground_truth_sentence)), snt in zip(
                 contents.items(), sentences
             ):
-                illegal = []
-                for entity in snt.get_spans("ner"):
-                    text, start_pos, end_pos, conf = (
+                for entity in (snt.get_spans("ner") if is_flair else tagger.predict(snt, processed_sentences)):
+                    text, start_pos, end_pos, conf, tag = (
                         entity.text,
                         entity.start_pos,
                         entity.end_pos,
                         entity.score,
+                        entity.tag
                     )
                     total_ment += 1
 
@@ -308,9 +194,8 @@ class MentionDetection:
                     if len(cands) == 0:
                         continue
 
+                    # Re-create ngram as 'text' is at times changed by Flair (e.g. double spaces are removed).
                     ngram = sentence[start_pos:end_pos]
-                    illegal.extend(range(start_pos, end_pos))
-
                     left_ctxt, right_ctxt = self._get_ctxt(
                         start_pos, end_pos, idx_sent, sentence
                     )
@@ -318,7 +203,7 @@ class MentionDetection:
                     res = {
                         "mention": m,
                         "context": (left_ctxt, right_ctxt),
-                        "candidates": cands,
+                        "candidates": cands ,
                         "gold": ["NONE"],
                         "pos": start_pos,
                         "sent_idx": idx_sent,
@@ -326,7 +211,7 @@ class MentionDetection:
                         "end_pos": end_pos,
                         "sentence": sentence,
                         "conf_md": conf,
-                        "tag": entity.tag,
+                        "tag": tag,
                     }
 
                     result_doc.append(res)
