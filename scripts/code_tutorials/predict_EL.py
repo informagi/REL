@@ -28,10 +28,10 @@ mention_detection = MentionDetection(base_url, wiki_subfolder)
 # mentions_dataset, n_mentions = mention_detection.format_spans(input)
 
 # Alternatively use Flair NER tagger.
-tagger_ner = SequenceTagger.load("ner-fast")
+#tagger_ner = SequenceTagger.load("ner-fast")
 tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
 
-mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ner)
+mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ngram)
 
 # 3. Load model.
 config = {
