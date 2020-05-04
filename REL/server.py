@@ -73,7 +73,7 @@ def make_handler(
                 # print('response in server.py code:\n\n {}'.format(response))
                 self.wfile.write(bytes(json.dumps(response), "utf-8"))
             except Exception as e:
-                print(f"Encountered exception: {e}")
+                print(f"Encountered exception: {repr(e)}")
                 self.send_response(400)
                 self.end_headers()
                 self.wfile.write(bytes(json.dumps([]), "utf-8"))
