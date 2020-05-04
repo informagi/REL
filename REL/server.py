@@ -48,22 +48,35 @@ def make_handler(
             )
             return
 
+        def do_HEAD(self):
+            # send bad request response code
+            self.send_response(400)
+            self.end_headers()
+            self.wfile.write(bytes(json.dumps([]), "utf-8"))
+            return
+
         def do_POST(self):
             """
             Returns response.
 
             :return:
             """
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            self.send_response(200)
-            self.end_headers()
+            try:
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                self.send_response(200)
+                self.end_headers()
 
-            text, spans = self.read_json(post_data)
-            response = self.generate_response(text, spans)
+                text, spans = self.read_json(post_data)
+                response = self.generate_response(text, spans)
 
-            # print('response in server.py code:\n\n {}'.format(response))
-            self.wfile.write(bytes(json.dumps(response), "utf-8"))
+                # print('response in server.py code:\n\n {}'.format(response))
+                self.wfile.write(bytes(json.dumps(response), "utf-8"))
+            except Exception as e:
+                print("Encountered exception {e}")
+                self.send_response(400)
+                self.end_headers()
+                self.wfile.write(bytes(json.dumps([]), "utf-8"))
             return
 
         def read_json(self, post_data):
