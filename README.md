@@ -79,7 +79,16 @@ The remainder of the tutorials are optional and for users who wish to e.g. train
 6. [REL as systemd service](https://github.com/informagi/REL/tree/master/tutorials/06_systemd_instructions.md)
 
 # Cite
-How to cite us.
+If you are using REL, please cite the following paper:
+
+@inproceedings{vanHulst:2020:REL,
+ author =    {van Hulst, Johannes M. and Hasibi, Faegheh and Dercksen, Koen and Balog, Krisztian and de Vries, Arjen P.},
+ title =     {REL: An Entity Linker Standing on the Shoulders of Giants},
+ booktitle = {Proceedings of the 43rd International ACM SIGIR Conference on Research and Development in Information Retrieval},
+ series =    {SIGIR '20},
+ year =      {2020},
+ publisher = {ACM}
+}
 
 # Contact
 Please email your questions or comments to [Mick van Hulst](mailto:mick.vanhulst@gmail.com)
