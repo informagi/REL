@@ -2,9 +2,9 @@
 
 ![API status](https://img.shields.io/endpoint?label=status&url=https%3A%2F%2Frel.cs.ru.nl%2Fapi)
 
-REL is a modular Entity Linking package that is provided as a Python package as well as a web API. REL has various meanings, one might first notice that it stands for relation, which is a suiting name for the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
+REL is a modular Entity Linking package that is provided as a Python package as well as a web API. REL has various meanings -  one might first notice that it stands for relation, which is a suiting name for the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
 
-REL utilizes *Enligh* Wikipedia as a knwoledge base and can be used for the following tasks:
+REL utilizes *English* Wikipedia as a knowledge base and can be used for the following tasks:
 - **Entity linking (EL)**: Given a text, the system outputs a list of mention-entity pairs, where each mention is a n-gram from text and each entity is an entity in the knowledge base.
 - **Entity Disambiguation (ED)**: Given a text and a list of mentions, the system assigns an entity (or NIL) to each mention.
 
@@ -12,7 +12,7 @@ REL utilizes *Enligh* Wikipedia as a knwoledge base and can be used for the foll
 This section elaborates on how a user may utilize our API. Steps include obtaining an API key and querying our API. 
 
 ### Obtaining a key
-At this stage in time we do not require obtaining a key; please continue to the next step.
+At the moment we do not require obtaining a key; please continue to the next step.
 
 ### Querying our API
 Users may access our API by using the example script below. 
@@ -81,6 +81,7 @@ The remainder of the tutorials are optional and for users who wish to e.g. train
 # Cite
 If you are using REL, please cite the following paper:
 
+```bibtex
 @inproceedings{vanHulst:2020:REL,
  author =    {van Hulst, Johannes M. and Hasibi, Faegheh and Dercksen, Koen and Balog, Krisztian and de Vries, Arjen P.},
  title =     {REL: An Entity Linker Standing on the Shoulders of Giants},
@@ -89,6 +90,7 @@ If you are using REL, please cite the following paper:
  year =      {2020},
  publisher = {ACM}
 }
+```
 
 # Contact
 Please email your questions or comments to [Mick van Hulst](mailto:mick.vanhulst@gmail.com)
