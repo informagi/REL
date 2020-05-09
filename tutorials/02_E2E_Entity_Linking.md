@@ -196,7 +196,7 @@ class MD_Module(object):
         return mentions
 ```
 
-For our pipeline integration this means replcacing either `tagger_ner` or `tagger_ngram` with the class definition below.
+This means replcacing either `tagger_ner` or `tagger_ngram` with `tagger_custom`.
 
 ```python
 tagger_custom = MD_Module('param1', 'param2')
