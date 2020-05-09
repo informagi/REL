@@ -24,10 +24,11 @@ input = example_preprocessing()
 # 2. Mention detection, we used the NER tagger, user can also use his/her own mention detection module.
 mention_detection = MentionDetection(base_url, wiki_subfolder)
 
-# If you want to use your own MD system (or ngram detection), the required input is: {doc_name: [text, spans] ... }.
-# mentions_dataset, n_mentions = mention_detection.format_spans(input)
+# 2. Alternatively. if you want to use your own MD system (or ngram detection),
+# the required input is: {doc_name: [text, spans] ... }.
+mentions_dataset, n_mentions = mention_detection.format_spans(input)
 
-# Alternatively use Flair NER tagger.
+# 2. Alternative MD module is using an n-gram tagger.
 #tagger_ner = SequenceTagger.load("ner-fast")
 tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
 
