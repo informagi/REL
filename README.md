@@ -2,21 +2,21 @@
 
 ![API status](https://img.shields.io/endpoint?label=status&url=https%3A%2F%2Frel.cs.ru.nl%2Fapi)
 
-REL is a modular Entity Linking package that can both be integrated in existing pipelines or be used as an API. REL has various meanings, one might first notice that it stands for relation, which is a suiting name for
-the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
+REL is a modular Entity Linking package that is provided as a Python package as well as a web API. REL has various meanings -  one might first notice that it stands for relation, which is a suiting name for the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
+
+REL utilizes *English* Wikipedia as a knowledge base and can be used for the following tasks:
+- **Entity linking (EL)**: Given a text, the system outputs a list of mention-entity pairs, where each mention is a n-gram from text and each entity is an entity in the knowledge base.
+- **Entity Disambiguation (ED)**: Given a text and a list of mentions, the system assigns an entity (or NIL) to each mention.
 
 # Setup API
-This section elaborates on how a user may utilise our API. Steps include obtaining
-a API key and querying our API. Please note that at this point in time we do not require obtaining
-a key and leave it for future work.
+This section elaborates on how a user may utilize our API. Steps include obtaining an API key and querying our API. 
 
-## Obtaining a key
-Not necessary at this point in time, please continue to the next step.
+### Obtaining a key
+At the moment we do not require obtaining a key; please continue to the next step.
 
-## Querying our API
-Users may access our API by using the example script below. For EL, the user should leave the `spans` field empty. Additionally,
-if a user wishes to predict in an ED-fashion only, then the spans key should not be left empty and should be filled with tuples
-consisting of integer values that represent the starting position and length of the mention respectively.
+### Querying our API
+Users may access our API by using the example script below. 
+For EL, the user should leave the `spans` field empty. For ED, however, the `spans` field should be filled with a list of tuples, each tuple indicating he start position and length of a mention.
 
 ```python
 import requests
@@ -42,18 +42,16 @@ API_result = requests.post("{}:{}".format(IP_ADDRESS, PORT), json=document).json
 ```
 
 # Setup package
-The following installation, downloads and installation focuses on the local-usage of our package. If a user wishes
-to use our API, then we refer to the section above.
+This section describes how to deploy REL on a local machine and setup the API.
 
 ## Installation
-Please run the following command in a terminal to install REL:
+Run the following command in a terminal to install REL:
 ```
 pip install git+https://github.com/informagi/REL
 ```
 
 ## Download
-The files used for this project can be divided into three categories. The first is a generic set of documents and embeddings that was used throughout
-the project. This folder includes the GloVe embeddings used by Le et al. and the unprocessed datasets that were used to train
+The files used for this project can be divided into three categories. The first is a generic set of documents and embeddings that was used throughout the project. This folder includes the GloVe embeddings used by Le et al. and the unprocessed datasets that were used to train
 the ED model. The second and third category are Wikipedia corpus related files, which in our case either originate from a 2014 or 
 2019 corpus. Alternatively, users may use their own corpus, for which we refer to the tutorials.
 
@@ -81,7 +79,18 @@ The remainder of the tutorials are optional and for users who wish to e.g. train
 6. [REL as systemd service](https://github.com/informagi/REL/tree/master/tutorials/06_systemd_instructions.md)
 
 # Cite
-How to cite us.
+If you are using REL, please cite the following paper:
+
+```bibtex
+@inproceedings{vanHulst:2020:REL,
+ author =    {van Hulst, Johannes M. and Hasibi, Faegheh and Dercksen, Koen and Balog, Krisztian and de Vries, Arjen P.},
+ title =     {REL: An Entity Linker Standing on the Shoulders of Giants},
+ booktitle = {Proceedings of the 43rd International ACM SIGIR Conference on Research and Development in Information Retrieval},
+ series =    {SIGIR '20},
+ year =      {2020},
+ publisher = {ACM}
+}
+```
 
 # Contact
 Please email your questions or comments to [Mick van Hulst](mailto:mick.vanhulst@gmail.com)
