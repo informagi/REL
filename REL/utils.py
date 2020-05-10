@@ -87,8 +87,8 @@ def process_results(
                 temp = (
                     start_pos,
                     mention_length,
-                    ment['ngram'],
                     pred["prediction"],
+                    ment['ngram'],
                     ment["conf_md"] if "conf_md" in ment else -1,
                     ment["tag"] if "tag" in ment else 'NULL',
                     pred["conf_ed"]
