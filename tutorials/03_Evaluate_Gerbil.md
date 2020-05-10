@@ -8,6 +8,10 @@ After opening the `gerbil_middleware` folder, the user can run the following com
 ```
 mvn clean -Dmaven.tomcat.port=1235 tomcat:run
 ```
-Secondly, we need to [start the API]((https://github.com/informagi/REL/tree/master/tutorials/02_E2E_Entity_Linking.md)) as described in the previous tutorials.
+Secondly, we need to [start the API]((https://github.com/informagi/REL/tree/master/tutorials/02_E2E_Entity_Linking.md)) as described in the previous tutorials. Make sure
+to change the port to '5555'.
 
-Finally, the user may open the [GERBIL platform](http://gerbil.aksw.org/gerbil/config) and configure and run an experiment.
+Finally, the user may open the [GERBIL platform](http://gerbil.aksw.org/gerbil/config) and configure and run an experiment. Where the URI field
+should be filled with:
+
+ `http://{YOUR_IP_ADD}:1235/gerbil-spotWrapNifWS4Test/myalgorithm`

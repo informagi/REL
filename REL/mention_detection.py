@@ -107,7 +107,7 @@ class MentionDetection:
             results[doc] = results_doc
         return results, total_ment
 
-    def split_text(self, dataset, is_flair):
+    def split_text(self, dataset, is_flair=False):
         """
         Splits text into sentences with optional spans (format is a requirement for GERBIL usage).
         This behavior is required for the default NER-tagger, which during experiments was experienced
