@@ -3,7 +3,6 @@ In this tutorial we will guide you through the process of using our Entity Linki
 that the tutorials are followed in a sequential order, meaning that the variable `base_url` is defined and that you have
 amended the required project structure.
 
-
 ## Setting up  your own API
 Previously we defined our `base_url`. We also need the project to know which specific
 Wikipedia corpus we would like to use. We do this by creating a variable that in this case refers to the folder containing
@@ -11,10 +10,12 @@ the necessary files for our Wikipedia 2014 folder. Additionally, we import the r
  
  ```python
 from http.server import HTTPServer
+
 from flair.models import SequenceTagger
 
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.server import make_handler
+from REL.ngram import Cmns
 
 wiki_subfolder = "wiki_2014"
  ```
@@ -33,29 +34,28 @@ config = {
     "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
 }
 
-model = EntityDisambiguation(base_url, wiki_subfolder, config, reset_embeddings=False)
+model = EntityDisambiguation(base_url, wiki_subfolder, config)
 ```
 
-As was mentioned prior to this, we used Flair's NER tagger as our Mention Detection system. This system can be replaced,
-which we elaborate on in the sections below. For now we assume that you also want to use their NER tagger (it's awesome).
-Take note that we used their fast tagger for our predictions as we wanted to use a light-weight model that could serve
-users in terms of speed.
+As was mentioned prior to this, we used Flair's NER tagger as our Mention Detection system. This system can be replaced 
+with either our n-gram system or your own custom MD module. Using your own MD module will be elaborated on below. 
+For now we assume that you want to either use Flair's NER tagger or our n-gram detection. For high Recall tasks we advice 
+the use of our n-gram module. Note that the parameter `n` refers to the max to-be-considered length of a candidate mention.
 
 ```python
 tagger_ner = SequenceTagger.load("ner-fast")
+tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
 ```
 
 Our final step consists of starting the server, where we may define our IP-address and port. Additionally,
 the user may choose to include or exclude confidence scores.
 
 ```python
-INCLUDE_CONF = True
-
-server_address = ("localhost", 5555)
+server_address = ("127.0.0.1", 1235)
 server = HTTPServer(
     server_address,
     make_handler(
-        base_url, wiki_subfolder, model, tagger_ner, mode=MODE, include_conf=INCLUDE_CONF
+        base_url, wiki_subfolder, model, tagger_ngram
     ),
 )
 
@@ -78,7 +78,7 @@ with integer values `(start_pos, mention_length)` (starting position and length 
 import requests
 
 IP_ADDRESS = "http://localhost"
-PORT = "5555"
+PORT = "1235"
 text_doc = "If you're going to try, go all the way - Charles Bukowski"
 
 document = {
@@ -100,6 +100,7 @@ from flair.models import SequenceTagger
 from REL.mention_detection import MentionDetection
 from REL.utils import process_results
 from REL.entity_disambiguation import EntityDisambiguation
+from REL.ngram import Cmns
 
 wiki_subfolder = "wiki_2014"
  ```
@@ -118,7 +119,7 @@ def example_preprocessing():
 input = example_preprocessing()
 ```
 
-Now that we have defined our `input` we instantiate our mention detection class, NER-tagger and use both to find
+Now that we have defined our `input` we instantiate our mention detection class and MD module, and then use both to find
 mentions of our dataset. The output of the function `find_mentions()` is a dictionary with various properties that
 are required for the Entity Disambiguation module. Additionally, it returns a count consisting of the total number of
 mentions that were found using the NER-tagger. This number may be unequal to the number of mentions that the dictionary
@@ -127,7 +128,8 @@ mentions that were found using the NER-tagger. This number may be unequal to the
 ```python
 mention_detection = MentionDetection(base_url, wiki_subfolder)
 tagger_ner = SequenceTagger.load("ner-fast")
-mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ner)
+tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
+mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ngram)
 ```
 
 The final step of our End-to-End process consists of instantiating the model and using it to find entities based
@@ -144,10 +146,10 @@ predictions, timing = model.predict(mentions_dataset)
 ```
 
 Optionally users may want to process the results in a predefined format of 
-`(start_pos, length, entity, confidence_md, confidence_ed)` per entity found in a given document.
+`(start_pos, length, entity, NER-type, confidence_md, confidence_ed)` per entity found in a given document.
 
 ```python
-result = process_results(mentions_dataset, predictions, input, include_conf=True)
+result = process_results(mentions_dataset, predictions, input)
 ```
 
 ## Replacing the Mention Detection module
@@ -155,36 +157,47 @@ With this project we attempt to advocate a modular approach to development, maki
 for a user to replace certain components. One of such components is the Mention Detection module. After experimenting with
 various approaches, we came to the conclusion that the NER-system provided by Flair worked best and was easiest to integrate
 in our existing pipeline. We, however, made it easy for the user to replace this part of the pipeline. Luckily, replacing
-the module is quite straightforward as we will illustrate by example. Given your own mention detection system, the system
-will produce, given a text, a set of spans which have a start position and length. For our API this simply means
-replacing the NER-tagger as shown below.
+the module is quite straightforward as we will illustrate by example. We have defined an example MD class below,
+which given a particular sentence and all of the sentences of that given text (for global context), produces a set
+of mentions for that sentence.
 
 ```python
-def produce_spans(text):
-    return [(0, 5), (17, 7), (50, 6)]
-    
+class Token:
+    def __init__(self, text, start_pos, end_pos, score, tag):
+        self.text = text
+        self.start_pos = start_pos
+        self.end_pos = end_pos
+        self.score = score
+        self.tag = tag
 
-tagger_ner = produce_spans
+class MD_Module(object):
+    def __init__(self, param1, param2):
+        self.param1 = param1
+        self.param2 = param2
+
+    def predict(self, sentence, sentences_doc):
+        """
+        The module takes as an input a sentence from the current doc and all the sentences of
+        the current doc (for global context). The user is expected to return a list of mentions,
+        where each mention is a Token class.
+
+        We denote the following requirements:
+        1. Any MD module should have a 'predict()' function that returns a list of mentions.
+        2. A mention is always defined as a Token class (see above).
+
+        """
+        # returns list of Token objects.
+        return self.find_mentions()
+
+    def find_mentions(self, sentence):
+        mentions = []
+        for i in range(10):
+            mentions.append(Token(i, i, i, i, i))
+        return mentions
 ```
 
-For our pipeline integration this means integrating the respective function in the preprocessing step. 
+This means replcacing either `tagger_ner` or `tagger_ngram` with `tagger_custom`.
 
 ```python
-def example_preprocessing():
-    # user does some stuff, which results in the format below.
-    text = "Obama will visit Germany. And have a meeting with Merkel tomorrow."
-    processed = {"test_doc1": [text, produce_spans(text)], 
-    "test_doc2": [text, produce_spans(text)}
-    return processed
-    
-input = example_preprocessing()
-```
-
-Once the data is in the format above, we still need to parse it such that it may be used for our EL step. We developed
-a function for this called `format_spans`. This will return the formatted spans that users provide and can then be used
-to make predictions using the ED step. In this case, the contribution of our package will solely be Entity Disambiguation.
-
-```python
-mention_detection = MentionDetection(base_url, wiki_subfolder)
-mentions_dataset, n_mentions = mention_detection.format_spans(input)
+tagger_custom = MD_Module('param1', 'param2')
 ```

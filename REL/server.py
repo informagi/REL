@@ -9,7 +9,6 @@ from flair.models import SequenceTagger
 
 API_DOC = "API_DOC"
 
-
 """
 Class/function combination that is used to setup an API that can be used for e.g. GERBIL evaluation.
 """
@@ -110,18 +109,7 @@ def make_handler(
                 return []
 
             if len(spans) > 0:
-                # Now we do ED.
-                processed = {API_DOC: [text, spans]}
-                mentions_dataset, total_ment = self.mention_detection.format_spans(
-                    processed
-                )
-            elif self.custom_ner:
-                # Verify if we have spans.
-                if len(spans) == 0:
-                    print("No spans found for custom MD.")
-                    return []
-                spans = self.tagger_ner(text)
-
+                # ED.
                 processed = {API_DOC: [text, spans]}
                 mentions_dataset, total_ment = self.mention_detection.format_spans(
                     processed
