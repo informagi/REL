@@ -135,6 +135,9 @@ def make_handler(
             text, spans = self.read_json(post_data)
             response = self.generate_response(text, spans)
 
+            print(response)
+            print('=========')
+
             # print('response in server.py code:\n\n {}'.format(response))
             self.wfile.write(bytes(json.dumps(response), "utf-8"))
             return
@@ -264,7 +267,7 @@ tagger_custom = MD_Module('param1', 'param2')
 tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
 
 # 3. Init server.
-server_address = ("127.0.0.1", 1236)
+server_address = ("localhost", 5555)
 server = HTTPServer(
     server_address,
     make_handler(
