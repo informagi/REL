@@ -1,16 +1,15 @@
-from REL.utils import preprocess_mention, split_in_words
-
+from collections import namedtuple
 from REL.db.generic import GenericLookup
-from segtok.segmenter import split_single
+from REL.utils import preprocess_mention, split_in_words
 from flair.data import Sentence
 from flair.models import SequenceTagger
-
-"""
-Class responsible for mention detection. 
-"""
+from segtok.segmenter import split_single
 
 
-class MentionDetection:
+class MentionDetection(MD_Module):
+    """
+    Class responsible for mention detection.
+    """
     def __init__(self, base_url, wiki_subfolder):
         self.cnt_exact = 0
         self.cnt_partial = 0
@@ -145,7 +144,7 @@ class MentionDetection:
             splits.append(splits[-1] + i)
         return res, processed_sentences, splits
 
-    def find_mentions(self, dataset, tagger=None):
+    def find_mentions(self, dataset, tagger):
         """
         Responsible for finding mentions given a set of documents in a batch-wise manner. More specifically,
         it returns the mention, its left/right context and a set of candidates.

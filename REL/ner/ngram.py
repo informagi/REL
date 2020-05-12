@@ -1,26 +1,19 @@
-import re
-from collections import defaultdict
-
-import numpy as np
-
+from REL.ner.base import NERBase, Span
 from REL.db.generic import GenericLookup
 from REL.utils import preprocess_mention
+from collections import defaultdict, namedtuple
+import numpy as np
+import re
 
-class Token:
-    def __init__(self, text, start_pos, end_pos, score, tag):
-        self.text = text
-        self.start_pos = start_pos
-        self.end_pos = end_pos
-        self.score = score
-        self.tag = tag
 
-class Cmns(object):
+class Cmns(NERBase):
     def __init__(self, base_url, wiki_subfolder, n=5):
         self.__n = n
         self.wiki_db = GenericLookup(
             "entity_word_embedding",
             "{}/{}/generated/".format(base_url, wiki_subfolder),
         )
+
     def predict(self, sentence, sentences_doc):
         """
         Links the query to the entity.
@@ -33,7 +26,7 @@ class Cmns(object):
 
         self.rank_ens(sentence)
 
-        # returns list of Token objects.
+        # returns list of Span objects.
         return self.mentions
 
     def rank_ens(self, sentence):
@@ -68,7 +61,7 @@ class Cmns(object):
                 mention = preprocess_mention(ngram, self.wiki_db)
                 freq = self.wiki_db.wiki(mention, "wiki", "freq")
                 if freq:
-                    self.mentions.append(Token(ngram, pos, end, freq, '#NGRAM#'))
+                    self.mentions.append(Span(ngram, pos, end, freq, '#NGRAM#'))
                     self.__ngrams_overlap.append([ngram, pos])
         self.__recursive_rank_ens(n - 1)
 
