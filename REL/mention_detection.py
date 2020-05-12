@@ -1,4 +1,3 @@
-from collections import namedtuple
 from REL.db.generic import GenericLookup
 from REL.utils import preprocess_mention, split_in_words
 from flair.data import Sentence
@@ -6,7 +5,7 @@ from flair.models import SequenceTagger
 from segtok.segmenter import split_single
 
 
-class MentionDetection(MD_Module):
+class MentionDetection:
     """
     Class responsible for mention detection.
     """
