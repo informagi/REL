@@ -9,15 +9,13 @@ import re
 import unidecode
 
 
-class ModelLoader:
-    @staticmethod
-    def fetch(path_or_url, cache_dir=flair.cache_root / "models/taggers"):
-        model_dict = json.loads(
-            pkg_resources.resource_string("REL.models", "models.json")
-        )
-        if path_or_url in model_dict.keys():
-            path_or_url = model_dict[path_or_url]
-        return get_from_cache(path_or_url, cache_dir)
+def fetch_model(path_or_url, cache_dir=flair.cache_root / "models/taggers"):
+    model_dict = json.loads(
+        pkg_resources.resource_string("REL.models", "models.json")
+    )
+    if path_or_url in model_dict.keys():
+        path_or_url = model_dict[path_or_url]
+    return get_from_cache(path_or_url, cache_dir)
 
 
 def preprocess_mention(m, wiki_db):
