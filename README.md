@@ -8,7 +8,7 @@ REL utilizes *English* Wikipedia as a knowledge base and can be used for the fol
 - **Entity linking (EL)**: Given a text, the system outputs a list of mention-entity pairs, where each mention is a n-gram from text and each entity is an entity in the knowledge base.
 - **Entity Disambiguation (ED)**: Given a text and a list of mentions, the system assigns an entity (or NIL) to each mention.
 
-# Setup API
+# Calling our API
 This section elaborates on how a user may utilize our API. Steps include obtaining an API key and querying our API. 
 
 ### Obtaining a key
@@ -41,16 +41,16 @@ document = {
 API_result = requests.post("{}:{}".format(IP_ADDRESS, PORT), json=document).json()
 ```
 
-# Setup package
+# Deploy REL on your machine
 This section describes how to deploy REL on a local machine and setup the API.
 
-## Installation
+## Install package
 Run the following command in a terminal to install REL:
 ```
 pip install git+https://github.com/informagi/REL
 ```
 
-## Download
+## Download data files
 The files used for this project can be divided into three categories. The first is a generic set of documents and embeddings that was used throughout the project. This folder includes the GloVe embeddings used by Le et al. and the unprocessed datasets that were used to train
 the ED model. The second and third category are Wikipedia corpus related files, which in our case either originate from a 2014 or 
 2019 corpus. Alternatively, users may use their own corpus, for which we refer to the tutorials.
