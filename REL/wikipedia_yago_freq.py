@@ -148,7 +148,7 @@ class WikipediaYagoFreq:
                 x = ent_name.find("\\u")
                 while x != -1:
                     code = ent_name[x : x + 6]
-                    replace = unicode2ascii[code]
+                    replace = unicode2ascii(code)
                     if replace == "%":
                         replace = "%%"
 

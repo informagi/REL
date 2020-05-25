@@ -1,6 +1,7 @@
 import os
 import json
 from random import shuffle
+from pathlib import Path
 import time
 import re
 import pickle as pkl
@@ -112,6 +113,18 @@ class EntityDisambiguation:
             k: user_config[k] if k in user_config else v
             for k, v in default_config.items()
         }
+        # fetch model_path if not yet done
+        config["model_path"] = utils.fetch_model(
+            config["model_path"] + ".state_dict",
+            cache_dir=Path("~/.rel_cache").expanduser()
+        )[:-len(".state_dict")]
+        try:
+            utils.fetch_model(
+                config["model_path"] + ".config",
+                cache_dir=Path("~/.rel_cache").expanduser()
+            )
+        except:
+            print("No configuration file could be found. Continuing...")
         return config
 
     def __load_embeddings(self):
