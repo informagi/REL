@@ -5,6 +5,8 @@ from pathlib import Path
 import time
 import re
 import pickle as pkl
+import tarfile
+from urllib.parse import urlparse
 
 import torch
 from torch.autograd import Variable
@@ -113,18 +115,26 @@ class EntityDisambiguation:
             k: user_config[k] if k in user_config else v
             for k, v in default_config.items()
         }
-        # fetch model_path if not yet done
-        config["model_path"] = utils.fetch_model(
-            config["model_path"] + ".state_dict",
-            cache_dir=Path("~/.rel_cache").expanduser()
-        )[:-len(".state_dict")]
-        try:
-            utils.fetch_model(
-                config["model_path"] + ".config",
-                cache_dir=Path("~/.rel_cache").expanduser()
+
+        # if model_path is an URL pointing to tarfile, carry out following
+        if urlparse(config["model_path"]).scheme in ("http", "https"):
+            model_path = utils.fetch_model(
+                config["model_path"],
+                cache_dir=Path("~/.rel_cache").expanduser(),
             )
-        except:
-            print("No configuration file could be found. Continuing...")
+            assert tarfile.is_tarfile(model_path), "Only tarfiles are supported!"
+            # make directory with name of tarfile (minus extension)
+            # extract the files in the archive to that directory
+            # assign config[model_state_dict] and config[model_config]
+            with tarfile.open(model_path) as f:
+                f.extractall(Path("~/.rel_cache").expanduser())
+            # NOTE: use double stem to deal with e.g. *.tar.gz
+            # this also handles *.tar correctly
+            stem = Path(Path(model_path).stem).stem
+            # NOTE: it is required that the model file(s) are named "model.state_dict"
+            # and "model.config" if supplied, other names won't work
+            config["model_path"] = Path("~/.rel_cache").expanduser() / stem / "model"
+
         return config
 
     def __load_embeddings(self):
