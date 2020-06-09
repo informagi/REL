@@ -2899,12 +2899,13 @@ def pages_from(input):
     page = []
     id = None
     ns = "0"
-    # last_id = None
+    last_id = None
     revid = None
     inText = False
     redirect = False
     redirect_title = ""
     title = None
+    catSet = set()
     for line in input:
         if not isinstance(line, text_type):
             line = line.decode("utf-8")
@@ -3229,7 +3230,7 @@ def reduce_process(
         nextFile = NextFile(out_file)
         output = OutputSplitter(nextFile, file_size, file_compress)
     else:
-        output = sys.stdout if PY2 else sys.stdout.buffer
+        output = sys.stdout.buffer
         if file_compress:
             logging.warn(
                 "writing to stdout, so no output compression (use an external tool)"
