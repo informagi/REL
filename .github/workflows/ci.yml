@@ -1,0 +1,85 @@
+name: Continuous integration
+
+on:
+    push:
+        branches:
+            - release/v**
+            - master
+    pull_request:
+        branches: [ master ]
+
+jobs:
+    formatting:
+        name: Formatting
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              name: Checkout repository
+
+            - name: Configure Git
+              run: |
+                  git config --local user.email "action@github.com"
+                  git config --local user.name "Github Action"
+                  git config --local core.autocrlf true
+
+            - name: Set up Python 3.7
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.7
+
+            - uses: actions/cache@v2
+              name: Cache pip dependencies
+              with:
+                  path: ~/.cache/pip
+                  key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+                  restore-keys: ${{ runner.os }}-pip-
+
+            - name: Install pip dependencies
+              run: |
+                  pip install -U pip
+                  pip install -r requirements.txt
+                  pip install isort black
+
+            - name: Install REL
+              run: pip install -e .
+
+            - name: Code formatting
+              run: |
+                  isort --apply
+                  black .
+
+            - name: Commit formatting changes
+              run: |
+                  git add -u
+                  git commit -m "[skip ci] Code formatting" -a || true
+
+            - name: Push changes
+              uses: ad-m/github-push-action@master
+              with:
+                  branch: ${{ github.ref }}
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python-version: [3.6, 3.7, 3.8]
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions:/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Install dependencies
+              run: |
+                  pip install -U pip
+                  pip install -r requirements.txt
+                  pip install flake8 pytest
+            - name: Lint with flake8
+              run: |
+                  flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                  flake8 . --count --exit-zero --max-complexity=10 max-line-length=90 --statistics
+            - name: Test with pytest
+              run: |
+                  pytest
