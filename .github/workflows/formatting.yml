@@ -1,12 +1,10 @@
-name: Continuous integration
+name: Fix formatting
 
 on:
     push:
         branches:
             - release/v**
             - master
-    pull_request:
-        branches: [ master ]
 
 jobs:
     formatting:
@@ -58,28 +56,3 @@ jobs:
               with:
                   branch: ${{ github.ref }}
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-
-    build:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                python-version: [3.6, 3.7, 3.8]
-
-        steps:
-            - uses: actions/checkout@v2
-            - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v2
-              with:
-                  python-version: ${{ matrix.python-version }}
-            - name: Install dependencies
-              run: |
-                  pip install -U pip
-                  pip install -r requirements.txt
-                  pip install flake8 pytest
-            - name: Lint with flake8
-              run: |
-                  flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-                  flake8 . --count --exit-zero --max-complexity=10 max-line-length=90 --statistics
-            - name: Test with pytest
-              run: |
-                  pytest

@@ -198,7 +198,7 @@ class DB:
         if not path.isfile(fname):
             if url:
                 logger.critical('Downloading from {} to {}'.format(url, fname))
-                Embedding.download_file(url, fname)
+                DB.download_file(url, fname)
             else:
                 raise Exception('{} does not exist!'.format(fname))
         return fname

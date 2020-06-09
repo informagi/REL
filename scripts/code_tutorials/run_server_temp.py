@@ -70,7 +70,7 @@ def __init__(
     self.embeddings = embeddings
 
     # set the dictionaries
-    self.tag_dictionary: Dictionary = tag_dictionary
+    self.tag_dictionary: DDD = tag_dictionary
     self.tag_type: str = tag_type
     self.tagset_size: int = len(tag_dictionary)
 
