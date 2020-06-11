@@ -14,4 +14,6 @@ jobs:
                   stale-issue-message: "This issue has not seen recent activity"
                   stale-pr-message: "This pull request has not seen recent activity"
                   days-before-stale: 60
-                  days-before-close: -1
+                  days-before-close: 14
+                  exempt-issue-labels: "enhancement"
+                  exempt-pr-labels: "enhancement"
