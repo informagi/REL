@@ -23,7 +23,6 @@ For EL, the user should leave the `spans` field empty. For ED, however, the `spa
 import requests
 
 IP_ADDRESS = "https://rel.cs.ru.nl/api"
-PORT = "443"
 text_doc = "If you're going to try, go all the way - Charles Bukowski"
 
 # Example EL.
@@ -39,7 +38,7 @@ document = {
 }
 
 
-API_result = requests.post("{}:{}".format(IP_ADDRESS, PORT), json=document).json()
+API_result = requests.post("{}".format(IP_ADDRESS), json=document).json()
 ```
 
 # Setup package
