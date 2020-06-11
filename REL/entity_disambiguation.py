@@ -28,6 +28,7 @@ for the ED step.
 
 wiki_prefix = "en.wikipedia.org/wiki/"
 
+
 class EntityDisambiguation:
     def __init__(self, base_url, wiki_version, user_config, reset_embeddings=False):
         self.base_url = base_url
@@ -41,15 +42,18 @@ class EntityDisambiguation:
         self.reset_embeddings = reset_embeddings
 
         self.emb = GenericLookup(
-            "entity_word_embedding",
-            "{}/{}/generated/".format(base_url, wiki_version),
+            "entity_word_embedding", "{}/{}/generated/".format(base_url, wiki_version),
         )
         test = self.emb.emb(["in"], "embeddings")[0]
-        assert test is not None, "Wikipedia embeddings in wrong folder..? Test embedding not found.."
+        assert (
+            test is not None
+        ), "Wikipedia embeddings in wrong folder..? Test embedding not found.."
 
         self.g_emb = GenericLookup("common_drawl", "{}/generic/".format(base_url))
         test = self.g_emb.emb(["in"], "embeddings")[0]
-        assert test is not None, "Glove embeddings in wrong folder..? Test embedding not found.."
+        assert (
+            test is not None
+        ), "Glove embeddings in wrong folder..? Test embedding not found.."
 
         self.__load_embeddings()
         self.coref = TrainingEvaluationDatasets("{}".format(base_url), wiki_version)
@@ -58,11 +62,15 @@ class EntityDisambiguation:
         self.__max_conf = None
 
         # Load LR model for confidence.
-        if os.path.exists("{}/{}/generated/lr_model.pkl".format(base_url, wiki_version)):
-            with open("{}/{}/generated/lr_model.pkl".format(base_url, wiki_version), 'rb') as f:
+        if os.path.exists(
+            "{}/{}/generated/lr_model.pkl".format(base_url, wiki_version)
+        ):
+            with open(
+                "{}/{}/generated/lr_model.pkl".format(base_url, wiki_version), "rb"
+            ) as f:
                 self.model_lr = pkl.load(f)
         else:
-            print('No LR model found, confidence scores ED will be set to zero.')
+            print("No LR model found, confidence scores ED will be set to zero.")
             self.model_lr = None
 
         if self.config["mode"] == "eval":
@@ -119,8 +127,7 @@ class EntityDisambiguation:
         # if model_path is an URL pointing to tarfile, carry out following
         if urlparse(config["model_path"]).scheme in ("http", "https"):
             model_path = utils.fetch_model(
-                config["model_path"],
-                cache_dir=Path("~/.rel_cache").expanduser(),
+                config["model_path"], cache_dir=Path("~/.rel_cache").expanduser(),
             )
             assert tarfile.is_tarfile(model_path), "Only tarfiles are supported!"
             # make directory with name of tarfile (minus extension)
@@ -350,8 +357,7 @@ class EntityDisambiguation:
         :return: -
         """
 
-        train = self.get_data_items(datasets['train'], 'train', predict=True)
-
+        train = self.get_data_items(datasets["train"], "train", predict=True)
 
         dev_datasets = []
         for dname, data in list(datasets.items()):
@@ -379,12 +385,12 @@ class EntityDisambiguation:
         for doc, preds in predictions.items():
             gt_doc = [c["gold"][0] for c in datasets[dname][doc]]
             for pred, gt in zip(preds, gt_doc):
-                scores = [float(x) for x in pred['scores']]
-                cands = pred['candidates']
+                scores = [float(x) for x in pred["scores"]]
+                cands = pred["candidates"]
 
                 # Build classes
                 for i, c in enumerate(cands):
-                    if c == '#UNK#':
+                    if c == "#UNK#":
                         continue
 
                     X.append([scores[i]])
@@ -404,18 +410,20 @@ class EntityDisambiguation:
         :return: -
         """
 
-        train_dataset = self.get_data_items(datasets['aida_train'], "train", predict=False)
+        train_dataset = self.get_data_items(
+            datasets["aida_train"], "train", predict=False
+        )
 
         dev_datasets = []
         for dname, data in list(datasets.items()):
-            if dname == 'aida_train':
+            if dname == "aida_train":
                 continue
             dev_datasets.append((dname, self.get_data_items(data, dname, predict=True)))
 
         model = LogisticRegression()
 
         predictions = self.__predict(train_dataset, eval_raw=True)
-        X, y, meta = self.__create_dataset_LR(datasets, predictions, 'aida_train')
+        X, y, meta = self.__create_dataset_LR(datasets, predictions, "aida_train")
         model.fit(X, y)
 
         for dname, data in dev_datasets:
@@ -426,10 +434,12 @@ class EntityDisambiguation:
 
             decisions = (preds >= threshold).astype(int)
 
-            print(utils.tokgreen('{}, F1-score: {}'.format(dname, f1_score(y, decisions))))
+            print(
+                utils.tokgreen("{}, F1-score: {}".format(dname, f1_score(y, decisions)))
+            )
 
         if store_offline:
-            with open('{}/lr_model.pkl'.format(model_path_lr), 'wb') as handle:
+            with open("{}/lr_model.pkl".format(model_path_lr), "wb") as handle:
                 pkl.dump(model, handle, protocol=pkl.HIGHEST_PROTOCOL)
 
     def predict(self, data):

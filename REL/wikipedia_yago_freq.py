@@ -266,9 +266,11 @@ class WikipediaYagoFreq:
                             last_processed_id = id
                     else:
                         if not exist_id_found:
-                            list_hyp, disambiguation_ent_error, print_values = self.__extract_text_and_hyp(
-                                line
-                            )
+                            (
+                                list_hyp,
+                                disambiguation_ent_error,
+                                print_values,
+                            ) = self.__extract_text_and_hyp(line)
 
                             disambiguation_ent_errors += disambiguation_ent_error
 

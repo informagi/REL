@@ -13,9 +13,8 @@ API_DOC = "API_DOC"
 Class/function combination that is used to setup an API that can be used for e.g. GERBIL evaluation.
 """
 
-def make_handler(
-    base_url, wiki_subfolder, model, tagger_ner
-):
+
+def make_handler(base_url, wiki_subfolder, model, tagger_ner):
     class GetHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             self.model = model

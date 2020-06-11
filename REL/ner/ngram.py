@@ -61,7 +61,7 @@ class Cmns(NERBase):
                 mention = preprocess_mention(ngram, self.wiki_db)
                 freq = self.wiki_db.wiki(mention, "wiki", "freq")
                 if freq:
-                    self.mentions.append(Span(ngram, pos, end, freq, '#NGRAM#'))
+                    self.mentions.append(Span(ngram, pos, end, freq, "#NGRAM#"))
                     self.__ngrams_overlap.append([ngram, pos])
         self.__recursive_rank_ens(n - 1)
 
@@ -117,7 +117,7 @@ class Cmns(NERBase):
             # If it is seperated by a trailing comma or whatever, then
             # it is most likely an end of the sentence.
             lookup = terms[start + j]
-            if not re.match(r'^[_\W]+$', lookup):
+            if not re.match(r"^[_\W]+$", lookup):
                 ngram += " {}".format(lookup)
             else:
                 quit = True
@@ -136,7 +136,7 @@ class Cmns(NERBase):
             for start in range(0, len(terms) - i + 1):  # start point
                 ngram = terms[start]
 
-                if re.match(r'^[_\W]+$', terms[start]):
+                if re.match(r"^[_\W]+$", terms[start]):
                     # Invalid input
                     continue
 

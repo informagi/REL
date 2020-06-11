@@ -11,9 +11,7 @@ import unidecode
 
 
 def fetch_model(path_or_url, cache_dir=flair.cache_root / "models/taggers"):
-    model_dict = json.loads(
-        pkg_resources.resource_string("REL.models", "models.json")
-    )
+    model_dict = json.loads(pkg_resources.resource_string("REL.models", "models.json"))
     if path_or_url in model_dict.keys():
         path_or_url = model_dict[path_or_url]
     return get_from_cache(path_or_url, cache_dir)
@@ -103,10 +101,10 @@ def process_results(
                     start_pos,
                     mention_length,
                     pred["prediction"],
-                    ment['ngram'],
+                    ment["ngram"],
                     ment["conf_md"] if "conf_md" in ment else -1,
-                    ment["tag"] if "tag" in ment else 'NULL',
-                    pred["conf_ed"]
+                    ment["tag"] if "tag" in ment else "NULL",
+                    pred["conf_ed"],
                 )
                 res_doc.append(temp)
         res[doc] = res_doc

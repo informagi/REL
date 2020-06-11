@@ -10,9 +10,7 @@ datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()
 # 2. Init model, where user can set his/her own config that will overwrite the default config.
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(
-        base_url, wiki_version
-    ),
+    "model_path": "{}/{}/generated/model".format(base_url, wiki_version),
 }
 model = EntityDisambiguation(base_url, wiki_version, config)
 
@@ -20,7 +18,4 @@ model = EntityDisambiguation(base_url, wiki_version, config)
 
 model_path_lr = "{}/{}/generated/".format(base_url, wiki_version)
 
-model.train_LR(
-    datasets,
-    model_path_lr
-)
+model.train_LR(datasets, model_path_lr)

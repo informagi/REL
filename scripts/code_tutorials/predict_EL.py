@@ -5,11 +5,12 @@ from REL.utils import process_results
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.ngram import Cmns
 
+
 def example_preprocessing():
     # Example splitting, should be of format {doc_1: {sent_idx: [sentence, []]}, .... }}
     text = """Obama will visit Germany. And have a meeting with Merkel tomorrow.
     Obama will visit Germany. And have a meeting with Merkel tomorrow. Go all the way or blah blah Charles Bukowski."""
-    spans = []#[(0, 5), (17, 7), (50, 6)]
+    spans = []  # [(0, 5), (17, 7), (50, 6)]
     processed = {"test_doc": [text, spans], "test_doc2": [text, spans]}
     return processed
 
@@ -29,7 +30,7 @@ mention_detection = MentionDetection(base_url, wiki_subfolder)
 mentions_dataset, n_mentions = mention_detection.format_spans(input)
 
 # 2. Alternative MD module is using an n-gram tagger.
-#tagger_ner = SequenceTagger.load("ner-fast")
+# tagger_ner = SequenceTagger.load("ner-fast")
 tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
 
 mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ngram)
@@ -37,9 +38,7 @@ mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ngr
 # 3. Load model.
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(
-        base_url, wiki_subfolder
-    ),
+    "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
 }
 model = EntityDisambiguation(base_url, wiki_subfolder, config)
 

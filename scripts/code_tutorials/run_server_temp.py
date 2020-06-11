@@ -23,6 +23,7 @@ from flair.embeddings import TokenEmbeddings
 START_TAG: str = "<START>"
 STOP_TAG: str = "<STOP>"
 
+
 def __init__(
     self,
     hidden_size: int,
@@ -80,7 +81,7 @@ def __init__(
     # Initialize the weight tensor
     if loss_weights is not None:
         n_classes = len(self.tag_dictionary)
-        weight_list = [1. for i in range(n_classes)]
+        weight_list = [1.0 for i in range(n_classes)]
         for i, tag in enumerate(self.tag_dictionary.get_items()):
             if tag in loss_weights.keys():
                 weight_list[i] = loss_weights[tag]
@@ -138,12 +139,16 @@ def __init__(
                 self.hs_initializer = torch.nn.init.xavier_normal_
 
                 self.lstm_init_h = Parameter(
-                    torch.zeros(self.nlayers * num_directions, self.hidden_size).float(),
+                    torch.zeros(
+                        self.nlayers * num_directions, self.hidden_size
+                    ).float(),
                     requires_grad=True,
                 )
 
                 self.lstm_init_c = Parameter(
-                    torch.zeros(self.nlayers * num_directions, self.hidden_size).float(),
+                    torch.zeros(
+                        self.nlayers * num_directions, self.hidden_size
+                    ).float(),
                     requires_grad=True,
                 )
 
@@ -152,9 +157,7 @@ def __init__(
                 # self.hs_initializer(self.lstm_init_c)
 
         # final linear map to tag space
-        self.linear = torch.nn.Linear(
-            hidden_size * num_directions, len(tag_dictionary)
-        )
+        self.linear = torch.nn.Linear(hidden_size * num_directions, len(tag_dictionary))
     else:
         self.linear = torch.nn.Linear(
             self.embeddings.embedding_length, len(tag_dictionary)
@@ -175,11 +178,13 @@ def __init__(
 
     self.to(flair.device)
 
+
 SequenceTagger.__init__ = __init__
 # ---------------------
 
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.server import make_handler
+
 
 def user_func(text):
     spans = [(0, 5), (17, 7), (50, 6)]
@@ -194,9 +199,7 @@ wiki_subfolder = "wiki_2019"
 # If mode is equal to 'eval', then the model_path should point to an existing model.
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(
-        base_url, wiki_subfolder
-    ),
+    "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
 }
 
 model = EntityDisambiguation(base_url, wiki_subfolder, config)
@@ -212,9 +215,7 @@ tagger_ner = SequenceTagger.load("ner-fast")
 server_address = ("192.168.178.11", 1235)
 server = HTTPServer(
     server_address,
-    make_handler(
-        base_url, wiki_subfolder, model, tagger_ner, include_conf=True
-    ),
+    make_handler(base_url, wiki_subfolder, model, tagger_ner, include_conf=True),
 )
 
 try:

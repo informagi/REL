@@ -15,6 +15,7 @@ from REL.utils import preprocess_mention, split_in_words
 
 API_DOC = "API_DOC"
 
+
 def process_results(
     mentions_dataset, predictions, processed, include_offset=False,
 ):
@@ -52,9 +53,9 @@ def process_results(
                     start_pos,
                     mention_length,
                     pred["prediction"],
-                    ment['ngram'],
+                    ment["ngram"],
                     ment["conf_md"] if "conf_md" in ment else -1,
-                    ment["tag"] if "tag" in ment else 'NULL',
+                    ment["tag"] if "tag" in ment else "NULL",
                 )
                 res_doc.append(temp)
         res[doc] = res_doc
@@ -77,22 +78,19 @@ def _get_ctxt(self, start, end, idx_sent, sentence):
 
     return left_ctxt, right_ctxt
 
+
 # Overwrite to just get current sentence context.
 MentionDetection._get_ctxt = _get_ctxt
 
 
-def make_handler(
-        base_url, wiki_subfolder, models, tagger_ner, argss, logger
-):
+def make_handler(base_url, wiki_subfolder, models, tagger_ner, argss, logger):
     class GetHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             self.model = models
             self.tagger_ner = tagger_ner
 
-
             self.argss = argss
             self.logger = logger
-
 
             self.base_url = base_url
             self.wiki_subfolder = wiki_subfolder
@@ -136,7 +134,7 @@ def make_handler(
             response = self.generate_response(text, spans)
 
             print(response)
-            print('=========')
+            print("=========")
 
             # print('response in server.py code:\n\n {}'.format(response))
             self.wfile.write(bytes(json.dumps(response), "utf-8"))
@@ -194,14 +192,18 @@ def make_handler(
                     "id": i,
                     "label": "unknown",
                     "label_id": -1,
-                    "context_left": m['context'][0].lower(),
-                    "mention": m['ngram'].lower(),
-                    "context_right": m['context'][1].lower(),
+                    "context_left": m["context"][0].lower(),
+                    "mention": m["ngram"].lower(),
+                    "context_right": m["context"][1].lower(),
                 }
                 data_to_link.append(temp)
-            _, _, _, _, _, predictions, scores, = main_dense.run(self.argss, self.logger, *self.model, test_data=data_to_link)
+            _, _, _, _, _, predictions, scores, = main_dense.run(
+                self.argss, self.logger, *self.model, test_data=data_to_link
+            )
 
-            predictions = {API_DOC: [{'prediction': x[0].replace(' ', '_')} for x in predictions]}
+            predictions = {
+                API_DOC: [{"prediction": x[0].replace(" ", "_")} for x in predictions]
+            }
             # Process result.
             result = process_results(
                 mentions_dataset,
@@ -218,6 +220,7 @@ def make_handler(
 
     return GetHandler
 
+
 # --------------
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
@@ -228,33 +231,32 @@ wiki_subfolder = "wiki_2014"
 # If mode is equal to 'eval', then the model_path should point to an existing model.
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(
-        base_url, wiki_subfolder
-    ),
+    "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
 }
 
 # Blink model stuff.
 import blink.main_dense as main_dense
 import argparse
 import logging
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-models_path = "/users/vanhulsm/Desktop/projects/BLINK/models/" # the path where you stored the BLINK models
+models_path = "/users/vanhulsm/Desktop/projects/BLINK/models/"  # the path where you stored the BLINK models
 
 config = {
     "test_entities": None,
     "test_mentions": None,
     "interactive": False,
-    "biencoder_model": models_path+"biencoder_wiki_large.bin",
-    "biencoder_config": models_path+"biencoder_wiki_large.json",
-    "entity_catalogue": models_path+"entity.jsonl",
-    "entity_encoding": models_path+"all_entities_large.t7",
-    "crossencoder_model": models_path+"crossencoder_wiki_large.bin",
-    "crossencoder_config": models_path+"crossencoder_wiki_large.json",
-    "fast": True, # set this to be true if speed is a concern
-    "output_path": "logs/", # logging directory
-    "top_k": 1
+    "biencoder_model": models_path + "biencoder_wiki_large.bin",
+    "biencoder_config": models_path + "biencoder_wiki_large.json",
+    "entity_catalogue": models_path + "entity.jsonl",
+    "entity_encoding": models_path + "all_entities_large.t7",
+    "crossencoder_model": models_path + "crossencoder_wiki_large.bin",
+    "crossencoder_config": models_path + "crossencoder_wiki_large.json",
+    "fast": True,  # set this to be true if speed is a concern
+    "output_path": "logs/",  # logging directory
+    "top_k": 1,
 }
 
 args = argparse.Namespace(**config)
@@ -263,16 +265,14 @@ models = main_dense.load_models(args)
 
 # 2. Create NER-tagger.
 tagger_ner = SequenceTagger.load("ner-fast")
-tagger_custom = MD_Module('param1', 'param2')
+tagger_custom = MD_Module("param1", "param2")
 tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
 
 # 3. Init server.
 server_address = ("localhost", 5555)
 server = HTTPServer(
     server_address,
-    make_handler(
-        base_url, wiki_subfolder, models, tagger_ner, args, logger
-    ),
+    make_handler(base_url, wiki_subfolder, models, tagger_ner, args, logger),
 )
 
 try:

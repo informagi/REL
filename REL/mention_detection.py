@@ -9,6 +9,7 @@ class MentionDetection:
     """
     Class responsible for mention detection.
     """
+
     def __init__(self, base_url, wiki_subfolder):
         self.cnt_exact = 0
         self.cnt_partial = 0
@@ -138,7 +139,9 @@ class MentionDetection:
                 ]
                 res[doc][i] = [sent, spans_sent]
                 if len(spans) == 0:
-                    processed_sentences.append(Sentence(sent, use_tokenizer=True) if is_flair else sent)
+                    processed_sentences.append(
+                        Sentence(sent, use_tokenizer=True) if is_flair else sent
+                    )
                 i += 1
             splits.append(splits[-1] + i)
         return res, processed_sentences, splits
@@ -170,19 +173,23 @@ class MentionDetection:
         for i, doc in enumerate(dataset):
             contents = dataset[doc]
             self.__sentences_doc = [v[0] for v in contents.values()]
-            sentences = processed_sentences[splits[i]:splits[i+1]]
+            sentences = processed_sentences[splits[i] : splits[i + 1]]
             result_doc = []
 
             for (idx_sent, (sentence, ground_truth_sentence)), snt in zip(
                 contents.items(), sentences
             ):
-                for entity in (snt.get_spans("ner") if is_flair else tagger.predict(snt, processed_sentences)):
+                for entity in (
+                    snt.get_spans("ner")
+                    if is_flair
+                    else tagger.predict(snt, processed_sentences)
+                ):
                     text, start_pos, end_pos, conf, tag = (
                         entity.text,
                         entity.start_pos,
                         entity.end_pos,
                         entity.score,
-                        entity.tag
+                        entity.tag,
                     )
                     total_ment += 1
 
@@ -201,7 +208,7 @@ class MentionDetection:
                     res = {
                         "mention": m,
                         "context": (left_ctxt, right_ctxt),
-                        "candidates": cands ,
+                        "candidates": cands,
                         "gold": ["NONE"],
                         "pos": start_pos,
                         "sent_idx": idx_sent,
@@ -217,4 +224,3 @@ class MentionDetection:
             results[doc] = result_doc
 
         return results, total_ment
-

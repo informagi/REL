@@ -25,8 +25,7 @@ class GenTrainingTest(MentionDetection):
         self.base_url = base_url
         self.wiki_version = wiki_version
         self.wiki_db = GenericLookup(
-            "entity_word_embedding",
-            "{}/{}/generated/".format(base_url, wiki_version),
+            "entity_word_embedding", "{}/{}/generated/".format(base_url, wiki_version),
         )
         super().__init__(base_url, wiki_version)
 

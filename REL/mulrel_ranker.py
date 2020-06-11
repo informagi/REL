@@ -61,9 +61,7 @@ class MulRelRanker(torch.nn.Module):
         self.device = device
         self.max_dist = 1000
         self.ent_top_n = 1000
-        self.ent_ent_comp = (
-            "bilinear"
-        )  # config.get('ent_ent_comp', 'bilinear')  # bilinear, trans_e, fbilinear
+        self.ent_ent_comp = "bilinear"  # config.get('ent_ent_comp', 'bilinear')  # bilinear, trans_e, fbilinear
 
         self.att_mat_diag = torch.nn.Parameter(torch.ones(self.config["emb_dims"]))
         self.tok_score_mat_diag = torch.nn.Parameter(
