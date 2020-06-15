@@ -90,11 +90,14 @@ def make_handler(
             text = text.replace("&amp;", "&")
 
             # GERBIL sends dictionary, users send list of lists.
-            try:
-                spans = [list(d.values()) for d in data["spans"]]
-            except Exception:
-                spans = data["spans"]
-                pass
+            if 'spans' in data:
+                try:
+                    spans = [list(d.values()) for d in data["spans"]]
+                except Exception:
+                    spans = data["spans"]
+                    pass
+            else:
+                spans = []
 
             return text, spans
 
