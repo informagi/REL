@@ -82,8 +82,8 @@ class GenTrainingTest(MentionDetection):
             for line in cf.readlines():
                 doc_text = ''
                 if '<annotation' in line:
-                    print(line)
-                    print('--------------------')
+                    #print(line)
+                    #print('--------------------')
                     start_tags = [m.start() for m in re.finditer('<', line)]
                     end_tags = [m.start() for m in re.finditer('>', line)]
 
@@ -97,8 +97,8 @@ class GenTrainingTest(MentionDetection):
                             entity = line[(start_tags[i]+cand_start):(start_tags[i]+cand_end)]
                             if len(entity) > 0:
                                 print(entity, cand_start, cand_end)
-                    print(doc_text)
-                    print('+++++++')
+                    #print(doc_text)
+                    #print('+++++++')
 
     def process_wned(self, dataset):
         """
