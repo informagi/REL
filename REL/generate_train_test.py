@@ -21,6 +21,8 @@ class GenTrainingTest(MentionDetection):
     def __init__(self, base_url, wiki_version, wikipedia):
         self.wned_path = "{}/generic/test_datasets/wned-datasets/".format(base_url)
         self.aida_path = "{}/generic/test_datasets/AIDA/".format(base_url)
+        self.gerdaq_path = "{}/generic/test_datasets/gerdaq/".format(base_url)
+
         self.wikipedia = wikipedia
         self.base_url = base_url
         self.wiki_version = wiki_version
@@ -69,6 +71,34 @@ class GenTrainingTest(MentionDetection):
             results[doc] = result_doc
 
         return results
+
+    def process_gerdaq(self, dataset):
+        annotations_xml = '{}/{}.xml'.format(self.gerdaq_path, dataset)
+        ent_xml_tag = 'rank_0_title="'
+
+        results = {}
+        doc_i = 0
+        with open(annotations_xml, "r", encoding="utf-8") as cf:
+            for line in cf.readlines():
+                doc_text = ''
+                if '<annotation' in line:
+                    print(line)
+                    print('--------------------')
+                    start_tags = [m.start() for m in re.finditer('<', line)]
+                    end_tags = [m.start() for m in re.finditer('>', line)]
+
+                    for i in range(len(start_tags)-1):
+                        span = line[end_tags[i]+1:start_tags[i+1]]
+                        doc_text += span
+                        if len(span) > 0:
+                            cand_text = line[start_tags[i]:end_tags[i]]
+                            cand_start = cand_text.find(ent_xml_tag)+len(ent_xml_tag)
+                            cand_end = cand_text.find('"', cand_start)
+                            entity = line[(start_tags[i]+cand_start):(start_tags[i]+cand_end)]
+                            if len(entity) > 0:
+                                print(entity, cand_start, cand_end)
+                    print(doc_text)
+                    print('+++++++')
 
     def process_wned(self, dataset):
         """
