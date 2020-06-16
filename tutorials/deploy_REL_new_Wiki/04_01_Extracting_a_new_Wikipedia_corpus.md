@@ -29,7 +29,7 @@ done, the user only needs to copy the respective wikipedia dump (this excludes t
 and redirects) into the `anchor_files` folder. 
 
 ```
-python WikiExtractor.py ./wiki_corpus.xml --links --filter_disambig_pages --processes 1 -- file_size 1000000
+python WikiExtractor.py ./wiki_corpus.xml --links --filter_disambig_pages --processes 1 --bytes 1000000
 ```
 
 # Generate p(e|m) index
