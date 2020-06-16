@@ -23,13 +23,13 @@ There are several platforms that host [Wikipedia dumps](https://dumps.wikimedia.
 A tool that does this is called [WikiExtractor](https://github.com/attardi/wikiextractor). This tool takes as an input a
 Wikipedia dump and spits out files that are required for our package. We, however, had to alter it slightly such that it 
 stored some additional files that are required for this package. As such, we have added this edited edition to our scripts
-folder. To process a Wikipedia dump run the command below in a terminal. We define the `file_size` as one GB, but it can
+folder. To process a Wikipedia dump run the command below in a terminal. We define the file size (`bytes`) as one GB, but it can
 be changed based on the user's wishes. We advice users to run the script in the `basic_data` folder. After the script is
 done, the user only needs to copy the respective wikipedia dump (this excludes the wiki id/name mapping, disambiguation pages
 and redirects) into the `anchor_files` folder. 
 
 ```
-python WikiExtractor.py ./wiki_corpus.xml --links --filter_disambig_pages --processes 1 --bytes 1000000
+python WikiExtractor.py ./wiki_corpus.xml --links --filter_disambig_pages --processes 1 --bytes 1G
 ```
 
 # Generate p(e|m) index
