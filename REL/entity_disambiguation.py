@@ -44,10 +44,10 @@ class EntityDisambiguation:
         self.emb = GenericLookup(
             "entity_word_embedding", "{}/{}/generated/".format(base_url, wiki_version),
         )
-        test = self.emb.emb(["in"], "embeddings")[0]
-        assert (
-            test is not None
-        ), "Wikipedia embeddings in wrong folder..? Test embedding not found.."
+        # test = self.emb.emb(["in"], "embeddings")[0]
+        # assert (
+        #     test is not None
+        # ), "Wikipedia embeddings in wrong folder..? Test embedding not found.."
 
         self.g_emb = GenericLookup("common_drawl", "{}/generic/".format(base_url))
         test = self.g_emb.emb(["in"], "embeddings")[0]
@@ -125,7 +125,7 @@ class EntityDisambiguation:
         }
 
         # if model_path is an URL pointing to tarfile, carry out following
-        if urlparse(config["model_path"]).scheme in ("http", "https"):
+        if urlparse(str(config["model_path"])).scheme in ("http", "https"):
             model_path = utils.fetch_model(
                 config["model_path"], cache_dir=Path("~/.rel_cache").expanduser(),
             )

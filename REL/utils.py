@@ -1,13 +1,14 @@
+import json
+import re
+from pathlib import Path
+
+import flair
+import numpy as np
+import pkg_resources
+import unidecode
 from colorama import Fore, Style
 from flair.file_utils import get_from_cache
 from nltk.tokenize import RegexpTokenizer
-from pathlib import Path
-import flair
-import json
-import numpy as np
-import pkg_resources
-import re
-import unidecode
 
 
 def fetch_model(path_or_url, cache_dir=flair.cache_root / "models/taggers"):

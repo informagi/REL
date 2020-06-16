@@ -4,12 +4,13 @@ from flair.models import SequenceTagger
 
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.server import make_handler
-from REL.ngram import Cmns
-from REL.example_custom_MD import MD_Module
+from REL.ner.ngram import Cmns
+
+# from REL.example_custom_MD import MD_Module
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
 base_url = "/home/koen/projects/REL/"
-wiki_subfolder = "wiki_2019"
+wiki_subfolder = "wiki_test"
 
 # 1. Init model, where user can set his/her own config that will overwrite the default config.
 # If mode is equal to 'eval', then the model_path should point to an existing model.

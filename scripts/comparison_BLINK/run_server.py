@@ -6,7 +6,7 @@ import json
 from flair.models import SequenceTagger
 
 
-from REL.ngram import Cmns
+from REL.ner.ngram import Cmns
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.example_custom_MD import MD_Module
 from REL.mention_detection import MentionDetection

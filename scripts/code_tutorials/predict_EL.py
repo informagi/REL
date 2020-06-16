@@ -1,9 +1,9 @@
 from flair.models import SequenceTagger
 
-from REL.mention_detection import MentionDetection
-from REL.utils import process_results
 from REL.entity_disambiguation import EntityDisambiguation
-from REL.ngram import Cmns
+from REL.mention_detection import MentionDetection
+from REL.ner.ngram import Cmns
+from REL.utils import process_results
 
 
 def example_preprocessing():
