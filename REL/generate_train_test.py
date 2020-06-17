@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from xml.etree import ElementTree
 import os
 import pickle
