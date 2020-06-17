@@ -41,7 +41,7 @@ class GenTrainingTest(MentionDetection):
 
         for doc in dataset:
             contents = dataset[doc]
-            self.sentences_doc = [v[0] for v in contents.values()]
+            self.__sentences_doc = [v[0] for v in contents.values()]
             result_doc = []
 
             for idx_sent, (sentence, ground_truth_sentence) in contents.items():
