@@ -1,6 +1,5 @@
 import json
 import re
-from pathlib import Path
 
 import flair
 import numpy as np

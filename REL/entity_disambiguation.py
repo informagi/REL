@@ -1,25 +1,25 @@
-import os
 import json
-from random import shuffle
-from pathlib import Path
-import time
-import re
+import os
 import pickle as pkl
+import re
 import tarfile
+import time
+from pathlib import Path
+from random import shuffle
 from urllib.parse import urlparse
 
-import torch
-from torch.autograd import Variable
-import torch.optim as optim
 import numpy as np
+import torch
+import torch.optim as optim
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
+from torch.autograd import Variable
 
-from REL.vocabulary import Vocabulary
-from REL.mulrel_ranker import MulRelRanker, PreRank
 import REL.utils as utils
-from REL.training_datasets import TrainingEvaluationDatasets
 from REL.db.generic import GenericLookup
+from REL.mulrel_ranker import MulRelRanker, PreRank
+from REL.training_datasets import TrainingEvaluationDatasets
+from REL.vocabulary import Vocabulary
 
 """
 Parent Entity Disambiguation class that directs the various subclasses used
@@ -119,17 +119,13 @@ class EntityDisambiguation:
             "oracle": False,
         }
 
-        config = {
-            k: user_config[k] if k in user_config else v
-            for k, v in default_config.items()
-        }
+        default_config.update(user_config)
+        config = default_config
 
-        # if model_path is an URL pointing to tarfile, carry out following
-        if urlparse(str(config["model_path"])).scheme in ("http", "https"):
-            model_path = utils.fetch_model(
-                config["model_path"], cache_dir=Path("~/.rel_cache").expanduser(),
-            )
-            assert tarfile.is_tarfile(model_path), "Only tarfiles are supported!"
+        model_path = utils.fetch_model(
+            config["model_path"], cache_dir=Path("~/.rel_cache").expanduser(),
+        )
+        if tarfile.is_tarfile(model_path):
             # make directory with name of tarfile (minus extension)
             # extract the files in the archive to that directory
             # assign config[model_state_dict] and config[model_config]
@@ -141,6 +137,8 @@ class EntityDisambiguation:
             # NOTE: it is required that the model file(s) are named "model.state_dict"
             # and "model.config" if supplied, other names won't work
             config["model_path"] = Path("~/.rel_cache").expanduser() / stem / "model"
+        else:
+            config["model_path"] = model_path
 
         return config
 

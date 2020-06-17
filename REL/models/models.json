@@ -1,3 +1,4 @@
 {
-  "ner-fast-with-lowercase": "http://gem.cs.ru.nl/ner-fast-with-lowercase.pt"
+  "ner-fast-with-lowercase": "http://gem.cs.ru.nl/ner-fast-with-lowercase.pt",
+  "ed-wiki-2019": "http://server-share.airdns.org:48144/test_model.tar.gz"
 }
