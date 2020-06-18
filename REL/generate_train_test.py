@@ -88,8 +88,8 @@ class GenTrainingTest(MentionDetectionBase):
                             cand_end = cand_text.find('"', cand_start)
                             ent_title = line[(start_tags[i]+cand_start):(start_tags[i]+cand_end)]
                             if len(ent_title) > 0:
-                                m = preprocess_mention(span, self.wiki_db)
-                                cands = self._get_candidates(m)
+                                m = self.preprocess_mention(span)
+                                cands = self.get_candidates(m)
                                 if 'annotation' in ent_title:
                                     print(line)
                                     print(cand_text)
