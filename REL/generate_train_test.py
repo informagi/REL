@@ -77,28 +77,62 @@ class GenTrainingTest(MentionDetection):
         ent_xml_tag = 'rank_0_title="'
 
         results = {}
-        doc_i = 0
+        doc_id = 0
         with open(annotations_xml, "r", encoding="utf-8") as cf:
             for line in cf.readlines():
                 doc_text = ''
                 if '<annotation' in line:
-                    #print(line)
-                    #print('--------------------')
+                    result_doc = []
                     start_tags = [m.start() for m in re.finditer('<', line)]
                     end_tags = [m.start() for m in re.finditer('>', line)]
 
                     for i in range(len(start_tags)-1):
                         span = line[end_tags[i]+1:start_tags[i+1]]
-                        doc_text += span
                         if len(span) > 0:
                             cand_text = line[start_tags[i]:end_tags[i]]
                             cand_start = cand_text.find(ent_xml_tag)+len(ent_xml_tag)
                             cand_end = cand_text.find('"', cand_start)
-                            entity = line[(start_tags[i]+cand_start):(start_tags[i]+cand_end)]
-                            if len(entity) > 0:
-                                print(entity, cand_start, cand_end)
-                    #print(doc_text)
-                    #print('+++++++')
+                            ent_title = line[(start_tags[i]+cand_start):(start_tags[i]+cand_end)]
+                            if len(ent_title) > 0:
+                                m = preprocess_mention(span, self.wiki_db)
+                                cands = self._get_candidates(m)
+                                if 'annotation' in ent_title:
+                                    print(line)
+                                    print(cand_text)
+                                    print('-----')
+
+                                #TODO: Uncomment, also in generate_train_val
+                                # if ent_title not in self.wikipedia.wiki_id_name_map["ent_name_to_id"]:
+                                #     ent_title_temp = self.wikipedia.preprocess_ent_name(ent_title)
+                                #     if (
+                                #             ent_title_temp
+                                #             in self.wikipedia.wiki_id_name_map["ent_name_to_id"]
+                                #     ):
+                                #         ent_title = ent_title_temp
+
+                                res = {
+                                    "mention": m,
+                                    "context": (doc_text, ''),
+                                    "candidates": cands,
+                                    "gold": [ent_title.replace(" ", "_")],
+                                    "pos": start_tags[i]+cand_start,
+                                    "sent_idx": 0,
+                                    "ngram": span,
+                                    "end_pos": start_tags[i]+cand_end,
+                                    "sentence": ''
+                                }
+                                result_doc.append(res)
+                            doc_text += span
+
+                    # Backfill now that we have complete sentence.
+                    for d in result_doc:
+                        d['context'] = (d['context'][0], doc_text[d['end_pos']:])
+                        d['sentence'] = doc_text
+
+                    results[doc_id] = result_doc
+                    doc_id += 1
+
+        self.__save(results, "{}".format(dataset))
 
     def process_wned(self, dataset):
         """
