@@ -3,8 +3,7 @@ from collections import defaultdict
 
 import numpy as np
 
-from REL.db.generic import GenericLookup
-from REL.utils import preprocess_mention
+from REL.mention_detection_base import MentionDetectionBase
 
 class Token:
     def __init__(self, text, start_pos, end_pos, score, tag):
@@ -14,13 +13,11 @@ class Token:
         self.score = score
         self.tag = tag
 
-class Cmns(object):
-    def __init__(self, base_url, wiki_subfolder, n=5):
+class Cmns(MentionDetectionBase):
+    def __init__(self, base_url, wiki_version, n=5):
         self.__n = n
-        self.wiki_db = GenericLookup(
-            "entity_word_embedding",
-            "{}/{}/generated/".format(base_url, wiki_subfolder),
-        )
+        super().__init__(base_url, wiki_version)
+
     def predict(self, sentence, sentences_doc):
         """
         Links the query to the entity.
@@ -65,7 +62,7 @@ class Cmns(object):
 
         for ngram, pos, end in self.__ngrams[n]:
             if not self.__is_overlapping(ngram, pos):
-                mention = preprocess_mention(ngram, self.wiki_db)
+                mention = self.preprocess_mention(ngram)
                 freq = self.wiki_db.wiki(mention, "wiki", "freq")
                 if freq:
                     self.mentions.append(Token(ngram, pos, end, freq, '#NGRAM#'))

@@ -15,7 +15,7 @@ the package is installed, all we have to do is run the code below. Please make s
 and `db_name`. The variable `embedding_file` needs to point to the trained Wikipedia2vec file.
 
 ```python
-from RELdb.generic import GenericLookup
+from REL.db.generic import GenericLookup
 
 save_dir = "{}/{}/generated/".format(base_url, wiki_version)
 db_name = "entity_word_embedding"

@@ -14,7 +14,7 @@ Class/function combination that is used to setup an API that can be used for e.g
 """
 
 def make_handler(
-    base_url, wiki_subfolder, model, tagger_ner
+    base_url, wiki_version, model, tagger_ner
 ):
     class GetHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
@@ -22,10 +22,10 @@ def make_handler(
             self.tagger_ner = tagger_ner
 
             self.base_url = base_url
-            self.wiki_subfolder = wiki_subfolder
+            self.wiki_version = wiki_version
 
             self.custom_ner = not isinstance(tagger_ner, SequenceTagger)
-            self.mention_detection = MentionDetection(base_url, wiki_subfolder)
+            self.mention_detection = MentionDetection(base_url, wiki_version)
 
             super().__init__(*args, **kwargs)
 
@@ -90,11 +90,14 @@ def make_handler(
             text = text.replace("&amp;", "&")
 
             # GERBIL sends dictionary, users send list of lists.
-            try:
-                spans = [list(d.values()) for d in data["spans"]]
-            except Exception:
-                spans = data["spans"]
-                pass
+            if 'spans' in data:
+                try:
+                    spans = [list(d.values()) for d in data["spans"]]
+                except Exception:
+                    spans = data["spans"]
+                    pass
+            else:
+                spans = []
 
             return text, spans
 
