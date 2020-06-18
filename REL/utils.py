@@ -47,7 +47,6 @@ def process_results(
         res[doc] = res_doc
     return res
 
-
 def trim1(s):
     return s.replace("^%s*(.-)%s*$", "%1")
 
