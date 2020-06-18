@@ -327,12 +327,8 @@ class EntityDisambiguation:
         :return: -
         """
 
-        train = self.get_data_items(datasets['train'], 'train', predict=True)
-
-
         dev_datasets = []
         for dname, data in list(datasets.items()):
-            start = time.time()
             dev_datasets.append((dname, self.get_data_items(data, dname, predict=True)))
 
         for dname, data in dev_datasets:

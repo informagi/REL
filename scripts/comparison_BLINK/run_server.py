@@ -82,7 +82,7 @@ MentionDetection._get_ctxt = _get_ctxt
 
 
 def make_handler(
-        base_url, wiki_subfolder, models, tagger_ner, argss, logger
+        base_url, wiki_version, models, tagger_ner, argss, logger
 ):
     class GetHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
@@ -95,10 +95,10 @@ def make_handler(
 
 
             self.base_url = base_url
-            self.wiki_subfolder = wiki_subfolder
+            self.wiki_version = wiki_version
 
             self.custom_ner = not isinstance(tagger_ner, SequenceTagger)
-            self.mention_detection = MentionDetection(base_url, wiki_subfolder)
+            self.mention_detection = MentionDetection(base_url, wiki_version)
 
             super().__init__(*args, **kwargs)
 
@@ -222,14 +222,14 @@ def make_handler(
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
 base_url = "/users/vanhulsm/Desktop/projects/data/"
-wiki_subfolder = "wiki_2014"
+wiki_version = "wiki_2014"
 
 # 1. Init model, where user can set his/her own config that will overwrite the default config.
 # If mode is equal to 'eval', then the model_path should point to an existing model.
 config = {
     "mode": "eval",
     "model_path": "{}/{}/generated/model".format(
-        base_url, wiki_subfolder
+        base_url, wiki_version
     ),
 }
 
@@ -264,14 +264,14 @@ models = main_dense.load_models(args)
 # 2. Create NER-tagger.
 tagger_ner = SequenceTagger.load("ner-fast")
 tagger_custom = MD_Module('param1', 'param2')
-tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
+tagger_ngram = Cmns(base_url, wiki_version, n=5)
 
 # 3. Init server.
 server_address = ("localhost", 5555)
 server = HTTPServer(
     server_address,
     make_handler(
-        base_url, wiki_subfolder, models, tagger_ner, args, logger
+        base_url, wiki_version, models, tagger_ner, args, logger
     ),
 )
 

@@ -15,14 +15,14 @@ def example_preprocessing():
 
 
 base_url = "/users/vanhulsm/Desktop/projects/data/"
-wiki_subfolder = "wiki_2014"
+wiki_version = "wiki_2014"
 
 # 1. Input sentences when using Flair.
 input = example_preprocessing()
 
 # For Mention detection two options.
 # 2. Mention detection, we used the NER tagger, user can also use his/her own mention detection module.
-mention_detection = MentionDetection(base_url, wiki_subfolder)
+mention_detection = MentionDetection(base_url, wiki_version)
 
 # 2. Alternatively. if you want to use your own MD system (or ngram detection),
 # the required input is: {doc_name: [text, spans] ... }.
@@ -30,7 +30,7 @@ mentions_dataset, n_mentions = mention_detection.format_spans(input)
 
 # 2. Alternative MD module is using an n-gram tagger.
 #tagger_ner = SequenceTagger.load("ner-fast")
-tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
+tagger_ngram = Cmns(base_url, wiki_version, n=5)
 
 mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ngram)
 
@@ -38,10 +38,10 @@ mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ngr
 config = {
     "mode": "eval",
     "model_path": "{}/{}/generated/model".format(
-        base_url, wiki_subfolder
+        base_url, wiki_version
     ),
 }
-model = EntityDisambiguation(base_url, wiki_subfolder, config)
+model = EntityDisambiguation(base_url, wiki_version, config)
 
 # 4. Entity disambiguation.
 predictions, timing = model.predict(mentions_dataset)

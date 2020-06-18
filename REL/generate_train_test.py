@@ -4,12 +4,10 @@ import pickle
 import re
 
 from REL.utils import (
-    preprocess_mention,
     split_in_words_mention,
     modify_uppercase_phrase,
 )
-from REL.mention_detection import MentionDetection
-from REL.db.generic import GenericLookup
+from REL.mention_detection_base import MentionDetectionBase
 
 """
 Class responsible for formatting WNED and AIDA datasets that are required for ED local evaluation and training.
@@ -17,7 +15,7 @@ Inherits overlapping functions from the Mention Detection class.
 """
 
 
-class GenTrainingTest(MentionDetection):
+class GenTrainingTest(MentionDetectionBase):
     def __init__(self, base_url, wiki_version, wikipedia):
         self.wned_path = "{}/generic/test_datasets/wned-datasets/".format(base_url)
         self.aida_path = "{}/generic/test_datasets/AIDA/".format(base_url)
@@ -26,16 +24,12 @@ class GenTrainingTest(MentionDetection):
         self.wikipedia = wikipedia
         self.base_url = base_url
         self.wiki_version = wiki_version
-        self.wiki_db = GenericLookup(
-            "entity_word_embedding",
-            "{}/{}/generated/".format(base_url, wiki_version),
-        )
+
         super().__init__(base_url, wiki_version)
 
     def __format(self, dataset):
         """
         Formats given ground truth spans and entities for local ED datasets.
-
         :return: wned dataset with respective ground truth values
         """
 
@@ -43,16 +37,16 @@ class GenTrainingTest(MentionDetection):
 
         for doc in dataset:
             contents = dataset[doc]
-            self.sentences_doc = [v[0] for v in contents.values()]
+            sentences_doc = [v[0] for v in contents.values()]
             result_doc = []
 
             for idx_sent, (sentence, ground_truth_sentence) in contents.items():
                 for m, gt, start, ngram in ground_truth_sentence:
                     end = start + len(ngram)
-                    left_ctxt, right_ctxt = self._get_ctxt(
-                        start, end, idx_sent, sentence
+                    left_ctxt, right_ctxt = self.get_ctxt(
+                        start, end, idx_sent, sentence, sentences_doc
                     )
-                    cands = self._get_candidates(m)
+                    cands = self.get_candidates(m)
 
                     res = {
                         "mention": m,
@@ -202,7 +196,7 @@ class GenTrainingTest(MentionDetection):
                 if pos not in mentions_gt:
                     total_gt += 1
                 mentions_gt[pos] = [
-                    preprocess_mention(mention_gt, self.wiki_db),
+                    self.preprocess_mention(mention_gt),
                     ent_title,
                     mention_gt,
                 ]
@@ -348,7 +342,7 @@ class GenTrainingTest(MentionDetection):
                         )  # + 1 for space between mention and sentence
                         gt_sent.append(
                             [
-                                preprocess_mention(mention_gt, self.wiki_db),
+                                self.preprocess_mention(mention_gt),
                                 ent_title,
                                 pos_mention_gt,
                                 mention_gt,

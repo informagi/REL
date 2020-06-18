@@ -1,55 +1,6 @@
 import unidecode
 from nltk.tokenize import RegexpTokenizer
 import numpy as np
-import re
-
-
-def preprocess_mention(m, wiki_db):
-    """
-    Responsible for preprocessing a mention and making sure we find a set of matching candidates
-    in our database.
-
-    :return: mention
-    """
-
-    # TODO: This can be optimised (less db calls required).
-    cur_m = modify_uppercase_phrase(m)
-    freq_lookup_cur_m = wiki_db.wiki(cur_m, "wiki", "freq")
-
-    if not freq_lookup_cur_m:
-        cur_m = m
-
-    freq_lookup_m = wiki_db.wiki(m, "wiki", "freq")
-    freq_lookup_cur_m = wiki_db.wiki(cur_m, "wiki", "freq")
-
-    if freq_lookup_m and (freq_lookup_m > freq_lookup_cur_m):
-        # Cases like 'U.S.' are handed badly by modify_uppercase_phrase
-        cur_m = m
-
-    freq_lookup_cur_m = wiki_db.wiki(cur_m, "wiki", "freq")
-    # If we cannot find the exact mention in our index, we try our luck to
-    # find it in a case insensitive index.
-    if not freq_lookup_cur_m:
-        # cur_m and m both not found, verify if lower-case version can be found.
-        find_lower = wiki_db.wiki(m.lower(), "wiki", "lower")
-
-        if find_lower:
-            cur_m = find_lower
-
-    freq_lookup_cur_m = wiki_db.wiki(cur_m, "wiki", "freq")
-    # Try and remove first or last characters (e.g. 'Washington,' to 'Washington')
-    # To be error prone, we only try this if no match was found thus far, else
-    # this might get in the way of 'U.S.' converting to 'US'.
-    # Could do this recursively, interesting to explore in future work.
-    if not freq_lookup_cur_m:
-        temp = re.sub(r"[\(.|,|!|')]", "", m).strip()
-        simple_lookup = wiki_db.wiki(temp, "wiki", "freq")
-
-        if simple_lookup:
-            cur_m = temp
-
-    return cur_m
-
 
 def process_results(
     mentions_dataset, predictions, processed, include_offset=False,
@@ -82,7 +33,6 @@ def process_results(
             start_pos = offset + ment["pos"]
             mention_length = int(ment["end_pos"] - ment["pos"])
 
-            # self.verify_pos(ment["ngram"], start_pos, end_pos, text)
             if pred["prediction"] != "NIL":
                 temp = (
                     start_pos,
@@ -115,12 +65,6 @@ def modify_uppercase_phrase(s):
     else:
         return s
 
-
-# def split_in_words(inputstr):
-#     tokenizer = RegexpTokenizer(r'\w+')
-#     return [unidecode.unidecode(w) for w in tokenizer.tokenize(inputstr)]
-
-
 def split_in_words(inputstr):
     """
     This regexp also splits 'AL-NAHAR', which should be a single word
@@ -141,20 +85,7 @@ def split_in_words_mention(inputstr):
     
     Same with U.S.
     """
-    tokenizer = RegexpTokenizer(r"\w+")
     return [unidecode.unidecode(w) for w in inputstr.split()]  # #inputstr.split()]#
-
-
-# def split_in_words_context(inputstr):
-#     '''
-#     TODO:
-#     This regexp also splits 'AL-NAHAR', which should be a single word
-#     into 'AL' and 'NAHAR', resulting in the inability to find a match.
-
-#     Same with U.S.
-#     '''
-#     tokenizer = RegexpTokenizer(r'\w+')
-#     return [unidecode.unidecode(w) for w in inputstr.split()]# #inputstr.split()]#
 
 
 def correct_type(args, data):
