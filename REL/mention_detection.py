@@ -1,66 +1,20 @@
-from REL.utils import preprocess_mention, split_in_words
-
-from REL.db.generic import GenericLookup
 from segtok.segmenter import split_single
 from flair.data import Sentence
 from flair.models import SequenceTagger
+
+from REL.mention_detection_base import MentionDetectionBase
 
 """
 Class responsible for mention detection. 
 """
 
-
-class MentionDetection:
-    def __init__(self, base_url, wiki_subfolder):
+class MentionDetection(MentionDetectionBase):
+    def __init__(self, base_url, wiki_version):
         self.cnt_exact = 0
         self.cnt_partial = 0
         self.cnt_total = 0
-        self.wiki_db = GenericLookup(
-            "entity_word_embedding",
-            "{}/{}/generated/".format(base_url, wiki_subfolder),
-        )
 
-    def _get_ctxt(self, start, end, idx_sent, sentence):
-        """
-        Retrieves context surrounding a given mention up to 100 words from both sides.
-
-        :return: left and right context
-        """
-
-        # Iteratively add words up until we have 100
-        left_ctxt = split_in_words(sentence[:start])
-        if idx_sent > 0:
-            i = idx_sent - 1
-            while (i >= 0) and (len(left_ctxt) <= 100):
-                left_ctxt = split_in_words(self.__sentences_doc[i]) + left_ctxt
-                i -= 1
-        left_ctxt = left_ctxt[-100:]
-        left_ctxt = " ".join(left_ctxt)
-
-        right_ctxt = split_in_words(sentence[end:])
-        if idx_sent < len(self.__sentences_doc):
-            i = idx_sent + 1
-            while (i < len(self.__sentences_doc)) and (len(right_ctxt) <= 100):
-                right_ctxt = right_ctxt + split_in_words(self.__sentences_doc[i])
-                i += 1
-        right_ctxt = right_ctxt[:100]
-        right_ctxt = " ".join(right_ctxt)
-
-        return left_ctxt, right_ctxt
-
-    def _get_candidates(self, mention):
-        """
-        Retrieves a maximum of 100 candidates from the sqlite3 database for a given mention.
-
-        :return: set of candidates
-        """
-
-        # Performs extra check for ED.
-        cands = self.wiki_db.wiki(mention, "wiki")
-        if cands:
-            return cands[:100]
-        else:
-            return []
+        super().__init__(base_url, wiki_version)
 
     def format_spans(self, dataset):
         """
@@ -76,7 +30,7 @@ class MentionDetection:
 
         for doc in dataset:
             contents = dataset[doc]
-            self.__sentences_doc = [v[0] for v in contents.values()]
+            sentences_doc = [v[0] for v in contents.values()]
 
             results_doc = []
             for idx_sent, (sentence, spans) in contents.items():
@@ -85,12 +39,12 @@ class MentionDetection:
 
                     # end_pos = start_pos + length
                     # ngram = text[start_pos:end_pos]
-                    mention = preprocess_mention(ngram, self.wiki_db)
-                    left_ctxt, right_ctxt = self._get_ctxt(
-                        start_pos, end_pos, idx_sent, sentence
+                    mention = self.preprocess_mention(ngram)
+                    left_ctxt, right_ctxt = self.get_ctxt(
+                        start_pos, end_pos, idx_sent, sentence, sentences_doc
                     )
 
-                    chosen_cands = self._get_candidates(mention)
+                    chosen_cands = self.get_candidates(mention)
                     res = {
                         "mention": mention,
                         "context": (left_ctxt, right_ctxt),
@@ -171,7 +125,7 @@ class MentionDetection:
 
         for i, doc in enumerate(dataset):
             contents = dataset[doc]
-            self.__sentences_doc = [v[0] for v in contents.values()]
+            sentences_doc = [v[0] for v in contents.values()]
             sentences = processed_sentences[splits[i]:splits[i+1]]
             result_doc = []
 
@@ -188,16 +142,16 @@ class MentionDetection:
                     )
                     total_ment += 1
 
-                    m = preprocess_mention(text, self.wiki_db)
-                    cands = self._get_candidates(m)
+                    m = self.preprocess_mention(text)
+                    cands = self.get_candidates(m)
 
                     if len(cands) == 0:
                         continue
 
                     # Re-create ngram as 'text' is at times changed by Flair (e.g. double spaces are removed).
                     ngram = sentence[start_pos:end_pos]
-                    left_ctxt, right_ctxt = self._get_ctxt(
-                        start_pos, end_pos, idx_sent, sentence
+                    left_ctxt, right_ctxt = self.get_ctxt(
+                        start_pos, end_pos, idx_sent, sentence, sentences_doc
                     )
 
                     res = {
