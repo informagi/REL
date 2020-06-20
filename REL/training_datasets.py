@@ -25,14 +25,18 @@ class TrainingEvaluationDatasets:
         """
         datasets = {}
         for ds in [
-            "aida_train",
-            "aida_testA",
-            "aida_testB",
-            "wned-ace2004",
-            "wned-aquaint",
-            "wned-clueweb",
-            "wned-msnbc",
-            "wned-wikipedia",
+            # "aida_train",
+            # "aida_testA",
+            # "aida_testB",
+            # "wned-ace2004",
+            # "wned-aquaint",
+            # "wned-clueweb",
+            # "wned-msnbc",
+            # "wned-wikipedia",
+            "gerdaq_train",
+            "gerdaq_devel",
+            "gerdaq_test",
+
         ]:
 
             print("Loading {}".format(ds))

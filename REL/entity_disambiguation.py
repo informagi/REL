@@ -326,7 +326,6 @@ class EntityDisambiguation:
 
         :return: -
         """
-
         dev_datasets = []
         for dname, data in list(datasets.items()):
             dev_datasets.append((dname, self.get_data_items(data, dname, predict=True)))
@@ -484,10 +483,6 @@ class EntityDisambiguation:
             s_rtoken_ids = [m["snd_ctx"][1] for m in batch]
             s_mtoken_ids = [m["snd_ment"] for m in batch]
 
-            # lctx_ids = s_ltoken_ids
-            # rctx_ids = s_rtoken_ids
-            # m_ids = s_mtoken_ids
-
             entity_ids = Variable(
                 torch.LongTensor([m["selected_cands"]["cands"] for m in batch]).to(
                     self.device
@@ -612,6 +607,7 @@ class EntityDisambiguation:
                 doc_names = [m["doc_name"] for m in batch]
 
                 for dname, entity in zip(doc_names, pred_entities):
+
                     if entity[0] != "NIL":
                         predictions[dname].append(
                             {
