@@ -9,27 +9,50 @@ from REL.ner.ngram import Cmns
 # from REL.example_custom_MD import MD_Module
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
+<<<<<<< HEAD
 base_url = "/home/koen/projects/REL/"
 wiki_subfolder = "wiki_test"
+=======
+base_url = "/users/vanhulsm/Desktop/projects/data/"
+wiki_version = "wiki_2014"
+>>>>>>> master
 
 # 1. Init model, where user can set his/her own config that will overwrite the default config.
 # If mode is equal to 'eval', then the model_path should point to an existing model.
 config = {
     "mode": "eval",
+<<<<<<< HEAD
     "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
+=======
+    "model_path": "{}/{}/generated/model".format(
+        base_url, wiki_version
+    ),
+>>>>>>> master
 }
 
-model = EntityDisambiguation(base_url, wiki_subfolder, config)
+model = EntityDisambiguation(base_url, wiki_version, config)
 
 # 2. Create NER-tagger.
 tagger_ner = SequenceTagger.load("ner-fast")
+<<<<<<< HEAD
 # tagger_custom = MD_Module('param1', 'param2')
 # tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
+=======
+tagger_custom = MD_Module('param1', 'param2')
+tagger_ngram = Cmns(base_url, wiki_version, n=5)
+>>>>>>> master
 
 # 3. Init server.
 server_address = ("127.0.0.1", 5555)
 server = HTTPServer(
+<<<<<<< HEAD
     server_address, make_handler(base_url, wiki_subfolder, model, tagger_ner),
+=======
+    server_address,
+    make_handler(
+        base_url, wiki_version, model, tagger_ngram
+    ),
+>>>>>>> master
 )
 
 try:

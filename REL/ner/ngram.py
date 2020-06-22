@@ -1,11 +1,21 @@
+<<<<<<< HEAD:REL/ner/ngram.py
 from REL.ner.base import NERBase, Span
 from REL.db.generic import GenericLookup
 from REL.utils import preprocess_mention
 from collections import defaultdict, namedtuple
 import numpy as np
 import re
+=======
+import re
+from collections import defaultdict
+
+import numpy as np
+
+from REL.mention_detection_base import MentionDetectionBase
+>>>>>>> master:REL/ngram.py
 
 
+<<<<<<< HEAD:REL/ner/ngram.py
 class Cmns(NERBase):
     def __init__(self, base_url, wiki_subfolder, n=5):
         self.__n = n
@@ -13,6 +23,12 @@ class Cmns(NERBase):
             "entity_word_embedding",
             "{}/{}/generated/".format(base_url, wiki_subfolder),
         )
+=======
+class Cmns(MentionDetectionBase):
+    def __init__(self, base_url, wiki_version, n=5):
+        self.__n = n
+        super().__init__(base_url, wiki_version)
+>>>>>>> master:REL/ngram.py
 
     def predict(self, sentence, sentences_doc):
         """
@@ -58,7 +74,7 @@ class Cmns(NERBase):
 
         for ngram, pos, end in self.__ngrams[n]:
             if not self.__is_overlapping(ngram, pos):
-                mention = preprocess_mention(ngram, self.wiki_db)
+                mention = self.preprocess_mention(ngram)
                 freq = self.wiki_db.wiki(mention, "wiki", "freq")
                 if freq:
                     self.mentions.append(Span(ngram, pos, end, freq, "#NGRAM#"))

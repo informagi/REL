@@ -13,18 +13,24 @@ API_DOC = "API_DOC"
 Class/function combination that is used to setup an API that can be used for e.g. GERBIL evaluation.
 """
 
+<<<<<<< HEAD
 
 def make_handler(base_url, wiki_subfolder, model, tagger_ner):
+=======
+def make_handler(
+    base_url, wiki_version, model, tagger_ner
+):
+>>>>>>> master
     class GetHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             self.model = model
             self.tagger_ner = tagger_ner
 
             self.base_url = base_url
-            self.wiki_subfolder = wiki_subfolder
+            self.wiki_version = wiki_version
 
             self.custom_ner = not isinstance(tagger_ner, SequenceTagger)
-            self.mention_detection = MentionDetection(base_url, wiki_subfolder)
+            self.mention_detection = MentionDetection(base_url, wiki_version)
 
             super().__init__(*args, **kwargs)
 

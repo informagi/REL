@@ -17,7 +17,7 @@ from REL.entity_disambiguation import EntityDisambiguation
 from REL.server import make_handler
 from REL.ngram import Cmns
 
-wiki_subfolder = "wiki_2014"
+wiki_version = "wiki_2014"
  ```
 
 Now that we know which Wikipedia corpus we are using, we need to create a configuration dictionary for our Entity
@@ -31,10 +31,10 @@ by setting `reset_embeddings=True`.
 ```python
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
+    "model_path": "{}/{}/generated/model".format(base_url, wiki_version),
 }
 
-model = EntityDisambiguation(base_url, wiki_subfolder, config)
+model = EntityDisambiguation(base_url, wiki_version, config)
 ```
 
 As was mentioned prior to this, we used Flair's NER tagger as our Mention Detection system. This system can be replaced 
@@ -44,7 +44,7 @@ the use of our n-gram module. Note that the parameter `n` refers to the max to-b
 
 ```python
 tagger_ner = SequenceTagger.load("ner-fast")
-tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
+tagger_ngram = Cmns(base_url, wiki_version, n=5)
 ```
 
 Our final step consists of starting the server, where we may define our IP-address and port. Additionally,
@@ -55,7 +55,7 @@ server_address = ("127.0.0.1", 1235)
 server = HTTPServer(
     server_address,
     make_handler(
-        base_url, wiki_subfolder, model, tagger_ngram
+        base_url, wiki_version, model, tagger_ngram
     ),
 )
 
@@ -102,7 +102,7 @@ from REL.utils import process_results
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.ngram import Cmns
 
-wiki_subfolder = "wiki_2014"
+wiki_version = "wiki_2014"
  ```
 
 The code below serves as an example as to how users should format their dataset. This should obviously be replaced
@@ -126,9 +126,9 @@ mentions that were found using the NER-tagger. This number may be unequal to the
 `mentions_dataset` stores as this dictionary only stores mentions that were found in our Knowledge Base.
 
 ```python
-mention_detection = MentionDetection(base_url, wiki_subfolder)
+mention_detection = MentionDetection(base_url, wiki_version)
 tagger_ner = SequenceTagger.load("ner-fast")
-tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
+tagger_ngram = Cmns(base_url, wiki_version, n=5)
 mentions_dataset, n_mentions = mention_detection.find_mentions(input, tagger_ngram)
 ```
 
@@ -138,10 +138,10 @@ on the mentions that we previously found.
 ```python
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
+    "model_path": "{}/{}/generated/model".format(base_url, wiki_version),
 }
 
-model = EntityDisambiguation(base_url, wiki_subfolder, config)
+model = EntityDisambiguation(base_url, wiki_version, config)
 predictions, timing = model.predict(mentions_dataset)
 ```
 

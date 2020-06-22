@@ -1,8 +1,8 @@
 from REL.training_datasets import TrainingEvaluationDatasets
 from REL.entity_disambiguation import EntityDisambiguation
 
-base_url = ""
-wiki_version = ""
+base_url = "/users/vanhulsm/Desktop/projects/data/"
+wiki_version = "wiki_2014"
 
 # 1. Load datasets # '/mnt/c/Users/mickv/Google Drive/projects/entity_tagging/deep-ed/data/wiki_2019/'
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()

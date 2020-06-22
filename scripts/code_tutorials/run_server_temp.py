@@ -193,16 +193,22 @@ def user_func(text):
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
 base_url = "C:/Users/mickv/Desktop/data_back/"
-wiki_subfolder = "wiki_2019"
+wiki_version = "wiki_2019"
 
 # 1. Init model, where user can set his/her own config that will overwrite the default config.
 # If mode is equal to 'eval', then the model_path should point to an existing model.
 config = {
     "mode": "eval",
+<<<<<<< HEAD
     "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
+=======
+    "model_path": "{}/{}/generated/model".format(
+        base_url, wiki_version
+    ),
+>>>>>>> master
 }
 
-model = EntityDisambiguation(base_url, wiki_subfolder, config)
+model = EntityDisambiguation(base_url, wiki_version, config)
 
 # 2. Create NER-tagger.
 tagger_ner = SequenceTagger.load("ner-fast")
@@ -215,7 +221,13 @@ tagger_ner = SequenceTagger.load("ner-fast")
 server_address = ("192.168.178.11", 1235)
 server = HTTPServer(
     server_address,
+<<<<<<< HEAD
     make_handler(base_url, wiki_subfolder, model, tagger_ner, include_conf=True),
+=======
+    make_handler(
+        base_url, wiki_version, model, tagger_ner, include_conf=True
+    ),
+>>>>>>> master
 )
 
 try:
