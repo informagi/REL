@@ -1,13 +1,13 @@
 import re
 
-from REL.utils import split_in_words, modify_uppercase_phrase
 from REL.db.generic import GenericLookup
+from REL.utils import modify_uppercase_phrase, split_in_words
+
 
 class MentionDetectionBase:
     def __init__(self, base_url, wiki_version):
         self.wiki_db = GenericLookup(
-            "entity_word_embedding",
-            "{}/{}/generated/".format(base_url, wiki_version),
+            "entity_word_embedding", "{}/{}/generated/".format(base_url, wiki_version),
         )
 
     def get_ctxt(self, start, end, idx_sent, sentence, sentences_doc):

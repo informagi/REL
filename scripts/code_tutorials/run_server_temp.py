@@ -1,24 +1,19 @@
 from http.server import HTTPServer
 
+# --------------------- Overwrite class
+from typing import Dict
+
 import flair
 import torch
-
-from flair.models import SequenceTagger
-
-# --------------------- Overwrite class
-from typing import List, Union, Optional, Callable, Dict
-
-import numpy as np
-import torch
 import torch.nn
-import torch.nn.functional as F
-from tabulate import tabulate
-from torch.nn.parameter import Parameter
-from torch.utils.data import DataLoader
-from tqdm import tqdm
-
 from flair.data import Dictionary as DDD
 from flair.embeddings import TokenEmbeddings
+from flair.models import SequenceTagger
+from torch.nn.parameter import Parameter
+
+from REL.entity_disambiguation import EntityDisambiguation
+from REL.ner import load_flair_ner
+from REL.server import make_handler
 
 START_TAG: str = "<START>"
 STOP_TAG: str = "<STOP>"
@@ -182,9 +177,6 @@ def __init__(
 SequenceTagger.__init__ = __init__
 # ---------------------
 
-from REL.entity_disambiguation import EntityDisambiguation
-from REL.server import make_handler
-
 
 def user_func(text):
     spans = [(0, 5), (17, 7), (50, 6)]
@@ -199,19 +191,13 @@ wiki_version = "wiki_2019"
 # If mode is equal to 'eval', then the model_path should point to an existing model.
 config = {
     "mode": "eval",
-<<<<<<< HEAD
-    "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
-=======
-    "model_path": "{}/{}/generated/model".format(
-        base_url, wiki_version
-    ),
->>>>>>> master
+    "model_path": "{}/{}/generated/model".format(base_url, wiki_version),
 }
 
 model = EntityDisambiguation(base_url, wiki_version, config)
 
 # 2. Create NER-tagger.
-tagger_ner = SequenceTagger.load("ner-fast")
+tagger_ner = load_flair_ner("ner-fast")
 
 # 2.1. Alternatively, one can create his/her own NER-tagger that given a text,
 # returns a list with spans (start_pos, length).
@@ -221,13 +207,7 @@ tagger_ner = SequenceTagger.load("ner-fast")
 server_address = ("192.168.178.11", 1235)
 server = HTTPServer(
     server_address,
-<<<<<<< HEAD
-    make_handler(base_url, wiki_subfolder, model, tagger_ner, include_conf=True),
-=======
-    make_handler(
-        base_url, wiki_version, model, tagger_ner, include_conf=True
-    ),
->>>>>>> master
+    make_handler(base_url, wiki_version, model, tagger_ner, include_conf=True),
 )
 
 try:

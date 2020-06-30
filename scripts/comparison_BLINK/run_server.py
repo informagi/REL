@@ -1,17 +1,14 @@
-from http.server import HTTPServer
-from http.server import BaseHTTPRequestHandler
-
+import argparse
 import json
+import logging
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from flair.models import SequenceTagger
 
-
-from REL.ner.ngram import Cmns
-from REL.entity_disambiguation import EntityDisambiguation
-from REL.example_custom_MD import MD_Module
+import blink.main_dense as main_dense
 from REL.mention_detection import MentionDetection
-from REL.utils import process_results
-from REL.utils import preprocess_mention, split_in_words
+from REL.ner import load_flair_ner
+from REL.utils import split_in_words
 
 API_DOC = "API_DOC"
 
@@ -83,13 +80,7 @@ def _get_ctxt(self, start, end, idx_sent, sentence):
 MentionDetection._get_ctxt = _get_ctxt
 
 
-<<<<<<< HEAD
-def make_handler(base_url, wiki_subfolder, models, tagger_ner, argss, logger):
-=======
-def make_handler(
-        base_url, wiki_version, models, tagger_ner, argss, logger
-):
->>>>>>> master
+def make_handler(base_url, wiki_version, models, tagger_ner, argss, logger):
     class GetHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             self.model = models
@@ -237,19 +228,9 @@ wiki_version = "wiki_2014"
 # If mode is equal to 'eval', then the model_path should point to an existing model.
 config = {
     "mode": "eval",
-<<<<<<< HEAD
-    "model_path": "{}/{}/generated/model".format(base_url, wiki_subfolder),
-=======
-    "model_path": "{}/{}/generated/model".format(
-        base_url, wiki_version
-    ),
->>>>>>> master
+    "model_path": "{}/{}/generated/model".format(base_url, wiki_version),
 }
 
-# Blink model stuff.
-import blink.main_dense as main_dense
-import argparse
-import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -276,26 +257,13 @@ models = main_dense.load_models(args)
 
 
 # 2. Create NER-tagger.
-tagger_ner = SequenceTagger.load("ner-fast")
-<<<<<<< HEAD
-tagger_custom = MD_Module("param1", "param2")
-tagger_ngram = Cmns(base_url, wiki_subfolder, n=5)
-=======
-tagger_custom = MD_Module('param1', 'param2')
-tagger_ngram = Cmns(base_url, wiki_version, n=5)
->>>>>>> master
+tagger_ner = load_flair_ner("ner-fast")
 
 # 3. Init server.
 server_address = ("localhost", 5555)
 server = HTTPServer(
     server_address,
-<<<<<<< HEAD
-    make_handler(base_url, wiki_subfolder, models, tagger_ner, args, logger),
-=======
-    make_handler(
-        base_url, wiki_version, models, tagger_ner, args, logger
-    ),
->>>>>>> master
+    make_handler(base_url, wiki_version, models, tagger_ner, args, logger),
 )
 
 try:

@@ -1,34 +1,18 @@
-<<<<<<< HEAD:REL/ner/ngram.py
-from REL.ner.base import NERBase, Span
-from REL.db.generic import GenericLookup
-from REL.utils import preprocess_mention
+import re
 from collections import defaultdict, namedtuple
-import numpy as np
-import re
-=======
-import re
-from collections import defaultdict
 
 import numpy as np
 
+from REL.db.generic import GenericLookup
 from REL.mention_detection_base import MentionDetectionBase
->>>>>>> master:REL/ngram.py
+from REL.ner import NERBase, Span
+from REL.utils import preprocess_mention
 
 
-<<<<<<< HEAD:REL/ner/ngram.py
-class Cmns(NERBase):
-    def __init__(self, base_url, wiki_subfolder, n=5):
-        self.__n = n
-        self.wiki_db = GenericLookup(
-            "entity_word_embedding",
-            "{}/{}/generated/".format(base_url, wiki_subfolder),
-        )
-=======
-class Cmns(MentionDetectionBase):
+class Cmns(NERBase, MentionDetectionBase):
     def __init__(self, base_url, wiki_version, n=5):
         self.__n = n
         super().__init__(base_url, wiki_version)
->>>>>>> master:REL/ngram.py
 
     def predict(self, sentence, sentences_doc):
         """

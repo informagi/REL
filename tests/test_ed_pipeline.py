@@ -5,7 +5,7 @@ from pathlib import Path
 
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.mention_detection import MentionDetection
-from REL.ner.ngram import Cmns
+from REL.ner import Cmns
 from REL.utils import process_results
 
 

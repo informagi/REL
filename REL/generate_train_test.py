@@ -1,26 +1,11 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> master
-from xml.etree import ElementTree
 import os
 import pickle
 import re
+from xml.etree import ElementTree
 
-from REL.utils import (
-<<<<<<< HEAD
-    preprocess_mention,
-    split_in_words_mention,
-    modify_uppercase_phrase,
-)
-from REL.mention_detection import MentionDetection
-from REL.db.generic import GenericLookup
-=======
-    split_in_words_mention,
-    modify_uppercase_phrase,
-)
 from REL.mention_detection_base import MentionDetectionBase
->>>>>>> master
+from REL.utils import modify_uppercase_phrase, split_in_words_mention
+
 
 """
 Class responsible for formatting WNED and AIDA datasets that are required for ED local evaluation and training.
@@ -28,33 +13,19 @@ Inherits overlapping functions from the Mention Detection class.
 """
 
 
-<<<<<<< HEAD
-class GenTrainingTest(MentionDetection):
-=======
 class GenTrainingTest(MentionDetectionBase):
->>>>>>> master
     def __init__(self, base_url, wiki_version, wikipedia):
         self.wned_path = "{}/generic/test_datasets/wned-datasets/".format(base_url)
         self.aida_path = "{}/generic/test_datasets/AIDA/".format(base_url)
         self.wikipedia = wikipedia
         self.base_url = base_url
         self.wiki_version = wiki_version
-<<<<<<< HEAD
-        self.wiki_db = GenericLookup(
-            "entity_word_embedding", "{}/{}/generated/".format(base_url, wiki_version),
-        )
-=======
-
->>>>>>> master
         super().__init__(base_url, wiki_version)
 
     def __format(self, dataset):
         """
         Formats given ground truth spans and entities for local ED datasets.
-<<<<<<< HEAD
 
-=======
->>>>>>> master
         :return: wned dataset with respective ground truth values
         """
 
@@ -62,27 +33,16 @@ class GenTrainingTest(MentionDetectionBase):
 
         for doc in dataset:
             contents = dataset[doc]
-<<<<<<< HEAD
-            self.__sentences_doc = [v[0] for v in contents.values()]
-=======
             sentences_doc = [v[0] for v in contents.values()]
->>>>>>> master
             result_doc = []
 
             for idx_sent, (sentence, ground_truth_sentence) in contents.items():
                 for m, gt, start, ngram in ground_truth_sentence:
                     end = start + len(ngram)
-<<<<<<< HEAD
-                    left_ctxt, right_ctxt = self._get_ctxt(
-                        start, end, idx_sent, sentence
-                    )
-                    cands = self._get_candidates(m)
-=======
                     left_ctxt, right_ctxt = self.get_ctxt(
                         start, end, idx_sent, sentence, sentences_doc
                     )
                     cands = self.get_candidates(m)
->>>>>>> master
 
                     res = {
                         "mention": m,
@@ -170,11 +130,7 @@ class GenTrainingTest(MentionDetectionBase):
                 if pos not in mentions_gt:
                     total_gt += 1
                 mentions_gt[pos] = [
-<<<<<<< HEAD
-                    preprocess_mention(mention_gt, self.wiki_db),
-=======
                     self.preprocess_mention(mention_gt),
->>>>>>> master
                     ent_title,
                     mention_gt,
                 ]
@@ -320,11 +276,7 @@ class GenTrainingTest(MentionDetectionBase):
                         )  # + 1 for space between mention and sentence
                         gt_sent.append(
                             [
-<<<<<<< HEAD
-                                preprocess_mention(mention_gt, self.wiki_db),
-=======
                                 self.preprocess_mention(mention_gt),
->>>>>>> master
                                 ent_title,
                                 pos_mention_gt,
                                 mention_gt,

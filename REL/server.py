@@ -1,11 +1,10 @@
-from http.server import BaseHTTPRequestHandler
-import torch
-import time
 import json
+from http.server import BaseHTTPRequestHandler
+
+from flair.models import SequenceTagger
 
 from REL.mention_detection import MentionDetection
 from REL.utils import process_results
-from flair.models import SequenceTagger
 
 API_DOC = "API_DOC"
 
@@ -13,14 +12,8 @@ API_DOC = "API_DOC"
 Class/function combination that is used to setup an API that can be used for e.g. GERBIL evaluation.
 """
 
-<<<<<<< HEAD
 
-def make_handler(base_url, wiki_subfolder, model, tagger_ner):
-=======
-def make_handler(
-    base_url, wiki_version, model, tagger_ner
-):
->>>>>>> master
+def make_handler(base_url, wiki_version, model, tagger_ner):
     class GetHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             self.model = model
@@ -95,7 +88,7 @@ def make_handler(
             text = text.replace("&amp;", "&")
 
             # GERBIL sends dictionary, users send list of lists.
-            if 'spans' in data:
+            if "spans" in data:
                 try:
                     spans = [list(d.values()) for d in data["spans"]]
                 except Exception:

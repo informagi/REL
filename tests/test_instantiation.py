@@ -8,7 +8,7 @@ import torch
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.mention_detection import MentionDetection
 from REL.mulrel_ranker import MulRelRanker, PreRank
-from REL.ner.ngram import Cmns
+from REL.ner import Cmns
 
 
 def test_entity_disambiguation_instantiation():
