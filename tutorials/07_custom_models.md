@@ -79,7 +79,10 @@ model_folder
 ├── model.config
 └── model.state_dict
 ```
-Note that the files *must* be named `model.state_dict` and `model.config`!
+Note that the files *must* be named `model.state_dict` and `model.config`!  If
+you wish to use a logistic regression model for confidence estimation, its
+checkpoint must be called `lr_model.pkl` and be in the same directory as the
+model files.
 
 Loading this model:
 ```python
@@ -106,7 +109,8 @@ model_folder
 ```
 The archive filename (minus extension) should be identical to the folder it
 contains.  The model files again *must* be called `model.state_dict` and
-`model.config`. Compressed archives are also supported, see Python's
+`model.config` (and `lr_model.pkl` if applicable). Compressed archives are also
+supported, see Python's
 [tarfile](https://docs.python.org/3/library/tarfile.html) module documentation
 for supported formats.
 

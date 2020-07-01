@@ -64,11 +64,9 @@ class EntityDisambiguation:
         self.__max_conf = None
 
         # Load LR model for confidence.
-        if os.path.exists(
-            "{}/{}/generated/lr_model.pkl".format(base_url, wiki_version)
-        ):
+        if os.path.exists(Path(self.config["model_path"]).parent / "lr_model.pkl"):
             with open(
-                "{}/{}/generated/lr_model.pkl".format(base_url, wiki_version), "rb"
+                Path(self.config["model_path"]).parent / "lr_model.pkl", "rb",
             ) as f:
                 self.model_lr = pkl.load(f)
         else:
