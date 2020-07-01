@@ -22,6 +22,8 @@ aliases.  Available models are listed
 All models that need to be downloaded from the web are cached for subsequent
 use.
 
+*TODO: list evaluations of models here, a la Flair*
+
 Additionally, fields that accept aliases also take URLs and regular file paths
 as values.
 
