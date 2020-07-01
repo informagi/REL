@@ -1,6 +1,7 @@
-import requests
-from REL.training_datasets import TrainingEvaluationDatasets
 import numpy as np
+import requests
+
+from REL.training_datasets import TrainingEvaluationDatasets
 
 np.random.seed(seed=42)
 

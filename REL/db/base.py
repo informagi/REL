@@ -1,9 +1,10 @@
-import sqlite3
-from os import path, makedirs
-import requests
-import logging
-from array import array
 import json
+import logging
+import sqlite3
+from array import array
+from os import makedirs, path
+
+import requests
 
 
 class DB:

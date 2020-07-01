@@ -1,11 +1,12 @@
-from REL.training_datasets import TrainingEvaluationDatasets
-import numpy as np
-import flair
-import torch
-
-from flair.models import SequenceTagger
-from REL.mention_detection import MentionDetection
 from time import time
+
+import flair
+import numpy as np
+import torch
+from flair.models import SequenceTagger
+
+from REL.mention_detection import MentionDetection
+from REL.training_datasets import TrainingEvaluationDatasets
 
 np.random.seed(seed=42)
 

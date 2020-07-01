@@ -4,8 +4,9 @@ from urllib.parse import unquote
 
 import numpy as np
 
-from REL.utils import trim1, first_letter_to_uppercase, unicode2ascii
 from REL.db.generic import GenericLookup
+from REL.utils import first_letter_to_uppercase, trim1, unicode2ascii
+
 
 """
 Class responsible for processing Wikipedia dumps. Performs computations to obtain the p(e|m) index and counts 

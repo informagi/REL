@@ -1,5 +1,5 @@
-from REL.training_datasets import TrainingEvaluationDatasets
 from REL.entity_disambiguation import EntityDisambiguation
+from REL.training_datasets import TrainingEvaluationDatasets
 
 base_url = ""
 wiki_version = ""

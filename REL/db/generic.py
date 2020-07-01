@@ -1,8 +1,11 @@
-from REL.db.base import DB
-from numpy import zeros, float32 as REAL
+from time import time
+
 import numpy as np
 from gensim import utils
-from time import time
+from numpy import float32 as REAL
+from numpy import zeros
+
+from REL.db.base import DB
 
 
 class GenericLookup(DB):

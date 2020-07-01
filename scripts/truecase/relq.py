@@ -3,9 +3,10 @@ Hacky - cli call to rel with string parameter
 python3 text2tag
 """
 
-import sys
-import requests
 import json
+import sys
+
+import requests
 
 IP_ADDRESS = "http://gem.cs.ru.nl/api"
 PORT = "80"

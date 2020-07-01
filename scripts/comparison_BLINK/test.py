@@ -1,6 +1,7 @@
-import blink.main_dense as main_dense
 import argparse
 import logging
+
+import blink.main_dense as main_dense
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

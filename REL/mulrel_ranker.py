@@ -1,7 +1,8 @@
+import numpy as np
 import torch
 import torch.nn.functional as F
 from torch.autograd import Variable
-import numpy as np
+
 
 """
 PreRank class is used for preranking entities for a given mention by multiplying entity vectors with
