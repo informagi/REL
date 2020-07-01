@@ -77,6 +77,7 @@ The remainder of the tutorials are optional and for users who wish to e.g. train
     4. [Training your own Entity Disambiguation model.](https://github.com/informagi/REL/tree/master/tutorials/deploy_REL_new_Wiki/04_04_training_your_own_ED_model.md)
 5. [Reproducing our results](https://github.com/informagi/REL/tree/master/tutorials/05_reproducing_our_results.md)
 6. [REL as systemd service](https://github.com/informagi/REL/tree/master/tutorials/06_systemd_instructions.md)
+7. [Notes on using custom models](https://github.com/informagi/REL/tree/master/tutorials/07_custom_models.md)
 
 # Cite
 If you are using REL, please cite the following paper:
