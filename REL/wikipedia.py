@@ -13,9 +13,10 @@ class Wikipedia:
         # if include_wiki_id_name:
         self.wiki_disambiguation_index = self.generate_wiki_disambiguation_map()
         print("Loaded wiki disambiguation index")
-        self.wiki_redirects_index, self.wiki_redirects_id_index = (
-            self.generate_wiki_redirect_map()
-        )
+        (
+            self.wiki_redirects_index,
+            self.wiki_redirects_id_index,
+        ) = self.generate_wiki_redirect_map()
         print("Loaded wiki redirects index")
         self.wiki_id_name_map = self.gen_wiki_name_map()
         print("Loaded entity index")

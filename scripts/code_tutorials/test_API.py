@@ -10,10 +10,7 @@ document = {
 }
 
 # Example ED.
-document = {
-    "text": text_doc,
-    "spans": [(41, 16)]
-}
+document = {"text": text_doc, "spans": [(41, 16)]}
 
 API_result = requests.post("{}:{}".format(IP_ADDRESS, PORT), json=document).json()
 print(API_result)

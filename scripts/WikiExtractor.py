@@ -54,8 +54,6 @@ collecting template definitions.
 
 """
 
-from __future__ import unicode_literals, division
-
 import sys
 import argparse
 import bz2
@@ -72,37 +70,12 @@ from multiprocessing import Queue, Process, Value, cpu_count
 from timeit import default_timer
 
 
-PY2 = sys.version_info[0] == 2
-# Python 2.7 compatibiity
-if PY2:
-    from urllib import quote
-    from htmlentitydefs import name2codepoint
-    from itertools import izip as zip, izip_longest as zip_longest
+from urllib.parse import quote
+from html.entities import name2codepoint
+from itertools import zip_longest
+from types import SimpleNamespace
 
-    range = xrange  # Use Python 3 equivalent
-    chr = unichr  # Use Python 3 equivalent
-    text_type = unicode
-
-    class SimpleNamespace(object):
-        def __init__(self, **kwargs):
-            self.__dict__.update(kwargs)
-
-        def __repr__(self):
-            keys = sorted(self.__dict__)
-            items = ("{}={!r}".format(k, self.__dict__[k]) for k in keys)
-            return "{}({})".format(type(self).__name__, ", ".join(items))
-
-        def __eq__(self, other):
-            return self.__dict__ == other.__dict__
-
-
-else:
-    from urllib.parse import quote
-    from html.entities import name2codepoint
-    from itertools import zip_longest
-    from types import SimpleNamespace
-
-    text_type = str
+text_type = str
 
 
 # ===========================================================================
@@ -2926,12 +2899,13 @@ def pages_from(input):
     page = []
     id = None
     ns = "0"
-    # last_id = None
+    last_id = None
     revid = None
     inText = False
     redirect = False
     redirect_title = ""
     title = None
+    catSet = set()
     for line in input:
         if not isinstance(line, text_type):
             line = line.decode("utf-8")
@@ -3130,9 +3104,16 @@ def process_dump(
         with open("./wiki_disambiguation_pages.txt", "w") as dis_f:
             with open("./wiki_name_id_map.txt", "w") as id_f:
                 for page_data in pages_from(input):
-                    id, revid, title, ns, catSet, page, redirect, redirect_title = (
-                        page_data
-                    )
+                    (
+                        id,
+                        revid,
+                        title,
+                        ns,
+                        catSet,
+                        page,
+                        redirect,
+                        redirect_title,
+                    ) = page_data
 
                     # If it crashes, can restart from a certain id.
                     # NOTE CUSTOM
@@ -3249,7 +3230,7 @@ def reduce_process(
         nextFile = NextFile(out_file)
         output = OutputSplitter(nextFile, file_size, file_compress)
     else:
-        output = sys.stdout if PY2 else sys.stdout.buffer
+        output = sys.stdout.buffer
         if file_compress:
             logging.warn(
                 "writing to stdout, so no output compression (use an external tool)"

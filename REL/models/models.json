@@ -1,0 +1,5 @@
+{
+  "ner-fast-with-lowercase": "http://gem.cs.ru.nl/ner-fast-with-lowercase.pt",
+  "ed-wiki-2019": "http://gem.cs.ru.nl/ed-wiki-2019.tar.gz",
+  "ed-wiki-2014": "http://gem.cs.ru.nl/ed-wiki-2014.tar.gz"
+}

@@ -5,6 +5,7 @@ import logging
 from array import array
 import json
 
+
 class DB:
     @staticmethod
     def download_file(url, local_filename):
@@ -17,10 +18,12 @@ class DB:
             str: file name of the downloaded file.
         """
         r = requests.get(url, stream=True, verify=False)
-        if path.dirname(local_filename) and not path.isdir(path.dirname(local_filename)):
+        if path.dirname(local_filename) and not path.isdir(
+            path.dirname(local_filename)
+        ):
             raise Exception(local_filename)
             makedirs(path.dirname(local_filename))
-        with open(local_filename, 'wb') as f:
+        with open(local_filename, "wb") as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:
                     f.write(chunk)
@@ -55,10 +58,9 @@ class DB:
         #     )
         #     print(createSecondaryIndex)
         #     c.execute(createSecondaryIndex)
-        createSecondaryIndex = "CREATE INDEX if not exists idx_{} ON {}({})".format('lower',
-                                                                                    'wiki',
-                                                                                    'lower'
-                                                                                    )
+        createSecondaryIndex = "CREATE INDEX if not exists idx_{} ON {}({})".format(
+            "lower", "wiki", "lower"
+        )
         print(createSecondaryIndex)
         c.execute(createSecondaryIndex)
 
@@ -88,7 +90,9 @@ class DB:
         try:
             # Adding the transaction statement reduces total time from approx 37h to 1.3h.
             c.execute("BEGIN TRANSACTION;")
-            c.executemany("insert into {} values (?, ?)".format(self.table_name), binarized)
+            c.executemany(
+                "insert into {} values (?, ?)".format(self.table_name), binarized
+            )
             c.execute("COMMIT;")
         except Exception as e:
             print("insert failed\n{}".format([w for w, e in batch]))
@@ -110,7 +114,8 @@ class DB:
         """
         c = self.db.cursor()
         binarized = [
-            (word, self.dict_to_binary(p_e_m), lower, occ) for word, p_e_m, lower, occ in batch
+            (word, self.dict_to_binary(p_e_m), lower, occ)
+            for word, p_e_m, lower, occ in batch
         ]
         try:
             # Adding the transaction statement reduces total time from approx 37h to 1.3h.
@@ -177,10 +182,11 @@ class DB:
                 "select {} from {} where word = :word".format(column, table_name),
                 {"word": w},
             ).fetchone()
-        res = e if e is None else self.binary_to_dict(e[0]) if column == "p_e_m" else e[0]
+        res = (
+            e if e is None else self.binary_to_dict(e[0]) if column == "p_e_m" else e[0]
+        )
 
         return res
-
 
     def ensure_file(self, name, url=None, logger=logging.getLogger()):
         """
@@ -194,11 +200,11 @@ class DB:
         Returns:
             str: file name of the downloaded file.
         """
-        fname = '{}/{}'.format(self.save_dir, name)
+        fname = "{}/{}".format(self.save_dir, name)
         if not path.isfile(fname):
             if url:
-                logger.critical('Downloading from {} to {}'.format(url, fname))
-                Embedding.download_file(url, fname)
+                logger.critical("Downloading from {} to {}".format(url, fname))
+                DB.download_file(url, fname)
             else:
-                raise Exception('{} does not exist!'.format(fname))
+                raise Exception("{} does not exist!".format(fname))
         return fname

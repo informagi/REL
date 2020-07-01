@@ -1,6 +1,7 @@
 # REL: Radboud Entity Linker
 
 ![API status](https://img.shields.io/endpoint?label=status&url=https%3A%2F%2Frel.cs.ru.nl%2Fapi)
+![build](https://github.com/informagi/REL/workflows/build/badge.svg)
 
 REL is a modular Entity Linking package that is provided as a Python package as well as a web API. REL has various meanings -  one might first notice that it stands for relation, which is a suiting name for the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
 
@@ -8,7 +9,7 @@ REL utilizes *English* Wikipedia as a knowledge base and can be used for the fol
 - **Entity linking (EL)**: Given a text, the system outputs a list of mention-entity pairs, where each mention is a n-gram from text and each entity is an entity in the knowledge base.
 - **Entity Disambiguation (ED)**: Given a text and a list of mentions, the system assigns an entity (or NIL) to each mention.
 
-# Calling our API
+# Setup API
 This section elaborates on how a user may utilize our API. Steps include obtaining an API key and querying our API. 
 
 ### Obtaining a key
@@ -40,16 +41,16 @@ document = {
 API_result = requests.post("{}".format(IP_ADDRESS), json=document).json()
 ```
 
-# Deploy REL on your machine
+# Setup package
 This section describes how to deploy REL on a local machine and setup the API.
 
-## Install package
+## Installation
 Run the following command in a terminal to install REL:
 ```
 pip install git+https://github.com/informagi/REL
 ```
 
-## Download data files
+## Download
 The files used for this project can be divided into three categories. The first is a generic set of documents and embeddings that was used throughout the project. This folder includes the GloVe embeddings used by Le et al. and the unprocessed datasets that were used to train
 the ED model. The second and third category are Wikipedia corpus related files, which in our case either originate from a 2014 or 
 2019 corpus. Alternatively, users may use their own corpus, for which we refer to the tutorials.
@@ -76,6 +77,7 @@ The remainder of the tutorials are optional and for users who wish to e.g. train
     4. [Training your own Entity Disambiguation model.](https://github.com/informagi/REL/tree/master/tutorials/deploy_REL_new_Wiki/04_04_training_your_own_ED_model.md)
 5. [Reproducing our results](https://github.com/informagi/REL/tree/master/tutorials/05_reproducing_our_results.md)
 6. [REL as systemd service](https://github.com/informagi/REL/tree/master/tutorials/06_systemd_instructions.md)
+7. [Notes on using custom models](https://github.com/informagi/REL/tree/master/tutorials/07_custom_models.md)
 
 # Cite
 If you are using REL, please cite the following paper:

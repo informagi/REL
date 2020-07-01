@@ -6,6 +6,7 @@ class Token:
         self.score = score
         self.tag = tag
 
+
 class MD_Module(object):
     def __init__(self, param1, param2):
         self.param1 = param1

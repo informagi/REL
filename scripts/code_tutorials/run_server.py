@@ -1,11 +1,8 @@
 from http.server import HTTPServer
 
-from flair.models import SequenceTagger
-
 from REL.entity_disambiguation import EntityDisambiguation
+from REL.ner import load_flair_ner
 from REL.server import make_handler
-from REL.ngram import Cmns
-from REL.example_custom_MD import MD_Module
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
 base_url = "/users/vanhulsm/Desktop/projects/data/"
@@ -15,25 +12,18 @@ wiki_version = "wiki_2014"
 # If mode is equal to 'eval', then the model_path should point to an existing model.
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(
-        base_url, wiki_version
-    ),
+    "model_path": "{}/{}/generated/model".format(base_url, wiki_version),
 }
 
 model = EntityDisambiguation(base_url, wiki_version, config)
 
 # 2. Create NER-tagger.
-tagger_ner = SequenceTagger.load("ner-fast")
-tagger_custom = MD_Module('param1', 'param2')
-tagger_ngram = Cmns(base_url, wiki_version, n=5)
+tagger_ner = load_flair_ner("ner-fast")  # or another tagger
 
 # 3. Init server.
-server_address = ("127.0.0.1", 1235)
+server_address = ("127.0.0.1", 5555)
 server = HTTPServer(
-    server_address,
-    make_handler(
-        base_url, wiki_version, model, tagger_ngram
-    ),
+    server_address, make_handler(base_url, wiki_version, model, tagger_ner),
 )
 
 try:

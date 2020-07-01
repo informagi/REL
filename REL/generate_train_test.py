@@ -1,13 +1,11 @@
-from xml.etree import ElementTree
 import os
 import pickle
 import re
+from xml.etree import ElementTree
 
-from REL.utils import (
-    split_in_words_mention,
-    modify_uppercase_phrase,
-)
 from REL.mention_detection_base import MentionDetectionBase
+from REL.utils import modify_uppercase_phrase, split_in_words_mention
+
 
 """
 Class responsible for formatting WNED and AIDA datasets that are required for ED local evaluation and training.
@@ -22,12 +20,12 @@ class GenTrainingTest(MentionDetectionBase):
         self.wikipedia = wikipedia
         self.base_url = base_url
         self.wiki_version = wiki_version
-
         super().__init__(base_url, wiki_version)
 
     def __format(self, dataset):
         """
         Formats given ground truth spans and entities for local ED datasets.
+
         :return: wned dataset with respective ground truth values
         """
 

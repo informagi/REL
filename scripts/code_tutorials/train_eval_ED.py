@@ -10,9 +10,7 @@ datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()
 # 2. Init model, where user can set his/her own config that will overwrite the default config.
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(
-        base_url, wiki_version
-    ),
+    "model_path": "{}/{}/generated/model".format(base_url, wiki_version),
 }
 model = EntityDisambiguation(base_url, wiki_version, config)
 
@@ -23,5 +21,3 @@ if config["mode"] == "train":
     )
 else:
     model.evaluate({k: v for k, v in datasets.items() if "train" not in k})
-
-

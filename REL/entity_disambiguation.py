@@ -1,22 +1,27 @@
-import os
 import json
-from random import shuffle
-import time
-import re
+import os
 import pickle as pkl
+import re
+import tarfile
+import time
+from pathlib import Path
+from random import shuffle
+from typing import Any, Dict
+from urllib.parse import urlparse
 
-import torch
-from torch.autograd import Variable
-import torch.optim as optim
 import numpy as np
+import pkg_resources
+import torch
+import torch.optim as optim
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
+from torch.autograd import Variable
 
-from REL.vocabulary import Vocabulary
-from REL.mulrel_ranker import MulRelRanker, PreRank
 import REL.utils as utils
-from REL.training_datasets import TrainingEvaluationDatasets
 from REL.db.generic import GenericLookup
+from REL.mulrel_ranker import MulRelRanker, PreRank
+from REL.training_datasets import TrainingEvaluationDatasets
+from REL.vocabulary import Vocabulary
 
 """
 Parent Entity Disambiguation class that directs the various subclasses used
@@ -24,6 +29,7 @@ for the ED step.
 """
 
 wiki_prefix = "en.wikipedia.org/wiki/"
+
 
 class EntityDisambiguation:
     def __init__(self, base_url, wiki_version, user_config, reset_embeddings=False):
@@ -38,15 +44,18 @@ class EntityDisambiguation:
         self.reset_embeddings = reset_embeddings
 
         self.emb = GenericLookup(
-            "entity_word_embedding",
-            "{}/{}/generated/".format(base_url, wiki_version),
+            "entity_word_embedding", "{}/{}/generated/".format(base_url, wiki_version),
         )
-        test = self.emb.emb(["in"], "embeddings")[0]
-        assert test is not None, "Wikipedia embeddings in wrong folder..? Test embedding not found.."
+        # test = self.emb.emb(["in"], "embeddings")[0]
+        # assert (
+        #     test is not None
+        # ), "Wikipedia embeddings in wrong folder..? Test embedding not found.."
 
         self.g_emb = GenericLookup("common_drawl", "{}/generic/".format(base_url))
         test = self.g_emb.emb(["in"], "embeddings")[0]
-        assert test is not None, "Glove embeddings in wrong folder..? Test embedding not found.."
+        assert (
+            test is not None
+        ), "Glove embeddings in wrong folder..? Test embedding not found.."
 
         self.__load_embeddings()
         self.coref = TrainingEvaluationDatasets("{}".format(base_url), wiki_version)
@@ -55,11 +64,13 @@ class EntityDisambiguation:
         self.__max_conf = None
 
         # Load LR model for confidence.
-        if os.path.exists("{}/{}/generated/lr_model.pkl".format(base_url, wiki_version)):
-            with open("{}/{}/generated/lr_model.pkl".format(base_url, wiki_version), 'rb') as f:
+        if os.path.exists(Path(self.config["model_path"]).parent / "lr_model.pkl"):
+            with open(
+                Path(self.config["model_path"]).parent / "lr_model.pkl", "rb",
+            ) as f:
                 self.model_lr = pkl.load(f)
         else:
-            print('No LR model found, confidence scores ED will be set to zero.')
+            print("No LR model found, confidence scores ED will be set to zero.")
             self.model_lr = None
 
         if self.config["mode"] == "eval":
@@ -77,7 +88,7 @@ class EntityDisambiguation:
         :return: configuration used for ED.
         """
 
-        default_config = {
+        default_config: Dict[str, Any] = {
             "mode": "train",
             "model_path": "./",
             "prerank_ctx_window": 50,
@@ -108,10 +119,33 @@ class EntityDisambiguation:
             "oracle": False,
         }
 
-        config = {
-            k: user_config[k] if k in user_config else v
-            for k, v in default_config.items()
-        }
+        default_config.update(user_config)
+        config = default_config
+
+        model_dict = json.loads(
+            pkg_resources.resource_string("REL.models", "models.json")
+        )
+        model_path: str = config["model_path"]
+        # load aliased url if it exists, else keep original string
+        config["model_path"] = model_dict.get(model_path, model_path)
+
+        if urlparse(str(config["model_path"])).scheme in ("http", "https"):
+            model_path = utils.fetch_model(
+                config["model_path"], cache_dir=Path("~/.rel_cache").expanduser(),
+            )
+            assert tarfile.is_tarfile(model_path), "Only tar-files are supported!"
+            # make directory with name of tarfile (minus extension)
+            # extract the files in the archive to that directory
+            # assign config[model_path] accordingly
+            with tarfile.open(model_path) as f:
+                f.extractall(Path("~/.rel_cache").expanduser())
+            # NOTE: use double stem to deal with e.g. *.tar.gz
+            # this also handles *.tar correctly
+            stem = Path(Path(model_path).stem).stem
+            # NOTE: it is required that the model file(s) are named "model.state_dict"
+            # and "model.config" if supplied, other names won't work.
+            config["model_path"] = Path("~/.rel_cache").expanduser() / stem / "model"
+
         return config
 
     def __load_embeddings(self):
@@ -327,8 +361,11 @@ class EntityDisambiguation:
         :return: -
         """
 
+        train = self.get_data_items(datasets["train"], "train", predict=True)
+
         dev_datasets = []
         for dname, data in list(datasets.items()):
+            start = time.time()
             dev_datasets.append((dname, self.get_data_items(data, dname, predict=True)))
 
         for dname, data in dev_datasets:
@@ -352,12 +389,12 @@ class EntityDisambiguation:
         for doc, preds in predictions.items():
             gt_doc = [c["gold"][0] for c in datasets[dname][doc]]
             for pred, gt in zip(preds, gt_doc):
-                scores = [float(x) for x in pred['scores']]
-                cands = pred['candidates']
+                scores = [float(x) for x in pred["scores"]]
+                cands = pred["candidates"]
 
                 # Build classes
                 for i, c in enumerate(cands):
-                    if c == '#UNK#':
+                    if c == "#UNK#":
                         continue
 
                     X.append([scores[i]])
@@ -377,18 +414,20 @@ class EntityDisambiguation:
         :return: -
         """
 
-        train_dataset = self.get_data_items(datasets['aida_train'], "train", predict=False)
+        train_dataset = self.get_data_items(
+            datasets["aida_train"], "train", predict=False
+        )
 
         dev_datasets = []
         for dname, data in list(datasets.items()):
-            if dname == 'aida_train':
+            if dname == "aida_train":
                 continue
             dev_datasets.append((dname, self.get_data_items(data, dname, predict=True)))
 
         model = LogisticRegression()
 
         predictions = self.__predict(train_dataset, eval_raw=True)
-        X, y, meta = self.__create_dataset_LR(datasets, predictions, 'aida_train')
+        X, y, meta = self.__create_dataset_LR(datasets, predictions, "aida_train")
         model.fit(X, y)
 
         for dname, data in dev_datasets:
@@ -399,10 +438,12 @@ class EntityDisambiguation:
 
             decisions = (preds >= threshold).astype(int)
 
-            print(utils.tokgreen('{}, F1-score: {}'.format(dname, f1_score(y, decisions))))
+            print(
+                utils.tokgreen("{}, F1-score: {}".format(dname, f1_score(y, decisions)))
+            )
 
         if store_offline:
-            with open('{}/lr_model.pkl'.format(model_path_lr), 'wb') as handle:
+            with open("{}/lr_model.pkl".format(model_path_lr), "wb") as handle:
                 pkl.dump(model, handle, protocol=pkl.HIGHEST_PROTOCOL)
 
     def predict(self, data):

@@ -1,3 +1,4 @@
+colorama
 tiny-tokenizer
 flair
 unidecode

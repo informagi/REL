@@ -4,6 +4,7 @@ import numpy as np
 from gensim import utils
 from time import time
 
+
 class GenericLookup(DB):
     def __init__(
         self,
@@ -19,16 +20,16 @@ class GenericLookup(DB):
             d_emb: embedding dimensions.
             show_progress: whether to print progress.
         """
-        self.avg_cnt = {"word": {"cnt": 0, "sum": zeros(d_emb)},
-                        "entity": {"cnt": 0, "sum": zeros(d_emb)}}
+        self.avg_cnt = {
+            "word": {"cnt": 0, "sum": zeros(d_emb)},
+            "entity": {"cnt": 0, "sum": zeros(d_emb)},
+        }
 
         path_db = "{}/{}.db".format(save_dir, name)
 
         self.d_emb = d_emb
         self.name = name
-        self.db = self.initialize_db(
-            path_db, table_name, columns
-        )
+        self.db = self.initialize_db(path_db, table_name, columns)
         self.table_name = table_name
         self.columns = columns
 
@@ -96,7 +97,7 @@ class GenericLookup(DB):
                     self.insert_batch_emb(batch)
                     batch.clear()
 
-        for x in ['entity', 'word']:
+        for x in ["entity", "word"]:
             if self.avg_cnt[x]["cnt"] > 0:
                 batch.append(
                     (
@@ -133,6 +134,7 @@ class GenericLookup(DB):
 
         self.create_index()
 
+
 if __name__ == "__main__":
     save_dir = "C:/Users/mickv/Desktop/data_back/wiki_2019/generated"
 
@@ -154,9 +156,16 @@ if __name__ == "__main__":
     # lowercase = wiki.wiki("Netherlands".lower(), "wiki", "lower")
 
     # Embedding load.
-    emb = GenericLookup('entity_word_embedding', save_dir=save_dir, table_name='embeddings')
-    emb.load_word2emb('D:/enwiki-20190701-model-w2v-dim300', batch_size=5000, reset=True)
+    emb = GenericLookup(
+        "entity_word_embedding", save_dir=save_dir, table_name="embeddings"
+    )
+    emb.load_word2emb(
+        "D:/enwiki-20190701-model-w2v-dim300", batch_size=5000, reset=True
+    )
 
     # Query
     import torch
-    embeddings = torch.stack([torch.tensor(e) for e in emb.emb(['in', 'the', 'end'], "embeddings")])
+
+    embeddings = torch.stack(
+        [torch.tensor(e) for e in emb.emb(["in", "the", "end"], "embeddings")]
+    )
