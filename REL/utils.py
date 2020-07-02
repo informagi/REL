@@ -100,11 +100,11 @@ def process_results(
                 temp = (
                     start_pos,
                     mention_length,
-                    pred["prediction"],
                     ment["ngram"],
-                    ment["conf_md"] if "conf_md" in ment else -1,
-                    ment["tag"] if "tag" in ment else "NULL",
+                    pred["prediction"],
                     pred["conf_ed"],
+                    ment["conf_md"] if "conf_md" in ment else 0.0,
+                    ment["tag"] if "tag" in ment else "NULL",
                 )
                 res_doc.append(temp)
         res[doc] = res_doc
