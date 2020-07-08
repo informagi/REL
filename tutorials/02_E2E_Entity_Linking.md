@@ -29,7 +29,7 @@ by setting `reset_embeddings=True`.
 ```python
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(base_url, wiki_version),
+    "model_path": "path/to/model",  # or alias, see also tutorial 7: custom models
 }
 
 model = EntityDisambiguation(base_url, wiki_version, config)
@@ -137,7 +137,7 @@ on the mentions that we previously found.
 ```python
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(base_url, wiki_version),
+    "model_path": "path/to/model",
 }
 
 model = EntityDisambiguation(base_url, wiki_version, config)
