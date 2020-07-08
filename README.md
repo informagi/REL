@@ -44,11 +44,33 @@ API_result = requests.post("{}".format(IP_ADDRESS), json=document).json()
 # Setup package
 This section describes how to deploy REL on a local machine and setup the API.
 
-## Installation
+## Installation using Docker
+To build the Docker image yourself, run:
+```bash
+# Clone the repository
+git clone https://github.com/informagi/REL && cd REL
+# Build the Docker image
+docker build - -t informagi/rel < Dockerfile
+```
+The build process will automatically download all necessary files.
+
+To run the API locally:
+```bash
+# Map container port 5555 to local port 5555
+docker run -p 5555:5555 --rm -it informagi/rel
+# Or automatically generate port mapping
+docker run -P --rm -it informagi/rel
+```
+
+Now you can make requests to `http://localhost:5555` (or another port if you
+use a different mapping) in the format described in the example above.
+
+## Installation from source
 Run the following command in a terminal to install REL:
 ```
 pip install git+https://github.com/informagi/REL
 ```
+You will also need to manually download the files described in the next section.
 
 ## Download
 The files used for this project can be divided into three categories. The first is a generic set of documents and embeddings that was used throughout the project. This folder includes the GloVe embeddings used by Le et al. and the unprocessed datasets that were used to train
