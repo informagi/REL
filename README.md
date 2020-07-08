@@ -55,11 +55,15 @@ The files used for this project can be divided into three categories. The first 
 the ED model. The second and third category are Wikipedia corpus related files, which in our case either originate from a 2014 or 
 2019 corpus. Alternatively, users may use their own corpus, for which we refer to the tutorials.
 
-[Download generic files](https://drive.google.com/file/d/15rz-q7ohCIZg-2hVqYojaos4ag79phSd/view?usp=sharing)
+[Download generic files](http://gem.cs.ru.nl/generic.tar.gz)
 
-[Download Wikipedia corpus (2014)](https://drive.google.com/file/d/1BhUA7h6PaP7ZcFJpLZzXxAH3k_EK1Iw-/view?usp=sharing)
+[Download Wikipedia corpus (2014)](http://gem.cs.ru.nl/wiki_2014.tar.gz)
 
-[Download Wikipedia corpus (2019)](https://drive.google.com/file/d/1Baxh36Eg0zhZ60PFRL4bjP8Z7Tz8F4hk/view?usp=sharing)
+[Download ED model 2014](http://gem.cs.ru.nl/ed-wiki-2014.tar.gz)
+
+[Download Wikipedia corpus (2019)](http://gem.cs.ru.nl/wiki_2019.tar.gz)
+
+[Download ED model 2019](http://gem.cs.ru.nl/ed-wiki-2019.tar.gz)
 
 ## Tutorials
 To promote usage of this package we developed various tutorials. If you simply want to use our API, then 
@@ -97,4 +101,4 @@ If you are using REL, please cite the following paper:
 Please email your questions or comments to [Mick van Hulst](mailto:mick.vanhulst@gmail.com)
 
 # Acknowledgements
-Our thanks go out to the authors that open-sourced their code, enabling us to this package that can hopefully be of service to many.
+Our thanks go out to the authors that open-sourced their code, enabling us to create this package that can hopefully be of service to many.
