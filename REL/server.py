@@ -140,3 +140,36 @@ def make_handler(base_url, wiki_version, model, tagger_ner):
             return []
 
     return GetHandler
+
+
+if __name__ == "__main__":
+    import argparse
+    from http.server import HTTPServer
+
+    from REL.entity_disambiguation import EntityDisambiguation
+    from REL.ner import load_flair_ner
+
+    p = argparse.ArgumentParser()
+    p.add_argument("base_url")
+    p.add_argument("wiki_version")
+    p.add_argument("--ed-model", default="ed-wiki-2019")
+    p.add_argument("--ner-model", default="ner-fast")
+    p.add_argument("--bind", "-b", metavar="ADDRESS", default="0.0.0.0")
+    p.add_argument("--port", "-p", default="5555")
+    args = p.parse_args()
+
+    ner_model = load_flair_ner(args.ner_model)
+    ed_model = EntityDisambiguation(
+        args.base_url, args.wiki_version, {"mode": "eval", "model_path": args.ed_model}
+    )
+    server_address = (args.bind, args.port)
+    server = HTTPServer(
+        server_address,
+        make_handler(args.base_url, args.wiki_version, ed_model, ner_model),
+    )
+
+    try:
+        print("Ready for listening.")
+        server.serve_forever()
+    except KeyboardInterrupt:
+        exit(0)

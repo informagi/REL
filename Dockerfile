@@ -16,4 +16,4 @@ RUN git clone https://github.com/informagi/REL && cd REL && git checkout docker 
 EXPOSE 5555
 
 # run REL server
-ENTRYPOINT python REL/scripts/code_tutorials/run_server.py ./ wiki_2019
+ENTRYPOINT python -m rel.server ./ wiki_2019 --bind 0.0.0.0 --port 5555
