@@ -17,7 +17,7 @@ At the moment we do not require obtaining a key; please continue to the next ste
 
 ### Querying our API
 Users may access our API by using the example script below. 
-For EL, the user should leave the `spans` field empty. For ED, however, the `spans` field should be filled with a list of tuples, each tuple indicating he start position and length of a mention.
+For EL, the `spans` field is not required. For ED, however, the `spans` field should consist of a list of tuples, where each tuple refers to the start position and length of a mention.
 
 ```python
 import requests
@@ -28,7 +28,6 @@ text_doc = "If you're going to try, go all the way - Charles Bukowski"
 # Example EL.
 document = {
     "text": text_doc,
-    "spans": []
 }
 
 # Example ED.
