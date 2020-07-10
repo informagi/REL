@@ -155,7 +155,7 @@ if __name__ == "__main__":
     p.add_argument("--ed-model", default="ed-wiki-2019")
     p.add_argument("--ner-model", default="ner-fast")
     p.add_argument("--bind", "-b", metavar="ADDRESS", default="0.0.0.0")
-    p.add_argument("--port", "-p", default="5555")
+    p.add_argument("--port", "-p", default=5555, type=int)
     args = p.parse_args()
 
     ner_model = load_flair_ner(args.ner_model)
