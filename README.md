@@ -52,7 +52,14 @@ git clone https://github.com/informagi/REL && cd REL
 # Build the Docker image
 docker build - -t informagi/rel < Dockerfile
 ```
-The build process will automatically download all necessary files.
+The build process will automatically download all necessary files. Wikipedia
+version 2019 is used by default - to specify the Wikipedia version (either 2019
+or 2014), pass e.g. `--build-arg WIKI_YEAR=2014` to the `docker build`
+command:
+
+```bash
+docker build - -t informagi/rel --build-arg WIKI_YEAR=2014 < Dockerfile
+```
 
 To run the API locally:
 ```bash
