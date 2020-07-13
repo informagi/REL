@@ -15,7 +15,7 @@ setuptools.setup(
     description="Entity Linking package",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/mickvanhulst/rel",
+    url="https://github.com/informagi/REL",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
