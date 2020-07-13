@@ -41,7 +41,7 @@ API_result = requests.post("{}".format(IP_ADDRESS), json=document).json()
 ```
 
 # Setup package
-This section describes how to deploy REL on a local machine and setup the API.
+This section describes how to deploy REL on a local machine and setup the API. If you want to do anything more than simply running our API locally, you can skip the Docker steps and continue with installation from source.
 
 ## Installation using Docker
 To build the Docker image yourself, run:
