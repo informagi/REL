@@ -13,7 +13,7 @@ ARG WIKI_YEAR="2019"
 RUN test "$WIKI_YEAR" = "2019" || test "$WIKI_YEAR" = "2014"
 
 # these files are generic for any wikipedia version
-RUN wget "http://gem.cs.ru.nl/generic.tar.gz" && \
+RUN wget -q "http://gem.cs.ru.nl/generic.tar.gz" && \
     tar xzf "generic.tar.gz" && \
     rm "generic.tar.gz"
 
@@ -26,7 +26,7 @@ RUN git clone "https://github.com/informagi/REL" && \
 
 # pull files necessary for WIKI_YEAR (2014 or 2019) English wiki setup from fileserver;
 # do this last to optimize cache usage
-RUN wget "http://gem.cs.ru.nl/wiki_$WIKI_YEAR.tar.gz" && \
+RUN wget -q "http://gem.cs.ru.nl/wiki_$WIKI_YEAR.tar.gz" && \
     tar xzf "wiki_$WIKI_YEAR.tar.gz" && \
     rm "wiki_$WIKI_YEAR.tar.gz"
 
