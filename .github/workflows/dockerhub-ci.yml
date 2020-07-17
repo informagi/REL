@@ -1,0 +1,21 @@
+name: Dockerhub CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Login to Dockerhub registry
+      run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+    - name: Build the Docker image for 2014
+      run: docker build . --file Dockerfile --build-arg WIKI_YEAR=2014 --tag informagi/rel:2014
+    - name: Push the Docker image for 2014
+      run: docker push informagi/rel:2014
+    - name: Build the Docker image for 2019
+      run: docker build . --file Dockerfile --builg-arg WIKI_YEAR=2019 --tag informagi/rel:2019
+    - name: Push the Docker image for 2019
+      run: docker push informagi/rel:2019
