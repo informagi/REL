@@ -83,6 +83,7 @@ class Wikipedia:
 
         :return: disambiguation index
         """
+
         wiki_disambiguation_index = {}
         path = os.path.join(self.base_url, "/basic_data/wiki_disambiguation_pages.txt")
 
@@ -104,6 +105,7 @@ class Wikipedia:
 
         :return: disambiguation index
         """
+
         wiki_id_name_map = {"ent_name_to_id": {}, "ent_id_to_name": {}}
         path = os.path.join(self.base_url, "/basic_data/wiki_name_id_map.txt")
         with open(path, "r", encoding="utf-8") as f:
