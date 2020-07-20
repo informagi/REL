@@ -1,5 +1,5 @@
 import pickle
-
+import os
 
 """
 Class responsible for loading training/evaluation datasets for local ED.
@@ -13,7 +13,7 @@ class TrainingEvaluationDatasets:
 
     def __init__(self, base_url, wiki_version):
         self.person_names = self.__load_person_names(
-            "{}/generic/p_e_m_data/persons.txt".format(base_url)
+            os.path.join(base_url, '/generic/p_e_m_data/persons.txt')
         )
         self.base_url = base_url + wiki_version
 
@@ -37,7 +37,7 @@ class TrainingEvaluationDatasets:
 
             print("Loading {}".format(ds))
             datasets[ds] = self.__read_pickle_file(
-                "{}/generated/test_train_data/{}.pkl".format(self.base_url, ds)
+                os.path.join(self.base_url, '/generated/test_train_data/', ds, '.pkl')
             )
 
             if ds == "wned-wikipedia":

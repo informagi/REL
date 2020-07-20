@@ -13,7 +13,6 @@ word vectors
 class PreRank(torch.nn.Module):
     def __init__(self, config, embeddings=None):
         super(PreRank, self).__init__()
-        # self.embeddings = embeddings
         self.config = config
 
     def forward(self, token_ids, token_offsets, entity_ids, embeddings, emb):

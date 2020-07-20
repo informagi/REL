@@ -158,19 +158,6 @@ def split_in_words_mention(inputstr):
     tokenizer = RegexpTokenizer(r"\w+")
     return [unidecode.unidecode(w) for w in inputstr.split()]  # #inputstr.split()]#
 
-
-# def split_in_words_context(inputstr):
-#     '''
-#     TODO:
-#     This regexp also splits 'AL-NAHAR', which should be a single word
-#     into 'AL' and 'NAHAR', resulting in the inability to find a match.
-
-#     Same with U.S.
-#     '''
-#     tokenizer = RegexpTokenizer(r'\w+')
-#     return [unidecode.unidecode(w) for w in inputstr.split()]# #inputstr.split()]#
-
-
 def correct_type(args, data):
     if "cuda" in args.type:
         return data.cuda()
