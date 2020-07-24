@@ -9,7 +9,7 @@ class MentionDetectionBase:
     def __init__(self, base_url, wiki_version):
         self.wiki_db = GenericLookup(
             "entity_word_embedding",
-            os.path.join(base_url, wiki_version)
+            os.path.join(base_url, wiki_version, 'generated')
         )
 
     def get_ctxt(self, start, end, idx_sent, sentence, sentences_doc):

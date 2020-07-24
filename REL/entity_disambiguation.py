@@ -44,10 +44,10 @@ class EntityDisambiguation:
         self.reset_embeddings = reset_embeddings
 
         self.emb = GenericLookup(
-            "entity_word_embedding", os.path.join(base_url, wiki_version, '{}/{}/generated/')
+            "entity_word_embedding", os.path.join(base_url, wiki_version, 'generated')
         )
 
-        self.g_emb = GenericLookup("common_drawl", os.path.join(base_url, '/generic/'))
+        self.g_emb = GenericLookup("common_drawl", os.path.join(base_url, 'generic'))
         test = self.g_emb.emb(["in"], "embeddings")[0]
         assert (
             test is not None
@@ -356,8 +356,6 @@ class EntityDisambiguation:
 
         :return: -
         """
-
-        train = self.get_data_items(datasets["train"], "train", predict=True)
 
         dev_datasets = []
         for dname, data in list(datasets.items()):
