@@ -34,7 +34,7 @@ class WikipediaYagoFreq:
 
         wiki_db = GenericLookup(
             "entity_word_embedding",
-            "{}/{}/generated/".format(self.base_url, self.wiki_version),
+            os.path.join(self.base_url, self.wiki_version, 'generated'),
             table_name="wiki",
             columns={"p_e_m": "blob", "lower": "text", "freq": "INTEGER"},
         )
@@ -127,7 +127,7 @@ class WikipediaYagoFreq:
         print("Calculating Yago occurrences")
         custom_freq = {}
         with open(
-            "{}/generic/p_e_m_data/aida_means.tsv".format(self.base_url),
+            os.path.join(self.base_url, 'generic/p_e_m_data/aida_means.tsv'),
             "r",
             encoding="utf-8",
         ) as f:
@@ -176,9 +176,7 @@ class WikipediaYagoFreq:
         print("Updating counts by merging with CrossWiki")
 
         cnt = 0
-        crosswiki_path = "{}/generic/p_e_m_data/crosswikis_p_e_m.txt".format(
-            self.base_url
-        )
+        crosswiki_path = os.path.join(self.base_url,'/generic/p_e_m_data/crosswikis_p_e_m.txt')
 
         with open(crosswiki_path, "r", encoding="utf-8") as f:
             for line in f:
@@ -241,12 +239,11 @@ class WikipediaYagoFreq:
         exist_id_found = False
 
         wiki_anchor_files = os.listdir(
-            "{}/{}/basic_data/anchor_files/".format(self.base_url, self.wiki_version)
+            os.path.join(self.base_url, self.wiki_version, '/basic_data/anchor_files/')
         )
         for wiki_anchor in wiki_anchor_files:
-            wiki_file = "{}/{}/basic_data/anchor_files/{}".format(
-                self.base_url, self.wiki_version, wiki_anchor
-            )
+            wiki_file = os.path.join(self.base_url, self.wiki_version, '/basic_data/anchor_files/', wiki_anchor)
+
             with open(wiki_file, "r", encoding="utf-8") as f:
                 for line in f:
                     num_lines += 1
@@ -359,14 +356,3 @@ class WikipediaYagoFreq:
             disambiguation_ent_errors,
             [len(start_entities), len(end_entities), len(end_mentions)],
         )
-
-    # def __preprocess_ent_name(self, ent_name):
-    #     ent_name = ent_name.strip()
-    #     ent_name = trim1(ent_name)
-    #     ent_name = ent_name.replace("&amp;", "&")
-    #     ent_name = ent_name.replace("&quot;", '"')
-    #     ent_name = ent_name.replace("_", " ")
-    #     ent_name = first_letter_to_uppercase(ent_name)
-    #
-    #     ent_name = self.wikipedia.wiki_redirect_ent_title(ent_name)
-    #     return ent_name

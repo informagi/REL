@@ -15,8 +15,8 @@ Inherits overlapping functions from the Mention Detection class.
 
 class GenTrainingTest(MentionDetectionBase):
     def __init__(self, base_url, wiki_version, wikipedia):
-        self.wned_path = "{}/generic/test_datasets/wned-datasets/".format(base_url)
-        self.aida_path = "{}/generic/test_datasets/AIDA/".format(base_url)
+        self.wned_path = os.path.join(base_url, 'generic/test_datasets/wned-datasets/')
+        self.aida_path = os.path.join(base_url, "generic/test_datasets/AIDA/")
         self.wikipedia = wikipedia
         self.base_url = base_url
         self.wiki_version = wiki_version
@@ -70,8 +70,7 @@ class GenTrainingTest(MentionDetectionBase):
         """
         split = "\n"
         annotations_xml = os.path.join(
-            self.wned_path, "{}/{}.xml".format(dataset, dataset)
-        )
+            self.wned_path, dataset, f"{dataset}.xml")
         tree = ElementTree.parse(annotations_xml)
         root = tree.getroot()
 
@@ -186,7 +185,7 @@ class GenTrainingTest(MentionDetectionBase):
         elif dataset == "test":
             dataset = "testa_testb_aggregate_original"
 
-        file_path = "{}{}".format(self.aida_path, dataset)
+        file_path = os.path.join(self.aida_path, dataset)
         sentences = {}
 
         sentence = []
@@ -195,10 +194,8 @@ class GenTrainingTest(MentionDetectionBase):
         i_sent = 0
 
         total_cnt = 0
-        missing_gt = 0
         doc_name = None
         prev_doc_name = None
-        doc_cnt = 0
         cnt_replaced = 0
 
         with open(file_path, "r", encoding="utf-8") as f:
@@ -334,9 +331,7 @@ class GenTrainingTest(MentionDetectionBase):
         """
 
         with open(
-            "{}/{}/generated/test_train_data/{}.pkl".format(
-                self.base_url, self.wiki_version, file_name
-            ),
+            os.path.join(self.base_url, self.wiki_version, 'generated/test_train_data/', f"{file_name}.pkl"),
             "wb",
         ) as f:
             pickle.dump(mentions_dataset, f, protocol=pickle.HIGHEST_PROTOCOL)

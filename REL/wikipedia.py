@@ -1,3 +1,5 @@
+import os
+
 from urllib.parse import unquote
 
 from REL.utils import first_letter_to_uppercase, trim1
@@ -21,23 +23,6 @@ class Wikipedia:
         print("Loaded wiki redirects index")
         self.wiki_id_name_map = self.gen_wiki_name_map()
         print("Loaded entity index")
-
-        # if include_p_e_m:
-        #     self.load_and_filter_indexes(removal_threshold)
-
-    # def load_and_filter_indexes(self, removal_threshold):
-    #     print("Loading mention total freq index")
-    #     with open("{}/generated/mention_freq.json".format(self.base_url), "r") as f:
-    #         self.mention_total_freq = json.load(f)
-    #     f.close()
-    #
-    #     print("Loading p(e|m) index")
-    #     with open("{}/generated/p_e_m.json".format(self.base_url), "r") as f:
-    #         self.ent_p_e_m_index = json.load(f)
-    #     f.close()
-    #
-    #     print("Loading case insensitive index")
-    #     self.case_insensitive_index = {k.lower(): k for k in self.ent_p_e_m_index}
 
     def preprocess_ent_name(self, ent_name):
         """
@@ -67,12 +52,6 @@ class Wikipedia:
             return -1
         else:
             return self.wiki_id_name_map["ent_name_to_id"][entity]
-
-    # def ent_name_from_wiki_id(self, id):
-    #     if id not in self.wiki_id_name_map["ent_name_to_id"]:
-    #         return "UNK_ENT"
-    #     else:
-    #         return self.wiki_id_name_map["ent_name_to_id"][id]
 
     def wiki_redirect_ent_title(self, ent_name):
         """
@@ -104,9 +83,12 @@ class Wikipedia:
 
         :return: disambiguation index
         """
+
         wiki_disambiguation_index = {}
+        path = os.path.join(self.base_url, "basic_data/wiki_disambiguation_pages.txt")
+
         with open(
-            "{}/basic_data//wiki_disambiguation_pages.txt".format(self.base_url),
+            path,
             "r",
             encoding="utf-8",
         ) as f:
@@ -123,9 +105,10 @@ class Wikipedia:
 
         :return: disambiguation index
         """
+
         wiki_id_name_map = {"ent_name_to_id": {}, "ent_id_to_name": {}}
-        file_name = "{}/basic_data/wiki_name_id_map.txt".format(self.base_url)
-        with open(file_name, "r", encoding="utf-8") as f:
+        path = os.path.join(self.base_url, "basic_data/wiki_name_id_map.txt")
+        with open(path, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.rstrip()
                 parts = line.split("\t")
@@ -146,8 +129,10 @@ class Wikipedia:
         """
         wiki_redirects_index = {}
         wiki_redirects_id_index = {}
+        path = os.path.join(self.base_url, "basic_data/wiki_redirects.txt")
+
         with open(
-            "{}/basic_data/wiki_redirects.txt".format(self.base_url),
+            path,
             "r",
             encoding="utf-8",
         ) as f:

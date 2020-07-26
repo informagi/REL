@@ -12,8 +12,7 @@ def example_preprocessing():
     processed = {"test_doc": [text, spans], "test_doc2": [text, spans]}
     return processed
 
-
-base_url = "/users/vanhulsm/Desktop/projects/data/"
+base_url = "/users/vanhulsm/Desktop/projects/data"
 wiki_version = "wiki_2014"
 
 # 1. Input sentences when using Flair.

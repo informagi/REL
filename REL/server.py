@@ -12,7 +12,6 @@ API_DOC = "API_DOC"
 Class/function combination that is used to setup an API that can be used for e.g. GERBIL evaluation.
 """
 
-
 def make_handler(base_url, wiki_version, model, tagger_ner):
     class GetHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
@@ -67,7 +66,6 @@ def make_handler(base_url, wiki_version, model, tagger_ner):
                 text, spans = self.read_json(post_data)
                 response = self.generate_response(text, spans)
 
-                # print('response in server.py code:\n\n {}'.format(response))
                 self.wfile.write(bytes(json.dumps(response), "utf-8"))
             except Exception as e:
                 print(f"Encountered exception: {repr(e)}")

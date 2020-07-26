@@ -44,21 +44,17 @@ class EntityDisambiguation:
         self.reset_embeddings = reset_embeddings
 
         self.emb = GenericLookup(
-            "entity_word_embedding", "{}/{}/generated/".format(base_url, wiki_version),
+            "entity_word_embedding", os.path.join(base_url, wiki_version, 'generated')
         )
-        # test = self.emb.emb(["in"], "embeddings")[0]
-        # assert (
-        #     test is not None
-        # ), "Wikipedia embeddings in wrong folder..? Test embedding not found.."
 
-        self.g_emb = GenericLookup("common_drawl", "{}/generic/".format(base_url))
+        self.g_emb = GenericLookup("common_drawl", os.path.join(base_url, 'generic'))
         test = self.g_emb.emb(["in"], "embeddings")[0]
         assert (
             test is not None
         ), "Glove embeddings in wrong folder..? Test embedding not found.."
 
         self.__load_embeddings()
-        self.coref = TrainingEvaluationDatasets("{}".format(base_url), wiki_version)
+        self.coref = TrainingEvaluationDatasets(base_url, wiki_version)
         self.prerank_model = PreRank(self.config).to(self.device)
 
         self.__max_conf = None
@@ -361,8 +357,6 @@ class EntityDisambiguation:
         :return: -
         """
 
-        train = self.get_data_items(datasets["train"], "train", predict=True)
-
         dev_datasets = []
         for dname, data in list(datasets.items()):
             start = time.time()
@@ -443,7 +437,8 @@ class EntityDisambiguation:
             )
 
         if store_offline:
-            with open("{}/lr_model.pkl".format(model_path_lr), "wb") as handle:
+            path = os.path.join(model_path_lr, '/lr_model.pkl')
+            with open(path, "wb") as handle:
                 pkl.dump(model, handle, protocol=pkl.HIGHEST_PROTOCOL)
 
     def predict(self, data):
@@ -525,10 +520,6 @@ class EntityDisambiguation:
             s_rtoken_ids = [m["snd_ctx"][1] for m in batch]
             s_mtoken_ids = [m["snd_ment"] for m in batch]
 
-            # lctx_ids = s_ltoken_ids
-            # rctx_ids = s_rtoken_ids
-            # m_ids = s_mtoken_ids
-
             entity_ids = Variable(
                 torch.LongTensor([m["selected_cands"]["cands"] for m in batch]).to(
                     self.device
@@ -567,7 +558,7 @@ class EntityDisambiguation:
 
             token_ids = Variable(torch.LongTensor(token_ids).to(self.device))
             token_mask = Variable(torch.FloatTensor(token_mask).to(self.device))
-            # too ugly, but too lazy to fix it
+
             self.model.s_ltoken_ids = Variable(
                 torch.LongTensor(s_ltoken_ids).to(self.device)
             )
@@ -872,7 +863,6 @@ class EntityDisambiguation:
             self.__load_embeddings()
 
         for doc_name, content in dataset.items():
-            start = time.time()
             items = []
             if len(content) == 0:
                 continue
@@ -903,7 +893,7 @@ class EntityDisambiguation:
 
                 self.__embed_words(named_cands_filt, "entity", "embeddings")
 
-                # Use re.split() to make sure that special characters are taken into account.
+                # Use re.split() to make sure that special characters are considered.
                 lctx = [
                     x for x in re.split("(\W)", m["context"][0].strip()) if x != " "
                 ]  # .split()
@@ -1029,7 +1019,6 @@ class EntityDisambiguation:
                 if len(snd_ment) == 0:
                     snd_ment = [self.embeddings["snd_voca"].unk_id]
 
-                # =========================
                 items.append(
                     {
                         "context": (lctx_ids, rctx_ids),
