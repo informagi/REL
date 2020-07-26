@@ -37,7 +37,7 @@ class TrainingEvaluationDatasets:
 
             print("Loading {}".format(ds))
             datasets[ds] = self.__read_pickle_file(
-                os.path.join(self.base_url, 'generated/test_train_data/', ds) + '.pkl'
+                os.path.join(self.base_url, 'generated/test_train_data/', f"{ds}.pkl")
             )
 
             if ds == "wned-wikipedia":

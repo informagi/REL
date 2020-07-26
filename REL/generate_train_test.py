@@ -15,8 +15,8 @@ Inherits overlapping functions from the Mention Detection class.
 
 class GenTrainingTest(MentionDetectionBase):
     def __init__(self, base_url, wiki_version, wikipedia):
-        self.wned_path = os.path.join(base_url, '/generic/test_datasets/wned-datasets/')
-        self.aida_path = os.path.join(base_url, "{}/generic/test_datasets/AIDA/")
+        self.wned_path = os.path.join(base_url, 'generic/test_datasets/wned-datasets/')
+        self.aida_path = os.path.join(base_url, "generic/test_datasets/AIDA/")
         self.wikipedia = wikipedia
         self.base_url = base_url
         self.wiki_version = wiki_version
@@ -70,7 +70,7 @@ class GenTrainingTest(MentionDetectionBase):
         """
         split = "\n"
         annotations_xml = os.path.join(
-            self.wned_path, dataset, dataset, '.xml')
+            self.wned_path, dataset, f"{dataset}.xml")
         tree = ElementTree.parse(annotations_xml)
         root = tree.getroot()
 
@@ -331,7 +331,7 @@ class GenTrainingTest(MentionDetectionBase):
         """
 
         with open(
-            os.path.join(self.base_url, self.wiki_version, '/generated/test_train_data/', file_name, 'pkl'),
+            os.path.join(self.base_url, self.wiki_version, 'generated/test_train_data/', f"{file_name}.pkl"),
             "wb",
         ) as f:
             pickle.dump(mentions_dataset, f, protocol=pickle.HIGHEST_PROTOCOL)
