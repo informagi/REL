@@ -12,3 +12,6 @@ for ds in ["test"]:
 
 for ds in ["aquaint"]:
     data_handler.process_wned(ds)
+
+for ds in ['gerdaq_devel', 'gerdaq_test', 'gerdaq_train']:
+    data_handler.process_gerdaq(ds)

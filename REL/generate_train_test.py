@@ -17,9 +17,12 @@ class GenTrainingTest(MentionDetectionBase):
     def __init__(self, base_url, wiki_version, wikipedia):
         self.wned_path = os.path.join(base_url, "generic/test_datasets/wned-datasets/")
         self.aida_path = os.path.join(base_url, "generic/test_datasets/AIDA/")
+        self.gerdaq_path= os.path.join(base_url, "generic/test_datasets/gerdaq/")
+        
         self.wikipedia = wikipedia
         self.base_url = base_url
         self.wiki_version = wiki_version
+        
         super().__init__(base_url, wiki_version)
 
     def __format(self, dataset):
@@ -61,6 +64,72 @@ class GenTrainingTest(MentionDetectionBase):
             results[doc] = result_doc
 
         return results
+
+    def process_gerdaq(self, dname):
+        datasets = [dname] if dname != 'gerdaq_train' else ['gerdaq_trainingA', 'gerdaq_trainingB']
+        results = {}
+        doc_id = 0
+
+        for dataset in datasets:
+            annotations_xml = '{}/{}.xml'.format(self.gerdaq_path, dataset)
+            with open(annotations_xml, "r", encoding="utf-8") as cf:
+                for line in cf.readlines():
+                    doc_text = ''
+                    if '<annotation' in line:
+                        result_doc = []
+                        start_tags = [m.start() for m in re.finditer('<', line)]
+                        end_tags = [m.start() for m in re.finditer('>', line)]
+
+                        for i in range(len(start_tags)-1):
+                            # Remove possible whitespaces.
+                            span = line[end_tags[i]+1:start_tags[i+1]].strip()
+                            if len(span) > 0:
+                                cand_text = line[start_tags[i]:end_tags[i]]
+                                cand_start = cand_text.find('rank_0_title="')
+                                if cand_start != -1:
+                                    cand_start += len('rank_0_title="')
+                                    cand_end = cand_text.find('"', cand_start)
+                                    ent_title = line[(start_tags[i]+cand_start):(start_tags[i]+cand_end)]
+                                    m = self.preprocess_mention(span)
+                                    cands = self.get_candidates(m)
+
+                                    if ent_title not in self.wikipedia.wiki_id_name_map["ent_name_to_id"]:
+                                        ent_title_temp = self.wikipedia.preprocess_ent_name(ent_title)
+                                        if (
+                                                ent_title_temp
+                                                in self.wikipedia.wiki_id_name_map["ent_name_to_id"]
+                                        ):
+                                            ent_title = ent_title_temp
+
+                                    # reverse calculation as we have to take into account possible whitespace that
+                                    # may occur
+
+                                    res = {
+                                        "mention": m,
+                                        "context": (doc_text, ''),
+                                        "candidates": cands,
+                                        "gold": [ent_title.replace(" ", "_")],
+                                        "pos": len(doc_text)+(1 if len(doc_text) != 0 else 0),
+                                        "sent_idx": 0,
+                                        "ngram": span,
+                                        "end_pos": len(doc_text)+len(span)+(1 if len(doc_text) != 0 else 0),
+                                        "sentence": ''
+                                    }
+
+                                    result_doc.append(res)
+                                doc_text += (' {}'.format(span) if len(doc_text) != 0 else span)
+
+                        # Backfill now that we have complete sentence.
+                        for d in result_doc:
+                            d['context'] = (d['context'][0], doc_text[d['end_pos']:])
+                            d['sentence'] = doc_text
+
+                            assert doc_text[d['pos']:d['end_pos']] == d['ngram'], d
+
+                        results[doc_id] = result_doc
+                        doc_id += 1
+
+        self.__save(results, "{}".format(dname))
 
     def process_wned(self, dataset):
         """
