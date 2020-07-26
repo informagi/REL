@@ -87,11 +87,7 @@ class Wikipedia:
         wiki_disambiguation_index = {}
         path = os.path.join(self.base_url, "basic_data/wiki_disambiguation_pages.txt")
 
-        with open(
-            path,
-            "r",
-            encoding="utf-8",
-        ) as f:
+        with open(path, "r", encoding="utf-8",) as f:
             for line in f:
                 line = line.rstrip()
                 parts = line.split("\t")
@@ -131,11 +127,7 @@ class Wikipedia:
         wiki_redirects_id_index = {}
         path = os.path.join(self.base_url, "basic_data/wiki_redirects.txt")
 
-        with open(
-            path,
-            "r",
-            encoding="utf-8",
-        ) as f:
+        with open(path, "r", encoding="utf-8",) as f:
             for line in f:
                 line = line.rstrip()
                 parts = line.split("\t")

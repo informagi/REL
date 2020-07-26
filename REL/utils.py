@@ -158,6 +158,7 @@ def split_in_words_mention(inputstr):
     tokenizer = RegexpTokenizer(r"\w+")
     return [unidecode.unidecode(w) for w in inputstr.split()]  # #inputstr.split()]#
 
+
 def correct_type(args, data):
     if "cuda" in args.type:
         return data.cuda()

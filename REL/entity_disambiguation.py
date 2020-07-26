@@ -44,10 +44,10 @@ class EntityDisambiguation:
         self.reset_embeddings = reset_embeddings
 
         self.emb = GenericLookup(
-            "entity_word_embedding", os.path.join(base_url, wiki_version, 'generated')
+            "entity_word_embedding", os.path.join(base_url, wiki_version, "generated")
         )
 
-        self.g_emb = GenericLookup("common_drawl", os.path.join(base_url, 'generic'))
+        self.g_emb = GenericLookup("common_drawl", os.path.join(base_url, "generic"))
         test = self.g_emb.emb(["in"], "embeddings")[0]
         assert (
             test is not None
@@ -437,7 +437,7 @@ class EntityDisambiguation:
             )
 
         if store_offline:
-            path = os.path.join(model_path_lr, '/lr_model.pkl')
+            path = os.path.join(model_path_lr, "/lr_model.pkl")
             with open(path, "wb") as handle:
                 pkl.dump(model, handle, protocol=pkl.HIGHEST_PROTOCOL)
 

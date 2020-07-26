@@ -34,7 +34,7 @@ class WikipediaYagoFreq:
 
         wiki_db = GenericLookup(
             "entity_word_embedding",
-            os.path.join(self.base_url, self.wiki_version, 'generated'),
+            os.path.join(self.base_url, self.wiki_version, "generated"),
             table_name="wiki",
             columns={"p_e_m": "blob", "lower": "text", "freq": "INTEGER"},
         )
@@ -127,7 +127,7 @@ class WikipediaYagoFreq:
         print("Calculating Yago occurrences")
         custom_freq = {}
         with open(
-            os.path.join(self.base_url, 'generic/p_e_m_data/aida_means.tsv'),
+            os.path.join(self.base_url, "generic/p_e_m_data/aida_means.tsv"),
             "r",
             encoding="utf-8",
         ) as f:
@@ -176,7 +176,9 @@ class WikipediaYagoFreq:
         print("Updating counts by merging with CrossWiki")
 
         cnt = 0
-        crosswiki_path = os.path.join(self.base_url,'/generic/p_e_m_data/crosswikis_p_e_m.txt')
+        crosswiki_path = os.path.join(
+            self.base_url, "/generic/p_e_m_data/crosswikis_p_e_m.txt"
+        )
 
         with open(crosswiki_path, "r", encoding="utf-8") as f:
             for line in f:
@@ -239,10 +241,15 @@ class WikipediaYagoFreq:
         exist_id_found = False
 
         wiki_anchor_files = os.listdir(
-            os.path.join(self.base_url, self.wiki_version, '/basic_data/anchor_files/')
+            os.path.join(self.base_url, self.wiki_version, "/basic_data/anchor_files/")
         )
         for wiki_anchor in wiki_anchor_files:
-            wiki_file = os.path.join(self.base_url, self.wiki_version, '/basic_data/anchor_files/', wiki_anchor)
+            wiki_file = os.path.join(
+                self.base_url,
+                self.wiki_version,
+                "/basic_data/anchor_files/",
+                wiki_anchor,
+            )
 
             with open(wiki_file, "r", encoding="utf-8") as f:
                 for line in f:
