@@ -44,6 +44,27 @@ API_result = requests.post("{}".format(IP_ADDRESS), json=document).json()
 This section describes how to deploy REL on a local machine and setup the API. If you want to do anything more than simply running our API locally, you can skip the Docker steps and continue with installation from source.
 
 ## Installation using Docker
+### Prebuilt images
+To use our prebuilt default images, run:
+```bash
+# Pull the image for Wikipedia 2014:
+docker pull informagi/rel:2014
+# Or Wikipedia 2019:
+docker pull informagi/rel:2019
+```
+
+To run the API locally:
+```bash
+# Map container port 5555 to local port 5555, and use Wikipedia 2019
+docker run -p 5555:5555 --rm -it informagi/rel:2019
+# Or automatically generate port mapping
+docker run -P --rm -it informagi/rel:2019
+```
+
+Now you can make requests to `http://localhost:5555` (or another port if you
+use a different mapping) in the format described in the example above.
+
+### Build your own
 To build the Docker image yourself, run:
 ```bash
 # Clone the repository
@@ -60,16 +81,7 @@ command:
 docker build - -t informagi/rel --build-arg WIKI_YEAR=2014 < Dockerfile
 ```
 
-To run the API locally:
-```bash
-# Map container port 5555 to local port 5555
-docker run -p 5555:5555 --rm -it informagi/rel
-# Or automatically generate port mapping
-docker run -P --rm -it informagi/rel
-```
-
-Now you can make requests to `http://localhost:5555` (or another port if you
-use a different mapping) in the format described in the example above.
+To run the API locally, use the same commands as mentioned in the previous section.
 
 ## Installation from source
 Run the following command in a terminal to install REL:
