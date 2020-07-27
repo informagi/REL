@@ -35,17 +35,17 @@ from REL.ner import load_flair_ner
 ### Flair ###
 # Flair provides their own aliases, you can use those as well as our aliases.
 # For example, using ner-fast from Flair:
-load_flair_ner("ner-fast")
+ner_tagger = load_flair_ner("ner-fast")
 
 # Or using ner-fast-with-lowercase, a finetuned version of ner-fast provided
 # as part of REL:
-load_flair_ner("ner-fast-with-lowercase")
+ner_tagger = load_flair_ner("ner-fast-with-lowercase")
 
 # You can also use a URL (http or https) to a model checkpoint, e.g.:
-load_flair_ner("https://some.website.com/flair_model.pt")
+ner_tagger = load_flair_ner("https://some.website.com/flair_model.pt")
 
 # Or a path on your filesystem:
-load_flair_ner("/home/user/flair/model.pt")
+ner_tagger = load_flair_ner("/home/user/flair/model.pt")
 ```
 
 ---
@@ -69,7 +69,7 @@ config = {
     "mode": "eval",
     "model_path": "ed-wiki-2019"  # model alias
 }
-EntityDisambiguation(base_url, wiki_version, config)
+ed_model = EntityDisambiguation(base_url, wiki_version, config)
 ```
 
 ### Local filepath
@@ -94,7 +94,7 @@ config = {
     "mode": "eval",
     "model_path": "model_folder/model"  # partial filepath to model
 }
-EntityDisambiguation(base_url, wiki_version, config)
+ed_model = EntityDisambiguation(base_url, wiki_version, config)
 ```
 
 ### Local or remote archives
@@ -124,7 +124,7 @@ config = {
     "mode": "eval",
     "model_path": "/path/to/model_folder.tar"  # filepath to archive
 }
-EntityDisambiguation(base_url, wiki_version, config)
+ed_model = EntityDisambiguation(base_url, wiki_version, config)
 ```
 
 Loading a model from remote archive:
@@ -137,7 +137,7 @@ config = {
     "mode": "eval",
     "model_path": "http://some.site.com/model_folder.tar"  # URL to archive
 }
-EntityDisambiguation(base_url, wiki_version, config)
+ed_model = EntityDisambiguation(base_url, wiki_version, config)
 ```
 
 # Under the hood
