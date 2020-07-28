@@ -3,6 +3,6 @@ tiny-tokenizer
 flair
 unidecode
 segtok
-pillow==6.2.2
+Pillow>=7.1.0
 torch
 nltk
