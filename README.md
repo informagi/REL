@@ -28,6 +28,7 @@ text_doc = "If you're going to try, go all the way - Charles Bukowski"
 # Example EL.
 document = {
     "text": text_doc,
+    "spans": []
 }
 
 # Example ED.
