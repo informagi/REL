@@ -17,7 +17,7 @@ At the moment we do not require obtaining a key; please continue to the next ste
 
 ### Querying our API
 Users may access our API by using the example script below. 
-For EL, the `spans` field is not required. For ED, however, the `spans` field should consist of a list of tuples, where each tuple refers to the start position and length of a mention.
+For EL, the `spans` field needs to be set to an empty list. For ED, however, the `spans` field should consist of a list of tuples, where each tuple refers to the start position and length of a mention.
 
 ```python
 import requests
