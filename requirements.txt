@@ -1,5 +1,5 @@
 colorama
-tiny-tokenizer
+konoha
 flair
 unidecode
 segtok
