@@ -43,7 +43,7 @@ jobs:
 
             - name: Code formatting
               run: |
-                  isort --apply
+                  isort .
                   black .
 
             - name: Commit formatting changes
