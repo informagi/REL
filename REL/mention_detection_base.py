@@ -1,5 +1,5 @@
-import re
 import os
+import re
 
 from REL.db.generic import GenericLookup
 from REL.utils import modify_uppercase_phrase, split_in_words

@@ -4,7 +4,6 @@ from segtok.segmenter import split_single
 
 from REL.mention_detection_base import MentionDetectionBase
 
-
 """
 Class responsible for mention detection.
 """
