@@ -339,6 +339,9 @@ class GenTrainingTest(MentionDetectionBase):
                         pos_mention_gt = (
                             len(" ".join(sentence)) + 1 if len(sentence) > 0 else 0
                         )  # + 1 for space between mention and sentence
+                        if ent_title not in self.wikipedia.wiki_id_name_map["ent_name_to_id"]:
+                            print(ent_title)
+                            print('----')
                         gt_sent.append(
                             [
                                 self.preprocess_mention(mention_gt),

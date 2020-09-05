@@ -13,7 +13,7 @@ Class/function combination that is used to setup an API that can be used for e.g
 """
 
 
-def make_handler(base_url, wiki_version, model, tagger_ner):
+def make_handler(base_url, wiki_version, model, tagger_ner, filter_conf=0.0):
     class GetHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             self.model = model
@@ -24,6 +24,8 @@ def make_handler(base_url, wiki_version, model, tagger_ner):
 
             self.custom_ner = not isinstance(tagger_ner, SequenceTagger)
             self.mention_detection = MentionDetection(base_url, wiki_version)
+
+            self.filter_conf = filter_conf
 
             super().__init__(*args, **kwargs)
 
@@ -95,7 +97,8 @@ def make_handler(base_url, wiki_version, model, tagger_ner):
                     pass
             else:
                 spans = []
-
+            print(text, spans)
+            print('------')
             return text, spans
 
         def generate_response(self, text, spans):
@@ -103,11 +106,14 @@ def make_handler(base_url, wiki_version, model, tagger_ner):
             Generates response for API. Can be either ED only or EL, meaning end-to-end.
 
             :return: list of tuples for each entity found.
+
+            NOTE: Apparently Gerbil sometimes sends documents without annotations for ED,
+            resulting in EL-mode being triggered.
             """
 
             if len(text) == 0:
                 return []
-
+            
             if len(spans) > 0:
                 # ED.
                 processed = {API_DOC: [text, spans]}
@@ -130,10 +136,15 @@ def make_handler(base_url, wiki_version, model, tagger_ner):
                 predictions,
                 processed,
                 include_offset=False if ((len(spans) > 0) or self.custom_ner) else True,
+                filter_conf=self.filter_conf
             )
 
+            
             # Singular document.
             if len(result) > 0:
+                print('====')
+                print([[x[2], x[4]] for x in result['API_DOC']])
+                print('====')
                 return [*result.values()][0]
 
             return []

@@ -7,11 +7,11 @@ wikipedia = Wikipedia(base_url, wiki_version)
 
 data_handler = GenTrainingTest(base_url, wiki_version, wikipedia)
 
-for ds in ["test"]:
+for ds in ["test", "train"]:
     data_handler.process_aida(ds)
 
-for ds in ["aquaint"]:
-    data_handler.process_wned(ds)
-
-for ds in ['gerdaq_devel', 'gerdaq_test', 'gerdaq_train']:
-    data_handler.process_gerdaq(ds)
+# for ds in ["aquaint"]:
+#     data_handler.process_wned(ds)
+#
+# for ds in ['gerdaq_devel', 'gerdaq_test', 'gerdaq_train']:
+#     data_handler.process_gerdaq(ds)

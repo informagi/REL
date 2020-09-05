@@ -14,7 +14,7 @@ import pkg_resources
 import torch
 import torch.optim as optim
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score
 from torch.autograd import Variable
 
 import REL.utils as utils
@@ -427,17 +427,17 @@ class EntityDisambiguation:
         for dname, data in dev_datasets:
             predictions = self.__predict(data, eval_raw=True)
             X, y, meta = self.__create_dataset_LR(datasets, predictions, dname)
+            print(np.unique(y, return_counts=True))
             preds = model.predict_proba(X)
             preds = np.array([x[1] for x in preds])
 
             decisions = (preds >= threshold).astype(int)
 
-            print(
-                utils.tokgreen("{}, F1-score: {}".format(dname, f1_score(y, decisions)))
-            )
+            utils.tokgreen("{}, F1-score: {}, Accuracy: {}".format(dname, f1_score(y, decisions), accuracy_score(y, decisions)))
+            utils.tokgreen("{}, recall: {}, precision: {}".format(dname, recall_score(y, decisions), precision_score(y, decisions)))
 
         if store_offline:
-            path = os.path.join(model_path_lr, "/lr_model.pkl")
+            path = os.path.join(model_path_lr, "lr_model.pkl")
             with open(path, "wb") as handle:
                 pkl.dump(model, handle, protocol=pkl.HIGHEST_PROTOCOL)
 

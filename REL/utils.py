@@ -65,7 +65,7 @@ def preprocess_mention(m, wiki_db):
 
 
 def process_results(
-    mentions_dataset, predictions, processed, include_offset=False,
+    mentions_dataset, predictions, processed, include_offset=False, filter_conf=0.0
 ):
     """
     Function that can be used to process the End-to-End results.
@@ -97,23 +97,22 @@ def process_results(
 
             # self.verify_pos(ment["ngram"], start_pos, end_pos, text)
             if pred["prediction"] != "NIL":
-                temp = (
-                    start_pos,
-                    mention_length,
-                    ment["ngram"],
-                    pred["prediction"],
-                    pred["conf_ed"],
-                    ment["conf_md"] if "conf_md" in ment else 0.0,
-                    ment["tag"] if "tag" in ment else "NULL",
-                )
-                res_doc.append(temp)
+                if pred["conf_ed"] >= filter_conf:
+                    temp = (
+                        start_pos,
+                        mention_length,
+                        ment["ngram"],
+                        pred["prediction"],
+                        pred["conf_ed"],
+                        ment["conf_md"] if "conf_md" in ment else 0.0,
+                        ment["tag"] if "tag" in ment else "NULL",
+                    )
+                    res_doc.append(temp)
         res[doc] = res_doc
     return res
 
-
 def trim1(s):
     return s.replace("^%s*(.-)%s*$", "%1")
-
 
 def first_letter_to_uppercase(s):
     if len(s) < 1:

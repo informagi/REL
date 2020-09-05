@@ -16,10 +16,11 @@ class Cmns(NERBase, MentionDetectionBase):
 
     def predict(self, sentence, sentences_doc):
         """
-        Links the query to the entity.
 
-        Added optional parameter sentences_doc for completeness sake. If a user wishes to create his/her
-        own MD system, it may deduce some form of a global context.
+        Predicts using the ngram tagger.
+
+        Note that we added sentences_doc for completeness sake as it may be used to infer some form of
+        global context for custom MD modules.
         """
         self.__ngrams_overlap = []
         self.mentions = []
@@ -41,7 +42,6 @@ class Cmns(NERBase, MentionDetectionBase):
         """
         Returns n-grams grouped by length.
         """
-        print(sentence)
         self.__ngrams = defaultdict(list)
         for ngram in self.__gen_ngrams(sentence):
             self.__ngrams[len(ngram[0].split())].append(ngram)
@@ -68,13 +68,16 @@ class Cmns(NERBase, MentionDetectionBase):
     def __is_overlapping(self, ngram, pos_prop):
         """
         Checks whether the ngram is contained in one of the currently identified mentions.
+
+        NOTE: Currently, this function is very basic and dependent on order of operations.
+
         """
+        
         for exist_ngram, exist_pos in self.__ngrams_overlap:
-            if ngram in exist_ngram:
-                range_exist = set(range(exist_pos, exist_pos + len(exist_ngram)))
-                range_new = set(range(pos_prop, pos_prop + len(ngram)))
-                if len(range_exist.intersection(range_new)) > 0:
-                    return True
+            range_exist = set(range(exist_pos, exist_pos + len(exist_ngram)))
+            range_new = set(range(pos_prop, pos_prop + len(ngram)))
+            if len(range_exist.intersection(range_new)) > 0:
+                return True
         return False
 
     def __find_end_pos(self, ngram, sent, start_pos):
@@ -109,43 +112,42 @@ class Cmns(NERBase, MentionDetectionBase):
             pos += 1
         return pos
 
-    def __build_ngram(self, ngram, terms, start, i):
+    def __build_ngram(self, ngram, terms, start, end):
         quit = False
 
-        for j in range(1, np.min([i, self.__n])):
+        for j in range(1, end+1):
             # Builds the sub-string.
             # If it is seperated by a trailing comma or whatever, then
-            # it is most likely an end of the sentence.
+            # we assume it is the end of the ngram.
             lookup = terms[start + j]
-            if not re.match(r"^[_\W]+$", lookup):
-                ngram += " {}".format(lookup)
-            else:
+
+            if re.match(r"^[_\W]+$", lookup):
                 quit = True
                 break
+            else:
+                ngram += " {}".format(lookup)
         return ngram, quit
 
     def __gen_ngrams(self, query):
         """Finds all n-grams of the query.
         :return: list of n-grams
         """
-        terms = query.split()  # get_terms(query)
+        terms = query.split()
         ngrams = []
 
-        for i in range(1, len(terms) + 1):  # number of words
-            offset = 0
-            for start in range(0, len(terms) - i + 1):  # start point
-                ngram = terms[start]
-
-                if re.match(r"^[_\W]+$", terms[start]):
+        for start_idx in range(0, len(terms)):  # number of words
+            for end_idx in range(0, np.min([len(terms) - start_idx, self.__n])):  # start point
+                ngram = terms[start_idx]
+                
+                if re.match(r"^[_\W]+$", ngram):
                     # Invalid input
                     continue
-
-                ngram, quit = self.__build_ngram(ngram, terms, start, i)
+                ngram, quit = self.__build_ngram(ngram, terms, start_idx, end_idx)
 
                 if quit:
                     continue
 
-                pos = self.__find_start_pos(query, start)
+                pos = self.__find_start_pos(query, start_idx)
                 end = self.__find_end_pos(ngram, query, pos)
                 ngrams.append([ngram, pos, end])
         return ngrams

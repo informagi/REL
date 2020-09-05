@@ -1,3 +1,4 @@
+import re
 from flair.data import Sentence
 from flair.models import SequenceTagger
 from segtok.segmenter import split_single
@@ -8,7 +9,6 @@ from REL.mention_detection_base import MentionDetectionBase
 """
 Class responsible for mention detection.
 """
-
 
 class MentionDetection(MentionDetectionBase):
     def __init__(self, base_url, wiki_version):
@@ -84,6 +84,10 @@ class MentionDetection(MentionDetectionBase):
             for sent in sentences:
                 if len(sent.strip()) == 0:
                     continue
+                # Remove special character from sentence.
+                if not re.match(r"^[a-zA-Z0-9_]*$", sent[-1]):
+                    sent = sent[:-1]
+                
                 # Match gt to sentence.
                 pos_start = text.find(sent)
                 pos_end = pos_start + len(sent)
