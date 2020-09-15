@@ -65,7 +65,10 @@ def preprocess_mention(m, wiki_db):
 
 
 def process_results(
-    mentions_dataset, predictions, processed, include_offset=False,
+    mentions_dataset,
+    predictions,
+    processed,
+    include_offset=False,
 ):
     """
     Function that can be used to process the End-to-End results.
@@ -139,7 +142,7 @@ def split_in_words(inputstr):
     """
     This regexp also splits 'AL-NAHAR', which should be a single word
     into 'AL' and 'NAHAR', resulting in the inability to find a match.
-    
+
     Same with U.S.
     """
     tokenizer = RegexpTokenizer(r"\w+")
@@ -152,7 +155,7 @@ def split_in_words_mention(inputstr):
     """
     This regexp also splits 'AL-NAHAR', which should be a single word
     into 'AL' and 'NAHAR', resulting in the inability to find a match.
-    
+
     Same with U.S.
     """
     tokenizer = RegexpTokenizer(r"\w+")

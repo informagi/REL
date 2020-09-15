@@ -47,9 +47,15 @@ data_to_link = [
 ]
 
 # TODO: Add ED
-_, _, _, _, _, predictions, scores, = main_dense.run(
-    args, logger, *models, test_data=data_to_link
-)
+(
+    _,
+    _,
+    _,
+    _,
+    _,
+    predictions,
+    scores,
+) = main_dense.run(args, logger, *models, test_data=data_to_link)
 
 
 print("============")

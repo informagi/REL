@@ -14,7 +14,10 @@ API_DOC = "API_DOC"
 
 
 def process_results(
-    mentions_dataset, predictions, processed, include_offset=False,
+    mentions_dataset,
+    predictions,
+    processed,
+    include_offset=False,
 ):
     """
     Function that can be used to process the End-to-End results.

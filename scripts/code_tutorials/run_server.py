@@ -23,7 +23,8 @@ tagger_ner = load_flair_ner("ner-fast")  # or another tagger
 # 3. Init server.
 server_address = ("127.0.0.1", 5555)
 server = HTTPServer(
-    server_address, make_handler(base_url, wiki_version, model, tagger_ner),
+    server_address,
+    make_handler(base_url, wiki_version, model, tagger_ner),
 )
 
 try:

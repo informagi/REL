@@ -62,7 +62,8 @@ class EntityDisambiguation:
         # Load LR model for confidence.
         if os.path.exists(Path(self.config["model_path"]).parent / "lr_model.pkl"):
             with open(
-                Path(self.config["model_path"]).parent / "lr_model.pkl", "rb",
+                Path(self.config["model_path"]).parent / "lr_model.pkl",
+                "rb",
             ) as f:
                 self.model_lr = pkl.load(f)
         else:
@@ -127,7 +128,8 @@ class EntityDisambiguation:
 
         if urlparse(str(config["model_path"])).scheme in ("http", "https"):
             model_path = utils.fetch_model(
-                config["model_path"], cache_dir=Path("~/.rel_cache").expanduser(),
+                config["model_path"],
+                cache_dir=Path("~/.rel_cache").expanduser(),
             )
             assert tarfile.is_tarfile(model_path), "Only tar-files are supported!"
             # make directory with name of tarfile (minus extension)
