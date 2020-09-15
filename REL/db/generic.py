@@ -1,3 +1,4 @@
+import os
 from time import time
 
 import numpy as np
@@ -28,7 +29,7 @@ class GenericLookup(DB):
             "entity": {"cnt": 0, "sum": zeros(d_emb)},
         }
 
-        path_db = "{}/{}.db".format(save_dir, name)
+        path_db = os.path.join(save_dir, f"{name}.db")
 
         self.d_emb = d_emb
         self.name = name
