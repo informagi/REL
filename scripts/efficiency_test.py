@@ -47,14 +47,14 @@ for i, doc in enumerate(datasets):
 # --------------------- Now total --------------------------------
 # ------------- RUN SEPARATELY TO BALANCE LOAD--------------------
 if not server:
+    from time import time
+
     import flair
     import torch
-
     from flair.models import SequenceTagger
 
-    from REL.mention_detection import MentionDetection
     from REL.entity_disambiguation import EntityDisambiguation
-    from time import time
+    from REL.mention_detection import MentionDetection
 
     base_url = "C:/Users/mickv/desktop/data_back/"
 

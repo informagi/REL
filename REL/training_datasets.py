@@ -1,5 +1,5 @@
-import pickle
 import os
+import pickle
 
 """
 Class responsible for loading training/evaluation datasets for local ED.

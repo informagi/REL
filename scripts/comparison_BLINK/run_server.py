@@ -3,9 +3,9 @@ import json
 import logging
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+import blink.main_dense as main_dense
 from flair.models import SequenceTagger
 
-import blink.main_dense as main_dense
 from REL.mention_detection import MentionDetection
 from REL.ner import load_flair_ner
 from REL.utils import split_in_words

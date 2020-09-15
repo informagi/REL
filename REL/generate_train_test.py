@@ -6,7 +6,6 @@ from xml.etree import ElementTree
 from REL.mention_detection_base import MentionDetectionBase
 from REL.utils import modify_uppercase_phrase, split_in_words_mention
 
-
 """
 Class responsible for formatting WNED and AIDA datasets that are required for ED local evaluation and training.
 Inherits overlapping functions from the Mention Detection class.

@@ -3,7 +3,6 @@ import torch
 import torch.nn.functional as F
 from torch.autograd import Variable
 
-
 """
 PreRank class is used for preranking entities for a given mention by multiplying entity vectors with
 word vectors
