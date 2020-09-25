@@ -6,7 +6,7 @@ from REL.server import make_handler
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
 base_url = "/users/vanhulsm/Desktop/projects/data/"
-wiki_version = "wiki_2014"
+wiki_version = "wiki_2019"
 
 # 1. Init model, where user can set his/her own config that will overwrite the default config.
 # If mode is equal to 'eval', then the model_path should point to an existing model.
