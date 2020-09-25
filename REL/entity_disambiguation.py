@@ -42,7 +42,6 @@ class EntityDisambiguation:
         self.prerank_model = None
         self.model = None
         self.reset_embeddings = reset_embeddings
-
         self.emb = GenericLookup(
             "entity_word_embedding", os.path.join(base_url, wiki_version, "generated")
         )
@@ -409,6 +408,7 @@ class EntityDisambiguation:
 
         :return: -
         """
+        print(os.path.join(model_path_lr, "lr_model.pkl"))
 
         train_dataset = self.get_data_items(
             datasets["aida_train"], "train", predict=False
@@ -439,7 +439,7 @@ class EntityDisambiguation:
             )
 
         if store_offline:
-            path = os.path.join(model_path_lr, "/lr_model.pkl")
+            path = os.path.join(model_path_lr, "lr_model.pkl")
             with open(path, "wb") as handle:
                 pkl.dump(model, handle, protocol=pkl.HIGHEST_PROTOCOL)
 
