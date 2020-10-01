@@ -59,9 +59,9 @@ class EntityDisambiguation:
         self.__max_conf = None
 
         # Load LR model for confidence.
-        if os.path.exists(Path(self.config["model_path"]).parent / "lr_model.pkl"):
+        if os.path.exists(Path(self.config["model_path"]).parent / "lr_model2.pkl"):
             with open(
-                Path(self.config["model_path"]).parent / "lr_model.pkl",
+                Path(self.config["model_path"]).parent / "lr_model2.pkl",
                 "rb",
             ) as f:
                 self.model_lr = pkl.load(f)
@@ -289,6 +289,10 @@ class EntityDisambiguation:
                     gold=true_pos.view(-1, 1),
                 )
                 loss = self.model.loss(scores, true_pos)
+
+                n_ments, n_cands = entity_ids.size()
+                scores = scores.view(n_ments, n_cands)
+                
                 # loss = self.model.prob_loss(scores, true_pos)
                 loss.backward()
                 optimizer.step()
@@ -304,7 +308,7 @@ class EntityDisambiguation:
                     end="\r",
                 )
 
-            print("epoch", e, "total loss", total_loss, total_loss / len(train_dataset))
+            print("epoch", e, "total/avg loss", total_loss, total_loss / len(train_dataset))
 
             if (e + 1) % eval_after_n_epochs == 0:
                 dev_f1 = 0
@@ -341,6 +345,15 @@ class EntityDisambiguation:
                 if dev_f1 < best_f1:
                     not_better_count += 1
                     print("Not improving", not_better_count)
+                    
+                    if (not_better_count >= 5) and (best_f1 > 0.865) and (self.config["learning_rate"] == 1e-4):
+                        eval_after_n_epochs = 2
+                        not_better_count = 0
+
+                        self.config["learning_rate"] = 1e-5
+                        print("change learning rate to", self.config["learning_rate"])
+                        for param_group in optimizer.param_groups:
+                            param_group["lr"] = self.config["learning_rate"]
                 else:
                     not_better_count = 0
                     best_f1 = dev_f1
@@ -439,7 +452,7 @@ class EntityDisambiguation:
             )
 
         if store_offline:
-            path = os.path.join(model_path_lr, "lr_model.pkl")
+            path = os.path.join(model_path_lr, "lr_model2.pkl")
             with open(path, "wb") as handle:
                 pkl.dump(model, handle, protocol=pkl.HIGHEST_PROTOCOL)
 
@@ -492,6 +505,7 @@ class EntityDisambiguation:
         if self.model_lr:
             preds = self.model_lr.predict_proba(X)
             confidence_scores = [x[1] for x in preds]
+            # confidence_scores = [float(x) for x in X.flatten()]
         else:
             confidence_scores = [0.0 for _ in scores]
         return confidence_scores
@@ -589,6 +603,10 @@ class EntityDisambiguation:
                 self.embeddings,
                 gold=true_pos.view(-1, 1),
             )
+
+            n_ments, n_cands = entity_ids.size()
+            scores = scores.view(n_ments, n_cands)
+            
             pred_ids = torch.argmax(scores, axis=1)
             scores = scores.cpu().data.numpy()
 

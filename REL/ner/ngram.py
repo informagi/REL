@@ -41,7 +41,6 @@ class Cmns(NERBase, MentionDetectionBase):
         """
         Returns n-grams grouped by length.
         """
-        print(sentence)
         self.__ngrams = defaultdict(list)
         for ngram in self.__gen_ngrams(sentence):
             self.__ngrams[len(ngram[0].split())].append(ngram)

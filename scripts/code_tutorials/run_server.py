@@ -1,7 +1,7 @@
 from http.server import HTTPServer
 
 from REL.entity_disambiguation import EntityDisambiguation
-from REL.ner import load_flair_ner
+from REL.ner import load_flair_ner, Cmns
 from REL.server import make_handler
 
 # 0. Set your project url, which is used as a reference for your datasets etc.
@@ -12,13 +12,14 @@ wiki_version = "wiki_2019"
 # If mode is equal to 'eval', then the model_path should point to an existing model.
 config = {
     "mode": "eval",
-    "model_path": "{}/{}/generated/model".format(base_url, wiki_version),
+    "model_path": "{}/{}/generated/model_pointw_rank".format(base_url, wiki_version),
 }
 
 model = EntityDisambiguation(base_url, wiki_version, config)
 
 # 2. Create NER-tagger.
-tagger_ner = load_flair_ner("ner-fast")  # or another tagger
+# tagger_ner = load_flair_ner("ner-fast")  # or another tagger
+tagger_ner = Cmns(base_url, wiki_version, n=5)
 
 # 3. Init server.
 server_address = ("127.0.0.1", 5555)

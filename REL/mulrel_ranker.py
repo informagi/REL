@@ -85,9 +85,15 @@ class MulRelRanker(torch.nn.Module):
             )
 
         self.ctx_layer = torch.nn.Sequential(
-            torch.nn.Linear(self.config["emb_dims"] * 3, self.config["emb_dims"]),
+            torch.nn.Linear(self.config["emb_dims"]*3, self.config["emb_dims"]),
             torch.nn.Tanh(),
-            torch.nn.Dropout(p=self.config["dropout_rate"]),
+            torch.nn.Dropout(p=self.config["dropout_rate"]), #TODO: <-- should I remove dropout..?
+            # torch.nn.Linear(self.config["emb_dims"]*3, self.config["emb_dims"]*2),
+            # torch.nn.Tanh(),
+            # torch.nn.Dropout(p=self.config["dropout_rate"]),
+            # torch.nn.Linear(self.config["emb_dims"]*2, self.config["emb_dims"]),
+            # torch.nn.Tanh(),
+            # torch.nn.Dropout(p=self.config["dropout_rate"]), #TODO: <-- should I remove dropout..?
         )
 
         self.rel_embs = (
@@ -105,6 +111,13 @@ class MulRelRanker(torch.nn.Module):
             torch.nn.Linear(2, self.config["hid_dims"]),
             torch.nn.ReLU(),
             torch.nn.Linear(self.config["hid_dims"], 1),
+            torch.nn.Sigmoid()
+            # torch.nn.Linear(2, self.config["hid_dims"]*2),
+            # torch.nn.ReLU(),
+            # torch.nn.Linear(self.config["hid_dims"]*2, self.config["hid_dims"]),
+            # torch.nn.ReLU(),
+            # torch.nn.Linear(self.config["hid_dims"], 1),
+            # torch.nn.Sigmoid()
         )
 
     def __local_ent_scores(
@@ -397,9 +410,24 @@ class MulRelRanker(torch.nn.Module):
         """
         Computes given ranking loss (Equation 7) and adds a regularization term.
 
+        NOTE: Proposed model reduces problem to point-wise regression.
+
         :return: loss of given batch
         """
-        loss = F.multi_margin_loss(scores, true_pos, margin=self.config["margin"])
+        y_onehot = torch.FloatTensor(scores.shape).to(self.device)
+        y_onehot.zero_()
+        y_onehot.scatter_(1, true_pos.long().view(-1, 1), 1)
+        
+        true_pos = y_onehot.view(-1, 1)
+        scores = scores.view(-1, 1)
+
+        sample_weights = true_pos.clone()
+        indices = sample_weights == 0
+        sample_weights[indices] = 1.0
+        sample_weights[~indices] = 1.0 
+        
+        loss = F.binary_cross_entropy(scores, true_pos, weight=sample_weights)# margin=self.config["margin"])
+        # loss = F.multi_margin_loss(scores, true_pos, margin=self.config["margin"])
         if self.config["use_local_only"]:
             return loss
 

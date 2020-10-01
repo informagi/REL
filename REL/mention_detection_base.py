@@ -60,7 +60,6 @@ class MentionDetectionBase:
 
         :return: mention
         """
-
         # TODO: This can be optimised (less db calls required).
         cur_m = modify_uppercase_phrase(m)
         freq_lookup_cur_m = self.wiki_db.wiki(cur_m, "wiki", "freq")
