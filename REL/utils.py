@@ -95,8 +95,8 @@ def process_results(
             if include_offset:
                 # offset = text.find(sent) # Commented out (issue #49)
                 offset = text[offset:].find(sent) + offset # Added (issue #49)
-            else:
-                offset = 0
+            #else: # Commented out (issue #49)
+                #offset = 0 # Commented out (issue #49)
             start_pos = offset + ment["pos"]
             mention_length = int(ment["end_pos"] - ment["pos"])
 
