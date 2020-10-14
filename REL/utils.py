@@ -86,13 +86,15 @@ def process_results(
         text = processed[doc][0]
 
         res_doc = []
-
+        offset  = 0 # Added (issue #49)
+        
         for pred, ment in zip(pred_doc, ment_doc):
             sent = ment["sentence"]
 
             # Only adjust position if using Flair NER tagger.
             if include_offset:
-                offset = text.find(sent)
+                # offset = text.find(sent) # Commented out (issue #49)
+                offset = text[offset:].find(sent) + offset # Added (issue #49)
             else:
                 offset = 0
             start_pos = offset + ment["pos"]
