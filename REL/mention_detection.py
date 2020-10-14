@@ -80,13 +80,15 @@ class MentionDetection(MentionDetectionBase):
             res[doc] = {}
 
             i = 0
-            pos_start = 0 # Added  (issue #49)
+            pos_start = 0  # Added  (issue #49)
             for sent in sentences:
                 if len(sent.strip()) == 0:
                     continue
                 # Match gt to sentence.
-                #pos_start = text.find(sent) # Commented out (issue #49)
-                pos_start = text[pos_start:].find(sent) + pos_start # Added  (issue #49)
+                # pos_start = text.find(sent) # Commented out (issue #49)
+                pos_start = (
+                    text[pos_start:].find(sent) + pos_start
+                )  # Added  (issue #49)
                 pos_end = pos_start + len(sent)
 
                 # ngram, start_pos, end_pos
