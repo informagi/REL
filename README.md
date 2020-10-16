@@ -45,21 +45,24 @@ API_result = requests.post("{}".format(IP_ADDRESS), json=document).json()
 This section describes how to deploy REL on a local machine and setup the API. If you want to do anything more than simply running our API locally, you can skip the Docker steps and continue with installation from source.
 
 ## Installation using Docker
+First, download the necessary data; you need the generic files and a Wikipedia version (2014 or 2019) (see [Download](## Download)). Extract them anywhere, we will bind the directories to the Docker container as volumes.
+
 ### Prebuilt images
-To use our prebuilt default images, run:
+To use our prebuilt default image, run:
 ```bash
-# Pull the image for Wikipedia 2014:
-docker pull informagi/rel:2014
-# Or Wikipedia 2019:
-docker pull informagi/rel:2019
+docker pull informagi/rel
 ```
 
 To run the API locally:
 ```bash
 # Map container port 5555 to local port 5555, and use Wikipedia 2019
-docker run -p 5555:5555 --rm -it informagi/rel:2019
-# Or automatically generate port mapping
-docker run -P --rm -it informagi/rel:2019
+# Also map the generic and wiki_2019 folders to directories in Docker container
+docker run 
+    -p 5555:5555 
+    -v /path/to/generic:/workspace/generic 
+    -v /path/to/wiki_2019:/workspace/wiki_2019 
+    --rm -it informagi/rel
+    python -m REL.server --bind 0.0.0.0 --port 5555 /workspace wiki_2019
 ```
 
 Now you can make requests to `http://localhost:5555` (or another port if you
@@ -72,14 +75,6 @@ To build the Docker image yourself, run:
 git clone https://github.com/informagi/REL && cd REL
 # Build the Docker image
 docker build - -t informagi/rel < Dockerfile
-```
-The build process will automatically download all necessary files. Wikipedia
-version 2019 is used by default - to specify the Wikipedia version (either 2019
-or 2014), pass e.g. `--build-arg WIKI_YEAR=2014` to the `docker build`
-command:
-
-```bash
-docker build - -t informagi/rel --build-arg WIKI_YEAR=2014 < Dockerfile
 ```
 
 To run the API locally, use the same commands as mentioned in the previous section.
