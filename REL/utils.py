@@ -100,7 +100,7 @@ def process_results(
             start_pos = offset + ment["pos"]
             mention_length = int(ment["end_pos"] - ment["pos"])
             offset += len(sent)
-            
+
             # self.verify_pos(ment["ngram"], start_pos, end_pos, text)
             if pred["prediction"] != "NIL":
                 temp = (
