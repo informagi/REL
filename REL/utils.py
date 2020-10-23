@@ -72,10 +72,8 @@ def process_results(
 ):
     """
     Function that can be used to process the End-to-End results.
-
     :return: dictionary with results and document as key.
     """
-
     res = {}
     for doc in mentions_dataset:
         if doc not in predictions:
@@ -84,24 +82,14 @@ def process_results(
         pred_doc = predictions[doc]
         ment_doc = mentions_dataset[doc]
         text = processed[doc][0]
-
         res_doc = []
-        offset = 0  # Added (issue #49)
 
         for pred, ment in zip(pred_doc, ment_doc):
             sent = ment["sentence"]
-
-            # Only adjust position if using Flair NER tagger.
-            if include_offset:
-                # offset = text.find(sent) # Commented out (issue #49)
-                offset = text[offset:].find(sent) + offset  # Added (issue #49)
-            # else: # Commented out (issue #49)
-            # offset = 0 # Commented out (issue #49)
-            start_pos = offset + ment["pos"]
+            idx = ment['sent_idx']
+            start_pos = ment["pos"]
             mention_length = int(ment["end_pos"] - ment["pos"])
-            offset += len(sent)
 
-            # self.verify_pos(ment["ngram"], start_pos, end_pos, text)
             if pred["prediction"] != "NIL":
                 temp = (
                     start_pos,
