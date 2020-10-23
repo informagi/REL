@@ -80,14 +80,14 @@ class MentionDetection(MentionDetectionBase):
             res[doc] = {}
 
             i = 0
-            pos_start = 0  # Added  (issue #49)
+            pos_end = 0  # Added  (issue #49)
             for sent in sentences:
                 if len(sent.strip()) == 0:
                     continue
                 # Match gt to sentence.
                 # pos_start = text.find(sent) # Commented out (issue #49)
                 pos_start = (
-                    text[pos_start:].find(sent) + pos_start
+                    text.find(sent, pos_end)
                 )  # Added  (issue #49)
                 pos_end = pos_start + len(sent)
 
@@ -107,80 +107,74 @@ class MentionDetection(MentionDetectionBase):
         return res, processed_sentences, splits
 
     def find_mentions(self, dataset, tagger=None):
-        """
-        Responsible for finding mentions given a set of documents in a batch-wise manner. More specifically,
-        it returns the mention, its left/right context and a set of candidates.
-
-        :return: Dictionary with mentions per document.
-        """
-
-        if tagger is None:
-            raise Exception(
-                "No NER tagger is set, but you are attempting to perform Mention Detection.."
-            )
-
-        # Verify if Flair, else ngram or custom.
-        is_flair = isinstance(tagger, SequenceTagger)
-        dataset, processed_sentences, splits = self.split_text(dataset, is_flair)
-        results = {}
-        total_ment = 0
-
-        # mini_batch_size default 32. Only if Flair for higher performance (GPU),
-        # else predict on a sentence-level.
-        if is_flair:
-            tagger.predict(processed_sentences)
-
-        for i, doc in enumerate(dataset):
-            contents = dataset[doc]
-            sentences_doc = [v[0] for v in contents.values()]
-            sentences = processed_sentences[splits[i] : splits[i + 1]]
-            result_doc = []
-
-            for (idx_sent, (sentence, ground_truth_sentence)), snt in zip(
-                contents.items(), sentences
-            ):
-                for entity in (
-                    snt.get_spans("ner")
-                    if is_flair
-                    else tagger.predict(snt, processed_sentences)
+            """
+            Responsible for finding mentions given a set of documents in a batch-wise manner. More specifically,
+            it returns the mention, its left/right context and a set of candidates.
+            :return: Dictionary with mentions per document.
+            """
+            if tagger is None:
+                raise Exception(
+                    "No NER tagger is set, but you are attempting to perform Mention Detection.."
+                )
+            # Verify if Flair, else ngram or custom.
+            is_flair = isinstance(tagger, SequenceTagger)
+            dataset_sentences_raw, processed_sentences, splits = self.split_text(dataset, is_flair)
+            results = {}
+            total_ment = 0
+            if is_flair:
+                tagger.predict(processed_sentences)
+            for i, doc in enumerate(dataset_sentences_raw):
+                contents = dataset_sentences_raw[doc]
+                raw_text = dataset[doc][0]
+                sentences_doc = [v[0] for v in contents.values()]
+                sentences = processed_sentences[splits[i] : splits[i + 1]]
+                result_doc = []
+                cum_sent_length = 0
+                offset = 0
+                for (idx_sent, (sentence, ground_truth_sentence)), snt in zip(
+                    contents.items(), sentences
                 ):
-                    text, start_pos, end_pos, conf, tag = (
-                        entity.text,
-                        entity.start_pos,
-                        entity.end_pos,
-                        entity.score,
-                        entity.tag,
-                    )
-                    total_ment += 1
-
-                    m = self.preprocess_mention(text)
-                    cands = self.get_candidates(m)
-
-                    if len(cands) == 0:
-                        continue
-
-                    # Re-create ngram as 'text' is at times changed by Flair (e.g. double spaces are removed).
-                    ngram = sentence[start_pos:end_pos]
-                    left_ctxt, right_ctxt = self.get_ctxt(
-                        start_pos, end_pos, idx_sent, sentence, sentences_doc
-                    )
-
-                    res = {
-                        "mention": m,
-                        "context": (left_ctxt, right_ctxt),
-                        "candidates": cands,
-                        "gold": ["NONE"],
-                        "pos": start_pos,
-                        "sent_idx": idx_sent,
-                        "ngram": ngram,
-                        "end_pos": end_pos,
-                        "sentence": sentence,
-                        "conf_md": conf,
-                        "tag": tag,
-                    }
-
-                    result_doc.append(res)
-
-            results[doc] = result_doc
-
-        return results, total_ment
+                    
+                    # Only include offset if using Flair.
+                    if is_flair:
+                        offset = raw_text.find(sentence, cum_sent_length)
+                    
+                    for entity in (
+                        snt.get_spans("ner")
+                        if is_flair
+                        else tagger.predict(snt, processed_sentences)
+                    ):
+                        text, start_pos, end_pos, conf, tag = (
+                            entity.text,
+                            entity.start_pos,
+                            entity.end_pos,
+                            entity.score,
+                            entity.tag,
+                        )
+                        total_ment += 1
+                        m = self.preprocess_mention(text)
+                        cands = self.get_candidates(m)
+                        if len(cands) == 0:
+                            continue
+                        # Re-create ngram as 'text' is at times changed by Flair (e.g. double spaces are removed).
+                        ngram = sentence[start_pos:end_pos]
+                        left_ctxt, right_ctxt = self.get_ctxt(
+                            start_pos, end_pos, idx_sent, sentence, sentences_doc
+                        )
+                        res = {
+                            "mention": m,
+                            "context": (left_ctxt, right_ctxt),
+                            "candidates": cands,
+                            "gold": ["NONE"],
+                            "pos": start_pos+offset,
+                            "sent_idx": idx_sent,
+                            "ngram": ngram,
+                            "end_pos": end_pos+offset,
+                            "sentence": sentence,
+                            "conf_md": conf,
+                            "tag": tag,
+                        }
+                        result_doc.append(res)
+                    cum_sent_length += len(sentence) + (offset - cum_sent_length)
+                results[doc] = result_doc
+            return results, total_ment 
