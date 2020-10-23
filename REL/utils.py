@@ -86,7 +86,7 @@ def process_results(
 
         for pred, ment in zip(pred_doc, ment_doc):
             sent = ment["sentence"]
-            idx = ment['sent_idx']
+            idx = ment["sent_idx"]
             start_pos = ment["pos"]
             mention_length = int(ment["end_pos"] - ment["pos"])
 
