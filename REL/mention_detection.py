@@ -126,8 +126,6 @@ class MentionDetection(MentionDetectionBase):
             for i, doc in enumerate(dataset_sentences_raw):
                 contents = dataset_sentences_raw[doc]
                 raw_text = dataset[doc][0]
-                print('contents', contents)
-                print('raw_text', raw_text)
                 sentences_doc = [v[0] for v in contents.values()]
                 sentences = processed_sentences[splits[i] : splits[i + 1]]
                 result_doc = []
