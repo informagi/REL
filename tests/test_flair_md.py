@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from REL.mention_detection import MentionDetection
+
 from flair.models import SequenceTagger
+
+from REL.mention_detection import MentionDetection
 
 
 def test_md():
