@@ -107,7 +107,7 @@ public class MyResource extends ServerResource {
     			JsonArray mentionJson = je.getAsJsonArray();
     			int start = mentionJson.get(0).getAsInt();
     			int length = mentionJson.get(1).getAsInt();
-    			String entity = mentionJson.get(2).getAsString();
+    			String entity = mentionJson.get(3).getAsString();
                 entities.add(new NamedEntity(start, length, "http://dbpedia.org/resource/" + entity));        		
     		}
     	}
