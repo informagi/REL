@@ -45,7 +45,7 @@ API_result = requests.post("{}".format(IP_ADDRESS), json=document).json()
 This section describes how to deploy REL on a local machine and setup the API. If you want to do anything more than simply running our API locally, you can skip the Docker steps and continue with installation from source.
 
 ## Installation using Docker
-First, download the necessary data; you need the generic files and a Wikipedia version (2014 or 2019) (see [Download](##-Download)). Extract them anywhere, we will bind the directories to the Docker container as volumes.
+First, download the necessary data; you need the generic files and a Wikipedia version (2014 or 2019) (see [Download](##Download)). Extract them anywhere, we will bind the directories to the Docker container as volumes.
 
 ### Prebuilt images
 To use our prebuilt default image, run:
