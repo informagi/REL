@@ -45,7 +45,7 @@ API_result = requests.post("{}".format(IP_ADDRESS), json=document).json()
 This section describes how to deploy REL on a local machine and setup the API. If you want to do anything more than simply running our API locally, you can skip the Docker steps and continue with installation from source.
 
 ## Installation using Docker
-First, download the necessary data; you need the generic files and a Wikipedia version (2014 or 2019) (see [Download](## Download)). Extract them anywhere, we will bind the directories to the Docker container as volumes.
+First, download the necessary data; you need the generic files and a Wikipedia version (2014 or 2019) (see [Download](##-Download)). Extract them anywhere, we will bind the directories to the Docker container as volumes.
 
 ### Prebuilt images
 To use our prebuilt default image, run:
@@ -134,7 +134,7 @@ If you are using REL, please cite the following paper:
 ```
 
 # Contact
-Please email your questions or comments to [Mick van Hulst](mailto:mick.vanhulst@gmail.com)
+If you find any bugs or experience difficulties when using REL, please create a issue on this Github page. If you have any specific questions with respect to our research with REL, please email [Mick van Hulst](mailto:mick.vanhulst@gmail.com).
 
 # Acknowledgements
 Our thanks go out to the authors that open-sourced their code, enabling us to create this package that can hopefully be of service to many.
