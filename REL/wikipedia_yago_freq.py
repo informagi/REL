@@ -176,7 +176,7 @@ class WikipediaYagoFreq:
 
         cnt = 0
         crosswiki_path = os.path.join(
-            self.base_url, "/generic/p_e_m_data/crosswikis_p_e_m.txt"
+            self.base_url, "generic/p_e_m_data/crosswikis_p_e_m.txt"
         )
 
         with open(crosswiki_path, "r", encoding="utf-8") as f:
@@ -240,13 +240,13 @@ class WikipediaYagoFreq:
         exist_id_found = False
 
         wiki_anchor_files = os.listdir(
-            os.path.join(self.base_url, self.wiki_version, "/basic_data/anchor_files/")
+            os.path.join(self.base_url, self.wiki_version, "basic_data/anchor_files/")
         )
         for wiki_anchor in wiki_anchor_files:
             wiki_file = os.path.join(
                 self.base_url,
                 self.wiki_version,
-                "/basic_data/anchor_files/",
+                "basic_data/anchor_files/",
                 wiki_anchor,
             )
 
