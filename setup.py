@@ -27,6 +27,7 @@ setuptools.setup(
         'develop': [
             'pytest',
             'pytest-cov',
+            'flake8',
         ],
         'docs': [
           'markdown-include',
