@@ -1,9 +1,7 @@
 [tool.pytest.ini_options]
-addopts = "--cov --cov-report xml --cov-report term --cov-report html --cov-config setup.cfg"
+addopts = "--cov --cov-report xml --cov-report term --cov-report html --cov-config pyproject.toml"
 testpaths = "tests"
 
 [tool.coverage.run]
 branch = true
-source = "rel"
-
-
+source = [ "rel" ]
