@@ -1,2 +1,9 @@
 [tool.pytest.ini_options]
-addopts = "--ignore scripts/"
+addopts = "--cov --cov-report xml --cov-report term --cov-report html --cov-config setup.cfg"
+testpaths = "tests"
+
+[tool.coverage.run]
+branch = true
+source = "rel"
+
+

@@ -26,6 +26,7 @@ setuptools.setup(
     extras_require={
         'develop': [
             'pytest',
+            'pytest-cov',
         ],
         'docs': [
           'markdown-include',
