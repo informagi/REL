@@ -236,9 +236,6 @@ class WikipediaYagoFreq:
 
         print("Calculating Wikipedia mention/entity occurrences")
 
-        last_processed_id = -1
-        exist_id_found = False
-
         wiki_anchor_files = os.listdir(
             os.path.join(self.base_url, self.wiki_version, "basic_data/anchor_files/")
         )
@@ -249,6 +246,9 @@ class WikipediaYagoFreq:
                 "basic_data/anchor_files/",
                 wiki_anchor,
             )
+            
+            last_processed_id = -1
+            exist_id_found = False
 
             with open(wiki_file, "r", encoding="utf-8") as f:
                 for line in f:

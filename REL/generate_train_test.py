@@ -74,8 +74,17 @@ class GenTrainingTest(MentionDetectionBase):
 
         contents = {}
         exist_doc_names = []
+        cnt_replaced = 0
         for doc in root:
             doc_name = doc.attrib["docName"].replace("&amp;", "&")
+            
+            # Replacement in string to makeup for mismatch in doc_names present in annotations_xml and generic folder
+            doc_name = doc_name.replace("'","_").replace("É","Р").replace("í","б").replace(
+                "_&_","___").replace("ü","Б").replace("â","Г").replace("ö","Ф").replace(
+                "é","В").replace("ó","в")
+            if doc_name.endswith("."):
+                doc_name = doc_name[:-1]+"_"
+                
             if doc_name in exist_doc_names:
                 print(
                     "Duplicate document found, will be removed later in the process: {}".format(
@@ -87,13 +96,17 @@ class GenTrainingTest(MentionDetectionBase):
             doc_path = os.path.join(
                 self.wned_path, "{}/RawText/{}".format(dataset, doc_name)
             )
-            with open(doc_path, "r", encoding="utf-8") as cf:
-                doc_text = " ".join(cf.readlines())
-            cf.close()
+            
+            try:
+                with open(doc_path, "r", encoding="utf-8") as cf:
+                    doc_text = " ".join(cf.readlines())
+            except:
+                print("Couldn't find: ", doc_path)
+                continue
+            
             doc_text = doc_text.replace("&amp;", "&")
             split_text = re.split(r"{}".format(split), doc_text)
 
-            cnt_replaced = 0
             sentences = {}
             mentions_gt = {}
             total_gt = 0
