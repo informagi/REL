@@ -86,3 +86,15 @@ mkdocs serve
 
 You can find the documentation source in the [docs](https://github.com/informagi/REL/tree/main/docs) directory. 
 If you are adding new pages, make sure to update the listing in the [`mkdocs.yml`](https://github.com/informagi/REL/blob/main/mkdocs.yml) under the `nav` entry.
+
+### Making a release
+
+The versioning scheme we use is [SemVer](http://semver.org/).
+
+1. Bump the version (`major`/`minor`/`patch` as needed)
+
+```console
+bumpversion minor
+```
+
+2. Make a new [release](https://github.com/informagi/REL/releases). The [upload to pypi](https://github.com/informagi/REL/actions/workflows/publish.yml) is triggered when a release is published.
