@@ -1,1 +1,1 @@
-include REL/models/models.json
+include src/REL/models/models.json
