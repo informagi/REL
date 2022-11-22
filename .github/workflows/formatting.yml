@@ -4,14 +4,14 @@ on:
     push:
         branches:
             - release/v**
-            - master
+            - main
 
 jobs:
     formatting:
         name: Formatting
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
               name: Checkout repository
 
             - name: Configure Git
@@ -21,25 +21,19 @@ jobs:
                   git config --local core.autocrlf true
 
             - name: Set up Python 3.7
-              uses: actions/setup-python@v2
+              uses: actions/setup-python@v4
               with:
                   python-version: 3.7
 
-            - uses: actions/cache@v2
-              name: Cache pip dependencies
+            - uses: actions/cache@v3
               with:
-                  path: ~/.cache/pip
-                  key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-                  restore-keys: ${{ runner.os }}-pip-
+                path: ${{ env.pythonLocation }}
+                key: ${{ env.pythonLocation }}-${{ hashFiles('setup.cfg') }}
 
-            - name: Install pip dependencies
+            - name: Install REL and dependencies
               run: |
                   pip install -U pip
-                  pip install -r requirements.txt
-                  pip install isort black
-
-            - name: Install REL
-              run: pip install -e .
+                  pip install -e .[develop]
 
             - name: Code formatting
               run: |
