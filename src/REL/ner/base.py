@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from collections import namedtuple
 
-Span = namedtuple("Span", ["text", "start_pos", "end_pos", "score", "tag"])
+Span = namedtuple("Span", ["text", "start_position", "end_position", "score", "tag"])
 
 
 class NERBase(ABC):
