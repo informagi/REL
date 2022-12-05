@@ -16,7 +16,7 @@ jobs:
       uses: mr-smithers-excellent/docker-build-push@v5
       with:
         image: informagi/REL
-        registry: registry-url.io
+        registry: docker.io
         dockerfile: Dockerfile
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
