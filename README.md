@@ -2,6 +2,9 @@
 
 [![API status](https://img.shields.io/endpoint?label=status&url=https%3A%2F%2Frel.cs.ru.nl%2Fapi)](https://rel.cs.ru.nl/api)
 [![build](https://github.com/informagi/REL/workflows/build/badge.svg)](https://github.com/informagi/REL/actions/workflows/build.yaml)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/radboud-el)](https://pypi.org/project/radboud-el/) 
+[![PyPI](https://img.shields.io/pypi/v/radboud-el.svg?style=flat)](https://pypi.org/project/radboud-el/)
+| 
 
 REL is a modular Entity Linking package that is provided as a Python package as well as a web API. REL has various meanings -  one might first notice that it stands for relation, which is a suiting name for the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
 
@@ -11,6 +14,17 @@ REL utilizes *English* Wikipedia as a knowledge base and can be used for the fol
 - **Entity Disambiguation (ED)**: Given a text and a list of mentions, the system assigns an entity (or NIL) to each mention.
 
 Documentation: <https://rel.readthedocs.io>
+
+To install:
+
+```console
+pip install radboud-el
+```
+
+The source code is available from [Github](https://github.com/duqtools/duqtools).
+
+Suggestions, improvements, and edits are most welcome.
+
 
 ## REL variants
 
