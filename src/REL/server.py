@@ -6,6 +6,8 @@ from flair.models import SequenceTagger
 from REL.mention_detection import MentionDetection
 from REL.utils import process_results
 
+from REL.crel.conv_el import ConvEL
+
 API_DOC = "API_DOC"
 
 
@@ -24,6 +26,8 @@ def make_handler(base_url, wiki_version, model, tagger_ner):
 
             self.custom_ner = not isinstance(tagger_ner, SequenceTagger)
             self.mention_detection = MentionDetection(base_url, wiki_version)
+
+            self.conv_linking = ConvEL(base_url=base_url, wiki_version=wiki_version)
 
             super().__init__(*args, **kwargs)
 
@@ -64,8 +68,8 @@ def make_handler(base_url, wiki_version, model, tagger_ner):
                 self.send_response(200)
                 self.end_headers()
 
-                text, spans = self.read_json(post_data)
-                response = self.generate_response(text, spans)
+                data = self.read_json(post_data)
+                response = self.generate_response(**data)
 
                 self.wfile.write(bytes(json.dumps(response), "utf-8"))
             except Exception as e:
@@ -83,22 +87,23 @@ def make_handler(base_url, wiki_version, model, tagger_ner):
             """
 
             data = json.loads(post_data.decode("utf-8"))
-            text = data["text"]
-            text = text.replace("&amp;", "&")
+
+            if isinstance(data["text"], str):
+                data["text"] = data["text"].replace("&amp;", "&")
 
             # GERBIL sends dictionary, users send list of lists.
             if "spans" in data:
                 try:
-                    spans = [list(d.values()) for d in data["spans"]]
+                    data["spans"] = [list(d.values()) for d in data["spans"]]
                 except Exception:
-                    spans = data["spans"]
                     pass
-            else:
-                spans = []
 
-            return text, spans
+            data.setdefault("spans", [])
+            data.setdefault("conversation", False)
 
-        def generate_response(self, text, spans):
+            return data
+
+        def generate_response(self, *, text: list, spans: list, conversation: bool):
             """
             Generates response for API. Can be either ED only or EL, meaning end-to-end.
 
@@ -108,29 +113,36 @@ def make_handler(base_url, wiki_version, model, tagger_ner):
             if len(text) == 0:
                 return []
 
-            if len(spans) > 0:
-                # ED.
-                processed = {API_DOC: [text, spans]}
-                mentions_dataset, total_ment = self.mention_detection.format_spans(
-                    processed
-                )
+            if conversation:
+
+                result = self.conv_linking.annotate(text)
+                return result
+
             else:
-                # EL
-                processed = {API_DOC: [text, spans]}
-                mentions_dataset, total_ment = self.mention_detection.find_mentions(
-                    processed, self.tagger_ner
+            
+                if len(spans) > 0:
+                    # ED.
+                    processed = {API_DOC: [text, spans]}
+                    mentions_dataset, total_ment = self.mention_detection.format_spans(
+                        processed
+                    )
+                else:
+                    # EL
+                    processed = {API_DOC: [text, spans]}
+                    mentions_dataset, total_ment = self.mention_detection.find_mentions(
+                        processed, self.tagger_ner
+                    )
+
+                # Disambiguation
+                predictions, timing = self.model.predict(mentions_dataset)
+
+                # Process result.
+                result = process_results(
+                    mentions_dataset,
+                    predictions,
+                    processed,
+                    include_offset=False if ((len(spans) > 0) or self.custom_ner) else True,
                 )
-
-            # Disambiguation
-            predictions, timing = self.model.predict(mentions_dataset)
-
-            # Process result.
-            result = process_results(
-                mentions_dataset,
-                predictions,
-                processed,
-                include_offset=False if ((len(spans) > 0) or self.custom_ner) else True,
-            )
 
             # Singular document.
             if len(result) > 0:

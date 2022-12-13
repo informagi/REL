@@ -1,12 +1,15 @@
 import numpy as np
 import requests
+import os
 
 from REL.training_datasets import TrainingEvaluationDatasets
 
 np.random.seed(seed=42)
 
-base_url = "/Users/vanhulsm/Desktop/projects/data/"
-wiki_version = "wiki_2014"
+base_url = os.environ.get("REL_BASE_URL")
+wiki_version = "wiki_2019"
+host = 'localhost'
+port = '5555'
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()["aida_testB"]
 
 # random_docs = np.random.choice(list(datasets.keys()), 50)
@@ -40,7 +43,7 @@ for i, doc in enumerate(datasets):
             print(myjson)
 
             print("Output API:")
-            print(requests.post("http://192.168.178.11:1235", json=myjson).json())
+            print(requests.post(f"http://{host}:{port}", json=myjson).json())
             print("----------------------------")
 
 
