@@ -9,8 +9,8 @@
 
 Example tests:
 
-* Flair: `python3 scripts/efficiency\_test.py --process\_sentences` 
-* Bert: `python3 scripts/efficiency\_test.py --use\_bert\_base\_cased --split\_docs\_value 500`
+* Flair: `python3 scripts/efficiency_test.py --process_sentences` 
+* Bert: `python3 scripts/efficiency_test.py --use_bert_base_cased --split_docs_value 500`
 
 Need installation of REL documents in directory `doc` (`ed-wiki-2019`,  `generic`  and `wiki_2019`)
 
