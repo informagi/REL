@@ -10,11 +10,12 @@
 Example tests:
 
 * Flair: `python3 scripts/efficiency_test.py --process_sentences` 
-* Bert: `python3 scripts/efficiency_test.py --use_bert_base_cased --split_docs_value 500`
+* Bert: `python3 scripts/efficiency_test.py --use_bert_base_uncased --split_docs_value 500`
+* Server (slower):
+    * `python3 src/REL/server.py --use_bert_base_uncased --split_docs_value 500 --ed-model ed-wiki-2019 data wiki_2019`
+    * `python3 scripts/efficiency_test.py --use_server`
 
-Need installation of REL documents in directory `doc` (`ed-wiki-2019`,  `generic`  and `wiki_2019`)
-
-Server does not work yet
+Needs installation of REL documents in directory `doc` (`ed-wiki-2019`,  `generic`  and `wiki_2019`)
 
 ---
 

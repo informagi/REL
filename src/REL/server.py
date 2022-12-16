@@ -1,4 +1,5 @@
 import json
+import numpy
 from http.server import BaseHTTPRequestHandler
 
 from flair.models import SequenceTagger
@@ -55,6 +56,17 @@ def make_handler(base_url, wiki_version, ed_model, tagger_ner, use_bert, process
             self.wfile.write(bytes(json.dumps([]), "utf-8"))
             return
 
+        def solve_floats(self, data):
+            data_new = []
+            for data_set in data:
+                data_set_new_list = []
+                for data_el in data_set:
+                    if isinstance(data_el, numpy.float32):
+                        data_el = float(data_el)
+                    data_set_new_list.append(data_el)
+                data_new.append(data_set_new_list)
+            return data_new
+
         def do_POST(self):
             """
             Returns response.
@@ -70,7 +82,7 @@ def make_handler(base_url, wiki_version, ed_model, tagger_ner, use_bert, process
                 text, spans = self.read_json(post_data)
                 response = self.generate_response(text, spans)
 
-                self.wfile.write(bytes(json.dumps(response), "utf-8"))
+                self.wfile.write(bytes(json.dumps(self.solve_floats(response)), "utf-8"))
             except Exception as e:
                 print(f"Encountered exception: {repr(e)}")
                 self.send_response(400)
