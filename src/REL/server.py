@@ -8,7 +8,7 @@ from REL.utils import process_results
 class ModelHandler:
     API_DOC = "API_DOC"
 
-    def __init__(self, base_url, wiki_version, ed_model, ner_model):
+    def __init__(self, base_url, wiki_version, model, tagger_ner):
         self.model = model
         self.tagger_ner = tagger_ner
 
@@ -63,7 +63,7 @@ class ModelHandler:
 
 
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
 
 app = FastAPI()
