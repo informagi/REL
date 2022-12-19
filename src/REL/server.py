@@ -4,7 +4,6 @@ from flair.models import SequenceTagger
 from REL.mention_detection import MentionDetection
 from REL.utils import process_results
 
-
 class ModelHandler:
     API_DOC = "API_DOC"
 
@@ -32,28 +31,36 @@ class ModelHandler:
         if len(text) == 0:
             return []
 
-        if len(spans) > 0:
-            # ED.
-            processed = {self.API_DOC: [text, spans]}
-            mentions_dataset, total_ment = self.mention_detection.format_spans(
-                processed)
+        if conversation:
+
+            result = self.conv_linking.annotate(text)
+            return result
+
         else:
-            # EL
-            processed = {self.API_DOC: [text, spans]}
-            mentions_dataset, total_ment = self.mention_detection.find_mentions(
-                processed, self.tagger_ner)
+        
+            if len(spans) > 0:
+                # ED.
+                processed = {self.API_DOC: [text, spans]}
+                mentions_dataset, total_ment = self.mention_detection.format_spans(
+                    processed
+                )
+            else:
+                # EL
+                processed = {self.API_DOC: [text, spans]}
+                mentions_dataset, total_ment = self.mention_detection.find_mentions(
+                    processed, self.tagger_ner
+                )
 
-        # Disambiguation
-        predictions, timing = self.model.predict(mentions_dataset)
+            # Disambiguation
+            predictions, timing = self.model.predict(mentions_dataset)
 
-        # Process result.
-        result = process_results(
-            mentions_dataset,
-            predictions,
-            processed,
-            include_offset=False if
-            ((len(spans) > 0) or self.custom_ner) else True,
-        )
+            # Process result.
+            result = process_results(
+                mentions_dataset,
+                predictions,
+                processed,
+                include_offset=False if ((len(spans) > 0) or self.custom_ner) else True,
+            )
 
         # Singular document.
         if len(result) > 0:
@@ -64,7 +71,7 @@ class ModelHandler:
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 
 app = FastAPI()
 
@@ -87,7 +94,7 @@ class EntityConfig(BaseModel):
 @app.post("/")
 def root(config: EntityConfig):
     """Submit your text here for entity disambiguation or linking."""
-    response = handler.generate_response(text=config.text, spans=config.spans)
+    response = handler.generate_response(text=config.text, spans=config.spans, conversation=config.conversation)
     return response
 
 
