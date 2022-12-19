@@ -14,37 +14,9 @@ REL utilizes *English* Wikipedia as a knowledge base and can be used for the fol
 
 Documentation: <https://rel.readthedocs.io>
 
-To install:
-
-```console
-pip install radboud-el
-```
-
 The source code is available from [Github](https://github.com/duqtools/duqtools).
 
 Suggestions, improvements, and edits are most welcome.
-
-
-## REL variants
-
-REL comes in two variants for identifying entity mentions:
-
-- **Case-sensitive**: This setup is suitable for properly written texts (e.g., news articles) and is the default setup of the REL package. In this setup, we use the `ner-fast` FLAIR model, which is case-sensitive. The results reported in the REL paper are based on this model.
-
-- **Case-insensitive**: This setup is well suited for noisy texts (e.g., queries), where entity mentions can be (often) lowercased. In this setup, we use the `ner-fast-with-lowercase` model, which is the `ner-fast` FLAIR architucture trained on randomly cased and uncased text. This variant is the default setup of our API.
-
-Below is a comparison of these two models on [CoNLL-2003 NER](https://www.clips.uantwerpen.be/conll2003/ner/) dataset.
-
-| Model  | CoNLL-2003 test | F1 |
-| ------ | --------------- | -- |
-| `ner-fast`  |  original | 92.78 |
-| `ner-fast`  |  lower-cased | 58.42 |
-| `ner-fast`  |  random | 70.64 |
-| `ner-fast-with-lowercase`  |  original | 91.53|
-| `ner-fast-with-lowercase`  |  lower-cased | 89.73 |
-| `ner-fast-with-lowercase`  |  random | 89.66 |
-
-See [Notes on using custom models](https://rel.readthedocs.io/en/latest/tutorials/custom_models/) for further information on switiching between these variants.
 
 
 ## Calling our API
@@ -71,11 +43,16 @@ ed_result = requests.post(API_URL, json={
 }).json()
 ```
 
-## Setup package
+## Installation
 
 This section describes how to deploy REL on a local machine and setup the API. If you want to do anything more than simply running our API locally, you can skip the Docker steps and continue with installation from source.
 
-### Option 1: Installation using Docker
+### Option 1: Installation using pip
+
+```console
+pip install radboud-el
+```
+### Option 2: Installation using Docker
 
 First, download the necessary data; you need the generic files and a Wikipedia version (2014 or 2019) (see [Download](#download)). Extract them anywhere, we will bind the directories to the Docker container as volumes.
 
@@ -119,7 +96,7 @@ docker build . -t informagi/rel
 
 To run the API locally, use the same commands as mentioned in the previous section.
 
-### Option 2: Installation from source code
+### Option 3: Installation from source code
 
 Run the following command in a terminal to install REL:
 
@@ -138,7 +115,7 @@ The files used for this project can be divided into three categories. The first 
 * [Download Wikipedia corpus (2019)](http://gem.cs.ru.nl/wiki_2019.tar.gz)
 * [Download ED model 2019](http://gem.cs.ru.nl/ed-wiki-2019.tar.gz)
 
-### Tutorials
+## Tutorials
 
 To promote usage of this package we developed various [tutorials](https://rel.readthedocs.io/en/latest/tutorials/). If you simply want to use our API, then 
 we refer to the section above. If you feel one is missing or unclear, then please create an [issue](https://github.com/informagi/REL/issues), which is much appreciated :)! 
@@ -154,6 +131,27 @@ The remainder of the tutorials are optional and for users who wish to e.g. train
 5. [Reproducing our results](https://rel.readthedocs.io/en/latest/tutorials/reproducing_our_results/)
 6. [REL as systemd service](https://rel.readthedocs.io/en/latest/tutorials/systemd_instructions/)
 7. [Notes on using custom models](https://rel.readthedocs.io/en/latest/tutorials/custom_models/)
+
+## REL variants
+
+REL comes in two variants for identifying entity mentions:
+
+- **Case-sensitive**: This setup is suitable for properly written texts (e.g., news articles) and is the default setup of the REL package. In this setup, we use the `ner-fast` FLAIR model, which is case-sensitive. The results reported in the REL paper are based on this model.
+
+- **Case-insensitive**: This setup is well suited for noisy texts (e.g., queries), where entity mentions can be (often) lowercased. In this setup, we use the `ner-fast-with-lowercase` model, which is the `ner-fast` FLAIR architucture trained on randomly cased and uncased text. This variant is the default setup of our API.
+
+Below is a comparison of these two models on [CoNLL-2003 NER](https://www.clips.uantwerpen.be/conll2003/ner/) dataset.
+
+| Model  | CoNLL-2003 test | F1 |
+| ------ | --------------- | -- |
+| `ner-fast`  |  original | 92.78 |
+| `ner-fast`  |  lower-cased | 58.42 |
+| `ner-fast`  |  random | 70.64 |
+| `ner-fast-with-lowercase`  |  original | 91.53|
+| `ner-fast-with-lowercase`  |  lower-cased | 89.73 |
+| `ner-fast-with-lowercase`  |  random | 89.66 |
+
+See [Notes on using custom models](https://rel.readthedocs.io/en/latest/tutorials/custom_models/) for further information on switiching between these variants.
 
 ## Efficiency of REL
 
