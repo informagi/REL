@@ -40,7 +40,7 @@ class DB:
             db (sqlite3.Connection): a SQLite3 database with an embeddings table.
         """
         # open database in autocommit mode by setting isolation_level to None.
-        db = sqlite3.connect(fname, isolation_level=None)
+        db = sqlite3.connect(fname, isolation_level=None, check_same_thread=False)
 
         q = "create table if not exists {}(word text primary key, {})".format(
             table_name, ", ".join(["{} {}".format(k, v) for k, v in columns.items()])

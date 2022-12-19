@@ -1,7 +1,10 @@
+anyascii
 colorama
-konoha
+fastapi
 flair>=0.11
+konoha
+nltk
+pydantic
 segtok
 torch
-nltk
-anyascii
+uvicorn
