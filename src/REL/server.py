@@ -3,6 +3,7 @@ from REL.ner import load_flair_ner
 from flair.models import SequenceTagger
 from REL.mention_detection import MentionDetection
 from REL.utils import process_results
+from REL.crel.conv_el import ConvEL
 
 class ModelHandler:
     API_DOC = "API_DOC"
@@ -21,7 +22,7 @@ class ModelHandler:
                           *,
                           text: list,
                           spans: list,
-                          conversation: bool = False):
+                          ):
         """
         Generates response for API. Can be either ED only or EL, meaning end-to-end.
 
@@ -31,36 +32,29 @@ class ModelHandler:
         if len(text) == 0:
             return []
 
-        if conversation:
-
-            result = self.conv_linking.annotate(text)
-            return result
-
-        else:
-        
-            if len(spans) > 0:
-                # ED.
-                processed = {self.API_DOC: [text, spans]}
-                mentions_dataset, total_ment = self.mention_detection.format_spans(
-                    processed
-                )
-            else:
-                # EL
-                processed = {self.API_DOC: [text, spans]}
-                mentions_dataset, total_ment = self.mention_detection.find_mentions(
-                    processed, self.tagger_ner
-                )
-
-            # Disambiguation
-            predictions, timing = self.model.predict(mentions_dataset)
-
-            # Process result.
-            result = process_results(
-                mentions_dataset,
-                predictions,
-                processed,
-                include_offset=False if ((len(spans) > 0) or self.custom_ner) else True,
+        if len(spans) > 0:
+            # ED.
+            processed = {self.API_DOC: [text, spans]}
+            mentions_dataset, total_ment = self.mention_detection.format_spans(
+                processed
             )
+        else:
+            # EL
+            processed = {self.API_DOC: [text, spans]}
+            mentions_dataset, total_ment = self.mention_detection.find_mentions(
+                processed, self.tagger_ner
+            )
+
+        # Disambiguation
+        predictions, timing = self.model.predict(mentions_dataset)
+
+        # Process result.
+        result = process_results(
+            mentions_dataset,
+            predictions,
+            processed,
+            include_offset=False if ((len(spans) > 0) or self.custom_ner) else True,
+        )
 
         # Singular document.
         if len(result) > 0:
@@ -71,7 +65,7 @@ class ModelHandler:
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 app = FastAPI()
 
@@ -94,7 +88,24 @@ class EntityConfig(BaseModel):
 @app.post("/")
 def root(config: EntityConfig):
     """Submit your text here for entity disambiguation or linking."""
-    response = handler.generate_response(text=config.text, spans=config.spans, conversation=config.conversation)
+    response = handler.generate_response(text=config.text, spans=config.spans)
+    return response
+
+
+class ConversationTurn(BaseModel):
+    speaker: Literal["USER", "SYSTEM"] = Field(..., "Speaker for this turn.")
+    utterance: str = Field(..., description="Input utterance.")
+
+
+class ConversationConfig(BaseModel):
+    text: List[ConversationTurn] = Field(..., "Conversation as list of turns between two speakers.")
+
+
+@app.post("/conversation/")
+def conversation(config: ConversationConfig):
+    """Submit your text here for conversational entity linking."""
+    text = config.dict()['text']
+    response = conv_handler.annotate(text)
     return response
 
 
@@ -117,5 +128,7 @@ if __name__ == "__main__":
     )
 
     handler = ModelHandler(args.base_url, args.wiki_version, ed_model, ner_model)
+
+    conv_handler = ConvEL(args.base_url, args.wiki_version)
 
     uvicorn.run(app, port=args.port, host=args.bind)

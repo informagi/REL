@@ -27,7 +27,7 @@ text1 = {
     "spans": []
 }
 
-conv1 = {"conversation": "True",
+conv1 = {
     "text" : [
         {
             "speaker":
@@ -48,10 +48,15 @@ conv1 = {"conversation": "True",
     ]
 }
 
-for myjson in text1, conv1:
+
+for endpoint, myjson in (
+        ('', text1), 
+        ('conversation/', conv1)
+    ):
     print('Input API:')
     print(myjson)
     print()
     print('Output API:')
-    print(requests.post(f"http://{host}:{port}", json=myjson).json())
+    print(requests.post(f"http://{host}:{port}/{endpoint}", json=myjson).json())
     print('----------------------------')
+
