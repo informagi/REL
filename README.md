@@ -20,7 +20,7 @@ To install:
 pip install radboud-el
 ```
 
-The source code is available from [Github](https://github.com/duqtools/duqtools).
+The source code is available from [Github](https://github.com/informagi/REL).
 
 Suggestions, improvements, and edits are most welcome.
 
