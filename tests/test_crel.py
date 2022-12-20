@@ -13,7 +13,7 @@ def cel():
 
 
 @pytest.mark.skipif(
-    os.getenv("GITHUB_ACTIONS")=='true',, reason="No way of testing this on Github actions."
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
 )
 def test_conv1(cel):
     example = [
