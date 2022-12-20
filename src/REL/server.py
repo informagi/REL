@@ -187,6 +187,7 @@ if __name__ == "__main__":
     p.add_argument("--use_bert_base_cased", help = "use Bert base cased rather than Flair", action="store_true")
     p.add_argument("--use_bert_large_uncased", help = "use Bert large uncased rather than Flair", action="store_true")
     p.add_argument("--use_bert_base_uncased", help = "use Bert base uncased rather than Flair", action="store_true")
+    p.add_argument("--use_bert_multilingual", help = "use Bert multilingual rather than Flair", action="store_true")
     p.add_argument("--process_sentences", help = "process sentences rather than documents", action="store_true")
     p.add_argument("--split_docs_value", help = "threshold number of tokens to split document")
 
@@ -196,6 +197,7 @@ if __name__ == "__main__":
     use_bert_large_cased = False
     use_bert_base_uncased = False
     use_bert_large_uncased = False
+    use_bert_multilingual = False
 
     if args.use_bert_base_cased:
         ner_model = load_bert_ner("dslim/bert-base-NER")
@@ -209,6 +211,9 @@ if __name__ == "__main__":
     elif args.use_bert_large_uncased:
         ner_model = load_bert_ner("Jorgeutd/bert-large-uncased-finetuned-ner")
         use_bert_large_uncased = True
+    elif args.use_bert_multilingual:
+        ner_model = load_bert_ner("Davlan/bert-base-multilingual-cased-ner-hrl")
+        use_bert_multilingual = True
     else:
         ner_model = load_flair_ner(args.ner_model)
 
@@ -228,7 +233,7 @@ if __name__ == "__main__":
                      args.wiki_version, 
                      ed_model, 
                      ner_model, 
-                     (use_bert_base_cased or use_bert_large_cased or use_bert_base_uncased or use_bert_large_uncased), 
+                     (use_bert_base_cased or use_bert_large_cased or use_bert_base_uncased or use_bert_large_uncased or use_bert_multilingual), 
                      process_sentences,
                      split_docs_value)
     )
