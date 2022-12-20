@@ -10,6 +10,7 @@ nav:
     - tutorials/reproducing_our_results.md
     - tutorials/systemd_instructions.md
     - tutorials/custom_models.md
+    - tutorials/conversations.md
   - Python API reference:
     - api/entity_disambiguation.md
     - api/generate_train_test.md
@@ -72,11 +73,10 @@ plugins:
         - https://numpy.org/doc/stable/objects.inv
         - https://docs.scipy.org/doc/scipy/objects.inv
         - https://pandas.pydata.org/docs/objects.inv
-        selection:
+        options:
           docstring_style: sphinx
           docstring_options:
             ignore_init_summary: yes
-        rendering:
           show_submodules: no
           show_source: true
           docstring_section_style: list
