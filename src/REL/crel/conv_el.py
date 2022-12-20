@@ -3,14 +3,14 @@ import sys
 from pathlib import Path
 
 from .bert_md import BERT_MD
-from .rel_ed import REL_ED
 from .s2e_pe import pe_data
 from .s2e_pe.pe import EEMD, PEMD
+from REL.response_model import ResponseModel
 
 
 class ConvEL:
     def __init__(
-        self, base_url=".", wiki_version="wiki_2019", user_config=None, threshold=0
+        self, base_url=".", wiki_version="wiki_2019", ed_model=None, user_config=None, threshold=0
     ):
         self.threshold = threshold
 
@@ -19,7 +19,12 @@ class ConvEL:
         self.file_pretrained = str(Path(base_url) / "bert_conv-td")
 
         self.bert_md = BERT_MD(self.file_pretrained)
-        self.rel_ed = REL_ED(self.base_url, self.wiki_version)
+
+        if not ed_model:
+            ed_model = self._default_ed_model()
+
+        self.response_model = ResponseModel(self.base_url, self.wiki_version, model=ed_model)
+        
         self.eemd = EEMD(s2e_pe_model=str(Path(base_url) / "s2e_ast_onto"))
         self.pemd = PEMD()
 
@@ -31,6 +36,13 @@ class ConvEL:
             []
         )  # initialize the history of conversation, which is used in PE Linking
         self.ment2ent = {}  # This will be used for PE Linking
+
+    def _default_ed_model(self):
+        from REL.entity_disambiguation import EntityDisambiguation
+        return EntityDisambiguation(self.base_url, self.wiki_version, config={
+                "mode": "eval",
+                "model_path": f"{self.base_url}/{self.wiki_version}/generated/model",
+            })
 
     def _error_check(self, conv):
         assert type(conv) == list
@@ -49,7 +61,7 @@ class ConvEL:
 
         # ED
         spans = [[r[0], r[1]] for r in md_results]  # r[0]: start, r[1]: length
-        el_results = self.rel_ed.ed(utt, spans)  # ED
+        el_results = self.ed(utt, spans)  # ED
 
         self.conv_hist_for_pe[-1]["mentions"] = [r[2] for r in el_results]
         self.ment2ent.update(
@@ -140,3 +152,10 @@ class ConvEL:
                 ret[-1]["annotations"] = el_results + pe_results
 
         return ret
+
+    def ed(self, text, spans):
+        """Change tuple to list to match the output format of REL API."""
+        response = self.response_model.generate_response(text=text, spans=spans)
+        return [list(ent) for ent in response]
+
+
