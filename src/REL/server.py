@@ -1,67 +1,4 @@
-from REL.entity_disambiguation import EntityDisambiguation
-from REL.ner import load_flair_ner
-from flair.models import SequenceTagger
-from REL.mention_detection import MentionDetection
-from REL.utils import process_results
-from REL.crel.conv_el import ConvEL
-
-class ModelHandler:
-    API_DOC = "API_DOC"
-
-    def __init__(self, base_url, wiki_version, model, tagger_ner):
-        self.model = model
-        self.tagger_ner = tagger_ner
-
-        self.base_url = base_url
-        self.wiki_version = wiki_version
-
-        self.custom_ner = not isinstance(tagger_ner, SequenceTagger)
-        self.mention_detection = MentionDetection(base_url, wiki_version)
-
-    def generate_response(self,
-                          *,
-                          text: list,
-                          spans: list,
-                          ):
-        """
-        Generates response for API. Can be either ED only or EL, meaning end-to-end.
-
-        :return: list of tuples for each entity found.
-        """
-
-        if len(text) == 0:
-            return []
-
-        if len(spans) > 0:
-            # ED.
-            processed = {self.API_DOC: [text, spans]}
-            mentions_dataset, total_ment = self.mention_detection.format_spans(
-                processed
-            )
-        else:
-            # EL
-            processed = {self.API_DOC: [text, spans]}
-            mentions_dataset, total_ment = self.mention_detection.find_mentions(
-                processed, self.tagger_ner
-            )
-
-        # Disambiguation
-        predictions, timing = self.model.predict(mentions_dataset)
-
-        # Process result.
-        result = process_results(
-            mentions_dataset,
-            predictions,
-            processed,
-            include_offset=False if ((len(spans) > 0) or self.custom_ner) else True,
-        )
-
-        # Singular document.
-        if len(result) > 0:
-            return [*result.values()][0]
-
-        return []
-
+from REL.response_model import ResponseModel
 
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
@@ -93,12 +30,12 @@ def root(config: EntityConfig):
 
 
 class ConversationTurn(BaseModel):
-    speaker: Literal["USER", "SYSTEM"] = Field(..., "Speaker for this turn.")
+    speaker: Literal["USER", "SYSTEM"] = Field(..., description="Speaker for this turn.")
     utterance: str = Field(..., description="Input utterance.")
 
 
 class ConversationConfig(BaseModel):
-    text: List[ConversationTurn] = Field(..., "Conversation as list of turns between two speakers.")
+    text: List[ConversationTurn] = Field(..., description="Conversation as list of turns between two speakers.")
 
 
 @app.post("/conversation/")
@@ -122,13 +59,17 @@ if __name__ == "__main__":
     p.add_argument("--port", "-p", default=5555, type=int)
     args = p.parse_args()
 
+    from REL.crel.conv_el import ConvEL
+    from REL.entity_disambiguation import EntityDisambiguation
+    from REL.ner import load_flair_ner
+
     ner_model = load_flair_ner(args.ner_model)
     ed_model = EntityDisambiguation(
         args.base_url, args.wiki_version, {"mode": "eval", "model_path": args.ed_model}
     )
 
-    handler = ModelHandler(args.base_url, args.wiki_version, ed_model, ner_model)
+    handler = ResponseModel(args.base_url, args.wiki_version, ed_model, ner_model)
 
-    conv_handler = ConvEL(args.base_url, args.wiki_version)
+    conv_handler = ConvEL(args.base_url, args.wiki_version, ed_model=ed_model)
 
     uvicorn.run(app, port=args.port, host=args.bind)
