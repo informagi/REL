@@ -39,7 +39,7 @@ class ConvEL:
 
     def _default_ed_model(self):
         from REL.entity_disambiguation import EntityDisambiguation
-        return EntityDisambiguation(self.base_url, self.wiki_version, config={
+        return EntityDisambiguation(self.base_url, self.wiki_version, user_config={
                 "mode": "eval",
                 "model_path": f"{self.base_url}/{self.wiki_version}/generated/model",
             })
