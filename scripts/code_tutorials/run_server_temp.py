@@ -12,7 +12,8 @@ from flair.models import SequenceTagger
 from torch.nn.parameter import Parameter
 
 from REL.entity_disambiguation import EntityDisambiguation
-from REL.ner import load_flair_ner
+from REL.ner.ngram import Cmns
+from REL.ner.flair_wrapper import load_flair_ner
 from REL.server import make_handler
 
 

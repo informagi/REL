@@ -7,7 +7,8 @@ import blink.main_dense as main_dense
 from flair.models import SequenceTagger
 
 from REL.mention_detection import MentionDetection
-from REL.ner import load_flair_ner
+from REL.ner.ngram import Cmns
+from REL.ner.flair_wrapper import load_flair_ner
 from REL.utils import split_in_words
 
 API_DOC = "API_DOC"
