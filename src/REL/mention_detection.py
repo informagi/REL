@@ -92,6 +92,13 @@ class MentionDetection(MentionDetectionBase):
             text, spans = dataset[doc]
             if process_sentences:
                 sentences = self.split_single(text)
+                if split_docs_value > 0:
+                    sentences_split = []
+                    for sentence in sentences:
+                        split_sentences = self.split_text_in_parts(sentence, split_docs_value, tagger)
+                        sentences_split.extend(split_sentences)
+                    print("sentences_split", len(sentences_split) != len(sentences), len(sentences_split), len(sentences))
+                    sentences = sentences_split
             elif split_docs_value > 0:
                 sentences = self.split_text_in_parts(text, split_docs_value, tagger)
             else:
@@ -127,7 +134,7 @@ class MentionDetection(MentionDetectionBase):
     def combine_entities(self, ner_results):
         ner_results_out = []
         i = 0
-        while i < len(ner_results)-1:
+        while i < len(ner_results):
             last_end = ner_results[i]["end"]
             ner_results_out.append(dict(ner_results[i]))
             j = 1
@@ -198,7 +205,7 @@ class MentionDetection(MentionDetectionBase):
         return texts
 
 
-    def find_mentions(self, dataset, use_bert, process_sentences, split_docs_value, tagger=None):
+    def find_mentions(self, dataset, tagger_ner_name, process_sentences, split_docs_value, tagger=None):
         """
         Responsible for finding mentions given a set of documents in a batch-wise manner. More specifically,
         it returns the mention, its left/right context and a set of candidates.
@@ -242,7 +249,7 @@ class MentionDetection(MentionDetectionBase):
                     if is_flair
                     else self.combine_entities(tagger(snt))
                 ):
-                    if use_bert:
+                    if re.search("bert", tagger_ner_name):
                         text, start_pos, end_pos, conf, tag = (
                             sentence[entity["start"]:entity["end"]], # for BERT
                             entity["start"],
