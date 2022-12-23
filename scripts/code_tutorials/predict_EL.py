@@ -1,7 +1,6 @@
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.mention_detection import MentionDetection
-from REL.ner.ngram import Cmns
-from REL.ner.flair_wrapper import load_flair_ner
+from REL.ner import Cmns, load_flair_ner
 from REL.utils import process_results
 
 

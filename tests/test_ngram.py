@@ -3,8 +3,7 @@
 
 from pathlib import Path
 
-from REL.ner.ngram import Cmns
-from REL.ner.flair_wrapper import load_flair_ner
+from REL.ner import Cmns, Span
 
 
 def compare_spans(a: Span, b: Span, fields=(0, 1, 2)):

@@ -1,18 +1,17 @@
 import json
 import numpy
-import re
 from http.server import BaseHTTPRequestHandler
 
 from flair.models import SequenceTagger
 
 from REL.mention_detection import MentionDetection
-from REL.utils import process_results, set_tagger_ner
+from REL.utils import process_results
 
 API_DOC = "API_DOC"
 
 
 
-def make_handler(base_url, wiki_version, ed_model, tagger_ner, tagger_ner_name, process_sentences, split_docs_value=0):
+def make_handler(base_url, wiki_version, ed_model, tagger_ner, use_bert, process_sentences, split_docs_value=0):
     """
     Class/function combination that is used to setup an API that can be used for e.g. GERBIL evaluation.
     """
@@ -20,7 +19,7 @@ def make_handler(base_url, wiki_version, ed_model, tagger_ner, tagger_ner_name, 
         def __init__(self, *args, **kwargs):
             self.ed_model = ed_model
             self.tagger_ner = tagger_ner
-            self.tagger_ner_name = tagger_ner_name
+            self.use_bert = use_bert
             self.process_sentences = process_sentences
             self.split_docs_value = split_docs_value
 
@@ -145,7 +144,7 @@ def make_handler(base_url, wiki_version, ed_model, tagger_ner, tagger_ner_name, 
                 # EL
                 processed = {API_DOC: [text, spans]}
                 mentions_dataset, total_ment = self.mention_detection.find_mentions(
-                    processed, self.tagger_ner_name, self.process_sentences, self.split_docs_value, self.tagger_ner
+                    processed, self.use_bert, self.process_sentences, self.split_docs_value, self.tagger_ner
                 )
 
             # Disambiguation
@@ -174,7 +173,7 @@ if __name__ == "__main__":
     from http.server import HTTPServer
 
     from REL.entity_disambiguation import EntityDisambiguation
-    from REL.ner.flair_wrapper import load_flair_ner
+    from REL.ner import load_flair_ner
     from REL.ner.bert_wrapper import load_bert_ner
 
     p = argparse.ArgumentParser()
@@ -194,7 +193,29 @@ if __name__ == "__main__":
 
     args = p.parse_args()
 
-    tagger_ner, tagger_ner_name = set_tagger_ner(args.use_bert_base_cased, args.use_bert_base_uncased, args.use_bert_large_cased, args.use_bert_large_uncased, args.use_bert_multilingual)
+    use_bert_base_cased = False
+    use_bert_large_cased = False
+    use_bert_base_uncased = False
+    use_bert_large_uncased = False
+    use_bert_multilingual = False
+
+    if args.use_bert_base_cased:
+        ner_model = load_bert_ner("dslim/bert-base-NER")
+        use_bert_base_cased = True
+    elif args.use_bert_large_cased:
+        ner_model = load_bert_ner("dslim/bert-large-NER")
+        use_bert_large_cased = True
+    elif args.use_bert_base_uncased:
+        ner_model = load_bert_ner("dslim/bert-base-NER-uncased")
+        use_bert_base_uncased = True
+    elif args.use_bert_large_uncased:
+        ner_model = load_bert_ner("Jorgeutd/bert-large-uncased-finetuned-ner")
+        use_bert_large_uncased = True
+    elif args.use_bert_multilingual:
+        ner_model = load_bert_ner("Davlan/bert-base-multilingual-cased-ner-hrl")
+        use_bert_multilingual = True
+    else:
+        ner_model = load_flair_ner(args.ner_model)
 
     split_docs_value = 0
     if args.split_docs_value:
@@ -208,7 +229,13 @@ if __name__ == "__main__":
     server_address = (args.bind, args.port)
     server = HTTPServer(
         server_address,
-        make_handler(args.base_url, args.wiki_version, ed_model, tagger_ner, tagger_ner_name, process_sentences, split_docs_value)
+        make_handler(args.base_url, 
+                     args.wiki_version, 
+                     ed_model, 
+                     ner_model, 
+                     (use_bert_base_cased or use_bert_large_cased or use_bert_base_uncased or use_bert_large_uncased or use_bert_multilingual), 
+                     process_sentences,
+                     split_docs_value)
     )
 
     try:

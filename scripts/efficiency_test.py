@@ -1,11 +1,9 @@
 import argparse
-from REL.evaluate_predictions import evaluate
+import evaluate_predictions
 import json
 import numpy as np
-import re
 import requests
 
-from REL.utils import set_tagger_ner
 from REL.training_datasets import TrainingEvaluationDatasets
 
 parser = argparse.ArgumentParser()
@@ -23,18 +21,20 @@ args = parser.parse_args()
 
 np.random.seed(seed=42)
 
-base_url = "/store/userdata/etjong/REL/data/"
-process_sentences = args.process_sentences
+base_url = "/store/userdata/etjong/REL-erik/data/"
+if args.max_docs:
+    max_docs = int(args.max_docs)
+else:
+    max_docs = 50
+if args.process_sentences:
+    process_sentences = True
+else:
+    process_sentences = False
 
 if args.split_docs_value:
     split_docs_value = int(args.split_docs_value)
 else:
     split_docs_value = 0
-
-if args.max_docs:
-    max_docs = int(args.max_docs)
-else:
-    max_docs = 50
 
 if args.wiki_version:
     wiki_version = args.wiki_version
@@ -43,10 +43,29 @@ else:
 
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()["aida_testB"]
 
-use_server = args.use_server
-tagger_ner, tagger_ner_name = set_tagger_ner(args.use_bert_base_cased, args.use_bert_base_uncased, args.use_bert_large_cased, args.use_bert_large_uncased, args.use_bert_multilingual)
+if args.use_server:
+    use_server = True
+else:
+    use_server = False
 
-print(f"max_docs={max_docs} wiki_version={wiki_version} tagger_ner_name={tagger_ner_name} process_sentences={process_sentences} split_docs_value={split_docs_value}")
+use_bert_base_cased = False
+use_bert_large_cased = False
+use_bert_base_uncased = False
+use_bert_large_uncased = False
+use_bert_multilingual = False
+
+if args.use_bert_base_cased:
+    use_bert_base_cased = True
+elif args.use_bert_large_cased:
+    use_bert_large_cased = True
+elif args.use_bert_base_uncased:
+    use_bert_base_uncased = True
+elif args.use_bert_large_uncased:
+    use_bert_large_uncased = True
+elif args.use_bert_multilingual:
+    use_bert_multilingual = True
+
+print(f"max_docs={max_docs} wiki_version={wiki_version} use_bert_base_cased={use_bert_base_cased} use_bert_large_cased={use_bert_large_cased} use_bert_base_uncased={use_bert_base_uncased} use_bert_large_uncased={use_bert_large_uncased} use_bert_multilingual={use_bert_multilingual} use_server={use_server} process_sentences={process_sentences} split_docs_value={split_docs_value}")
 
 docs = {}
 all_results = {}
@@ -80,10 +99,12 @@ for i, doc in enumerate(datasets):
 
             print("Output API:")
             results = requests.post("http://0.0.0.0:5555", json=myjson)
-            print(results.json())
             print("----------------------------")
+            print("results", type(results), results)
+            print("results.json()", results.json())
             try:
                 results_list = []
+                print("eff_test", results.json())
                 for result in results.json():
                     results_list.append({ "mention": result[2], "prediction": result[3] }) # Flair + Bert
                 all_results[doc] = results_list
@@ -92,7 +113,7 @@ for i, doc in enumerate(datasets):
                 all_results[doc] = []
 
 if len(all_results) > 0:
-    evaluate(all_results)
+    evaluate_predictions.evaluate(all_results)
 
 # --------------------- Now total --------------------------------
 # ------------- RUN SEPARATELY TO BALANCE LOAD--------------------
@@ -112,8 +133,28 @@ if not use_server:
 
     mention_detection = MentionDetection(base_url, wiki_version)
 
+    # Alternatively use Flair NER tagger.
+    if use_bert_base_uncased:
+        tagger_ner = load_bert_ner("dslim/bert-base-NER-uncased")
+    elif use_bert_large_uncased:
+        tagger_ner = load_bert_ner("Jorgeutd/bert-large-uncased-finetuned-ner")
+    elif use_bert_base_cased:
+        tagger_ner = load_bert_ner("dslim/bert-base-NER")
+    elif use_bert_large_cased:
+        tagger_ner = load_bert_ner("dslim/bert-large-NER")
+    elif use_bert_multilingual:
+        tagger_ner = load_bert_ner("Davlan/bert-base-multilingual-cased-ner-hrl")
+    else:
+        tagger_ner = SequenceTagger.load("ner-fast")
+
     start = time()
-    mentions_dataset, n_mentions = mention_detection.find_mentions(docs, tagger_ner_name, process_sentences, split_docs_value, tagger_ner)
+#   mentions_dataset, n_mentions = mention_detection.find_mentions(docs, tagger_ner)
+    mentions_dataset, n_mentions = mention_detection.find_mentions(
+       docs,
+       (use_bert_base_cased or use_bert_large_cased or use_bert_base_uncased or use_bert_large_uncased or use_bert_multilingual),
+       process_sentences,
+       split_docs_value,
+       tagger_ner)
     print("MD took: {} seconds".format(round(time() - start, 2)))
 
     # 3. Load ED model.
@@ -128,4 +169,4 @@ if not use_server:
     predictions, timing = ed_model.predict(mentions_dataset)
     print("ED took: {} seconds".format(round(time() - start, 2)))
 
-    evaluate(predictions)
+    evaluate_predictions.evaluate(predictions)
