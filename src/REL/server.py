@@ -179,8 +179,8 @@ if __name__ == "__main__":
     from REL.ner.bert_wrapper import load_bert_ner
 
     p = argparse.ArgumentParser()
-    p.add_argument("base_url")
-    p.add_argument("wiki_version")
+    p.add_argument("--base_url", default="data")
+    p.add_argument("--wiki_version", default="wiki_2019")
     p.add_argument("--ed-model", default="ed-wiki-2019")
     p.add_argument("--ner-model", default="ner-fast")
     p.add_argument("--bind", "-b", metavar="ADDRESS", default="0.0.0.0")
