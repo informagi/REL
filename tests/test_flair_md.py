@@ -3,6 +3,8 @@
 
 from pathlib import Path
 
+import os
+
 from flair.models import SequenceTagger
 
 from REL.mention_detection import MentionDetection
@@ -14,7 +16,7 @@ def test_md():
     tagger_ner = SequenceTagger.load("ner-fast")
     process_sentences = True
     split_docs_value = 0
-    base_url = "/store/userdata/etjong/REL/data/"
+    base_url = os.path.dirname(__file__) + "/../data/"
     wiki_version = "wiki_2019"
     md = MentionDetection(base_url, wiki_version)
 

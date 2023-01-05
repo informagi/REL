@@ -2,6 +2,7 @@ import argparse
 from REL.evaluate_predictions import evaluate
 import json
 import numpy as np
+import os
 import re
 import requests
 
@@ -23,7 +24,7 @@ args = parser.parse_args()
 
 np.random.seed(seed=42)
 
-base_url = "/store/userdata/etjong/REL/data/"
+base_url = os.path.dirname(__file__) + "/../data/"
 process_sentences = args.process_sentences
 
 if args.split_docs_value:

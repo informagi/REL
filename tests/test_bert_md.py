@@ -3,6 +3,8 @@
 
 from pathlib import Path
 
+import os
+
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 from transformers import pipeline
 
@@ -15,7 +17,7 @@ def test_md():
     tagger_ner = load_bert_ner("dslim/bert-base-NER")
     process_sentences = False
     split_docs_value = 0
-    base_url = "/store/userdata/etjong/REL/data/"
+    base_url = os.path.dirname(__file__) + "/../data/"
     wiki_version = "wiki_2019"
     md = MentionDetection(base_url, wiki_version)
 
