@@ -20,7 +20,7 @@ class MentionDetection(MentionDetectionBase):
 
         super().__init__(base_url, wiki_version)
 
-    def format_spans(self, dataset):
+    def format_spans(self, dataset, tagger_ner_name, process_sentences, split_docs_value=0, tagger_ner=None):
         """
         Responsible for formatting given spans into dataset for the ED step. More specifically,
         it returns the mention, its left/right context and a set of candidates.
@@ -28,7 +28,7 @@ class MentionDetection(MentionDetectionBase):
         :return: Dictionary with mentions per document.
         """
 
-        dataset, _, _ = self.split_text(dataset)
+        dataset, _, _ = self.split_text(dataset, process_sentences, split_docs_value, tagger_ner, re.search("flair", tagger_ner_name))
         results = {}
         total_ment = 0
 
@@ -76,7 +76,7 @@ class MentionDetection(MentionDetectionBase):
         return sentences
 
 
-    def split_text(self, dataset, process_sentences, split_docs_value=0, tagger=None, is_flair=False):
+    def split_text(self, dataset, process_sentences, split_docs_value=0, tagger_ner=None, is_flair=False):
         """
         Splits text into sentences with optional spans (format is a requirement for GERBIL usage).
         This behavior is required for the default NER-tagger, which during experiments was experienced
@@ -95,12 +95,11 @@ class MentionDetection(MentionDetectionBase):
                 if split_docs_value > 0:
                     sentences_split = []
                     for sentence in sentences:
-                        split_sentences = self.split_text_in_parts(sentence, split_docs_value, tagger)
+                        split_sentences = self.split_text_in_parts(sentence, split_docs_value, tagger_ner)
                         sentences_split.extend(split_sentences)
-                    print("sentences_split", len(sentences_split) != len(sentences), len(sentences_split), len(sentences))
                     sentences = sentences_split
             elif split_docs_value > 0:
-                sentences = self.split_text_in_parts(text, split_docs_value, tagger)
+                sentences = self.split_text_in_parts(text, split_docs_value, tagger_ner)
             else:
                 sentences = [ text ]
             res[doc] = {}
@@ -153,11 +152,11 @@ class MentionDetection(MentionDetectionBase):
         return ner_results_out
 
 
-    def split_sentence_in_bert_tokens(self, sentence, tagger):
-        tokenizer_results = tagger.tokenizer([sentence], return_offsets_mapping=True) # warns if sentence is too long (>512)
+    def split_sentence_in_bert_tokens(self, sentence, tagger_ner):
+        tokenizer_results = tagger_ner.tokenizer([sentence], return_offsets_mapping=True) # warns if sentence is too long (>512)
         input_ids = tokenizer_results["input_ids"][0]
         token_spans = tokenizer_results["offset_mapping"][0]
-        tokens = [ tagger.tokenizer.decode(token_id) for token_id in input_ids ]
+        tokens = [ tagger_ner.tokenizer.decode(token_id) for token_id in input_ids ]
         return tokens, token_spans
 
 
@@ -174,7 +173,7 @@ class MentionDetection(MentionDetectionBase):
         return text
 
 
-    def split_text_in_parts(self, text, split_docs_value, tagger):
+    def split_text_in_parts(self, text, split_docs_value, tagger_ner):
         """
         Splits text in parts of as most split_docs_value tokens. Texts are split at sentence 
         boundaries. If a sentence is longer than the limit it will be split in parts of
@@ -184,7 +183,7 @@ class MentionDetection(MentionDetectionBase):
         token_lists = []
         texts = []
         for sentence in sentences:
-            sentence_tokens, token_spans = self.split_sentence_in_bert_tokens(sentence, tagger)
+            sentence_tokens, token_spans = self.split_sentence_in_bert_tokens(sentence, tagger_ner)
             if len(token_lists) == 0 or (len(token_lists[-1]) + len(sentence_tokens)) > split_docs_value:
                 token_lists.append([])
                 texts.append("")
@@ -205,25 +204,25 @@ class MentionDetection(MentionDetectionBase):
         return texts
 
 
-    def find_mentions(self, dataset, tagger_ner_name, process_sentences, split_docs_value, tagger=None):
+    def find_mentions(self, dataset, tagger_ner_name, process_sentences, split_docs_value=0, tagger_ner=None):
         """
         Responsible for finding mentions given a set of documents in a batch-wise manner. More specifically,
         it returns the mention, its left/right context and a set of candidates.
         :return: Dictionary with mentions per document.
         """
-        if tagger is None:
+        if tagger_ner is None:
             raise Exception(
                 "No NER tagger is set, but you are attempting to perform Mention Detection.."
             )
         # Verify if Flair, else ngram or custom.
-        is_flair = isinstance(tagger, SequenceTagger)
+        is_flair = isinstance(tagger_ner, SequenceTagger)
         dataset_sentences_raw, processed_sentences, splits = self.split_text(
-            dataset, process_sentences, split_docs_value, tagger, is_flair
+            dataset, process_sentences, split_docs_value, tagger_ner, is_flair
         )
         results = {}
         total_ment = 0
         if is_flair:
-            tagger.predict(processed_sentences)
+            tagger_ner.predict(processed_sentences)
         for i, doc in enumerate(dataset_sentences_raw):
             raw_text = dataset[doc][0]
             contents = dataset_sentences_raw[doc]
@@ -247,7 +246,7 @@ class MentionDetection(MentionDetectionBase):
                 for entity in (
                     snt.get_spans("ner")
                     if is_flair
-                    else self.combine_entities(tagger(snt))
+                    else self.combine_entities(tagger_ner(snt))
                 ):
                     if re.search("bert", tagger_ner_name):
                         text, start_pos, end_pos, conf, tag = (

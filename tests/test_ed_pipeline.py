@@ -22,13 +22,13 @@ def test_pipeline():
     tagger = Cmns(base_url, wiki_subfolder, n=5)
     model = EntityDisambiguation(base_url, wiki_subfolder, config)
 
-    mentions_dataset, total_mentions = md.format_spans(sample)
+    mentions_dataset, total_mentions = md.format_spans(sample, tagger_ner_name="flair", process_sentences=True)
 
     predictions, _ = model.predict(mentions_dataset)
     results = process_results(
         mentions_dataset, predictions, sample, include_offset=False
     )
 
-    gold_truth = {"test_doc": [(10, 3, "Fox", "fox", -1, "NULL", 0.0)]}
+    gold_truth = {"test_doc": [(10, 3, "fox", "Fox", 0.0, 0.0, "NULL")]}
 
-    return results == gold_truth
+    assert results == gold_truth
