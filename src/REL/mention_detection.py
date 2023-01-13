@@ -43,7 +43,7 @@ class MentionDetection(MentionDetectionBase):
 
                     # end_pos = start_pos + length
                     # ngram = text[start_pos:end_pos]
-                    mention = self.preprocess_mention(ngram)
+                    mention = self.preprocess_mention(ngram) # mention may be different from ngram
                     left_ctxt, right_ctxt = self.get_ctxt(
                         start_pos, end_pos, idx_sent, sentence, sentences_doc
                     )
@@ -279,7 +279,7 @@ class MentionDetection(MentionDetectionBase):
                             entity.tag,
                         )
                     total_ment += 1
-                    m = self.preprocess_mention(text)
+                    m = self.preprocess_mention(text) # m may be different from text
                     cands = self.get_candidates(m)
                     if len(cands) == 0:
                         continue
@@ -289,7 +289,7 @@ class MentionDetection(MentionDetectionBase):
                         start_pos, end_pos, idx_sent, sentence, sentences_doc
                     )
                     res = {
-                        "mention": m,
+                        "mention": text, # 20230113 was m
                         "context": (left_ctxt, right_ctxt),
                         "candidates": cands,
                         "gold": ["NONE"],
