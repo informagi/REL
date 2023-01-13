@@ -24,7 +24,7 @@ args = parser.parse_args()
 
 np.random.seed(seed=42)
 
-base_url = os.path.dirname(__file__) + "/../data/"
+base_url = os.path.abspath(os.path.dirname(__file__) + "/../data/")
 process_sentences = args.process_sentences
 
 if args.split_docs_value:
@@ -130,4 +130,3 @@ if not use_server:
     print("ED took: {} seconds".format(round(time() - start, 2)))
 
     evaluate(predictions)
-

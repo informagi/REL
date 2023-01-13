@@ -1,5 +1,6 @@
 import json
 import numpy
+import os
 import re
 from http.server import BaseHTTPRequestHandler
 
@@ -179,7 +180,7 @@ if __name__ == "__main__":
     from REL.ner.bert_wrapper import load_bert_ner
 
     p = argparse.ArgumentParser()
-    p.add_argument("--base_url", default="data")
+    p.add_argument("--base_url", default=os.path.abspath(os.path.dirname(__file__) + "/../../data/"))
     p.add_argument("--wiki_version", default="wiki_2019")
     p.add_argument("--ed-model", default="ed-wiki-2019")
     p.add_argument("--ner-model", default="ner-fast")
