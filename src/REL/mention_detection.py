@@ -204,6 +204,20 @@ class MentionDetection(MentionDetectionBase):
         return texts
 
 
+    def prune_word_internal_mentions(self, raw_text, result_doc, total_ment):
+        to_be_deleted = []
+        for i in range(0, len(result_doc)):
+            start_pos = result_doc[i]["pos"]
+            end_pos = result_doc[i]["end_pos"]
+            if ((i > 0 and re.search("[a-zA-Z]", raw_text[start_pos-1])) or
+                (end_pos < len(raw_text) and re.search("[a-zA-Z]", raw_text[end_pos]))):
+                to_be_deleted.append(i)
+        total_ment -= len(to_be_deleted)
+        while len(to_be_deleted) > 0:
+            result_doc.pop(to_be_deleted.pop(-1))
+        return result_doc, total_ment
+
+
     def find_mentions(self, dataset, tagger_ner_name, process_sentences, split_docs_value=0, tagger_ner=None):
         """
         Responsible for finding mentions given a set of documents in a batch-wise manner. More specifically,
@@ -222,7 +236,7 @@ class MentionDetection(MentionDetectionBase):
         results = {}
         total_ment = 0
         if is_flair:
-            tagger_ner.predict(processed_sentences)
+            tagger_ner.predict(processed_sentences) # predict with Flair
         for i, doc in enumerate(dataset_sentences_raw):
             raw_text = dataset[doc][0]
             contents = dataset_sentences_raw[doc]
@@ -246,7 +260,7 @@ class MentionDetection(MentionDetectionBase):
                 for entity in (
                     snt.get_spans("ner")
                     if is_flair
-                    else self.combine_entities(tagger_ner(snt))
+                    else self.combine_entities(tagger_ner(snt)) # predict with BERT
                 ):
                     if re.search("bert", tagger_ner_name):
                         text, start_pos, end_pos, conf, tag = (
@@ -289,5 +303,6 @@ class MentionDetection(MentionDetectionBase):
                     }
                     result_doc.append(res)
                 cum_sent_length += len(sentence) + (offset - cum_sent_length)
+            result_doc, total_ment = self.prune_word_internal_mentions(raw_text, result_doc, total_ment)
             results[doc] = result_doc
         return results, total_ment
