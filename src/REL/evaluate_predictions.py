@@ -128,8 +128,6 @@ def evaluate(predictions):
         predicted_entities = []
         for mention in predictions[doc]:
             predicted_entities.append([mention["mention"], mention["prediction"]])
-        #print("GOLD", gold_entities)
-        #print("PREDICTED", predicted_entities)
         correct, wrong_md, wrong_el, missed = compare_and_count_entities(gold_entities, predicted_entities)
         correct_all += correct
         wrong_md_all += wrong_md
