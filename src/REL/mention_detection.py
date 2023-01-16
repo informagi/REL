@@ -95,11 +95,11 @@ class MentionDetection(MentionDetectionBase):
                 if split_docs_value > 0:
                     sentences_split = []
                     for sentence in sentences:
-                        split_sentences = self.split_text_in_parts(sentence, split_docs_value, tagger_ner)
+                        split_sentences = self.split_text_in_parts(sentence, split_docs_value, tagger_ner, is_flair)
                         sentences_split.extend(split_sentences)
                     sentences = sentences_split
             elif split_docs_value > 0:
-                sentences = self.split_text_in_parts(text, split_docs_value, tagger_ner)
+                sentences = self.split_text_in_parts(text, split_docs_value, tagger_ner, is_flair)
             else:
                 sentences = [ text ]
             res[doc] = {}
@@ -173,7 +173,7 @@ class MentionDetection(MentionDetectionBase):
         return text
 
 
-    def split_text_in_parts(self, text, split_docs_value, tagger_ner):
+    def split_text_in_parts(self, text, split_docs_value, tagger_ner, is_flair):
         """
         Splits text in parts of as most split_docs_value tokens. Texts are split at sentence 
         boundaries. If a sentence is longer than the limit it will be split in parts of
@@ -183,6 +183,8 @@ class MentionDetection(MentionDetectionBase):
         token_lists = []
         texts = []
         for sentence in sentences:
+            if is_flair:
+                raise Exception("Splitting documents does not work in combination with Flair")
             sentence_tokens, token_spans = self.split_sentence_in_bert_tokens(sentence, tagger_ner)
             if len(token_lists) == 0 or (len(token_lists[-1]) + len(sentence_tokens)) > split_docs_value:
                 token_lists.append([])
