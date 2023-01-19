@@ -1,5 +1,5 @@
 import argparse
-from REL.evaluate_predictions import evaluate
+from scripts.evaluate_predictions import evaluate
 import json
 import numpy as np
 import os

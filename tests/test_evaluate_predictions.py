@@ -1,4 +1,4 @@
-from REL.evaluate_predictions import compare_and_count_entities, print_scores
+from scripts.evaluate_predictions import compare_and_count_entities, print_scores
 
 
 def test_perfect():
