@@ -5,7 +5,6 @@ from time import time
 
 import numpy as np
 
-# import git
 import torch
 
 from .consts import NULL_ID_FOR_COREF
@@ -31,7 +30,6 @@ def extract_mentions_to_predicted_clusters_from_clusters(gold_clusters):
     return mention_to_gold
 
 
-# def extract_clusters_for_decode(mention_to_antecedent):
 def extract_clusters_for_decode(mention_to_antecedent, pems_subtoken):
     """
     Args:
@@ -134,69 +132,3 @@ def mask_tensor(t, mask):
     t = t + ((1.0 - mask.float()) * -10000.0)
     t = torch.clamp(t, min=-10000.0, max=10000.0)
     return t
-
-
-# def write_meta_data(output_dir, args):
-#     output_path = os.path.join(output_dir, "meta.json")
-#     repo = git.Repo(search_parent_directories=True)
-#     hexsha = repo.head.commit.hexsha
-#     ts = time()
-#     print(f"Writing {output_path}")
-#     with open(output_path, mode='w') as f:
-#         json.dump(
-#             {
-#                 'git_hexsha': hexsha,
-#                 'args': {k: str(v) for k, v in args.__dict__.items()},
-#                 'date': datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-#             },
-#             f,
-#             indent=4,
-#             sort_keys=True)
-
-# def ce_get_start_end_subtoken_num(start_token, end_token, subtoken_map):
-#     """
-#     Example:
-#         ### Input ###
-#         start_token, end_token = (2,4)
-#         subtoken_map = [0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] # subtoken_map
-
-#         ### Output ###
-#         (6, 8)
-
-#     Notes:
-#         - This function is used in modeling.py and this util.py
-#     """
-#     N = len(subtoken_map)
-#     start_subtoken = subtoken_map.index(start_token)
-#     end_subtoken = (N-1) - subtoken_map[::-1].index(end_token)
-
-#     return start_subtoken, end_subtoken
-
-# def ce_get_pem_ments(predict_file):
-#     """
-#     Args:
-#         args.predict_file: E.g., '../data/data_dir/test.english.jsonlines'
-#     Return:
-#         - pems  (dict): E.g., {'dialind_0': [[2, 4]], 'dialind_1': [[66, 67]], ...}
-#         - ments (dict): E.g., {'dialind_0': [[0, 0], [3, 4], [35, 35], ...}
-#     """
-#     pems = {}
-#     ments = {}
-#     with open(predict_file) as f:
-#         jsonl = f.readlines()
-#         print(len(jsonl))
-#         for l in jsonl:
-#             l = json.loads(l)
-#             assert l['doc_key'] not in pems, 'doc_key should be unique'
-#             assert l['doc_key'] not in ments, 'doc_key should be unique'
-#             pems[l['doc_key']] = l['pems']
-#             ments[l['doc_key']] = l['mentions']
-#             # pems.append(l['pems']) # PEM
-#             # ments.append(l['mentions']) # mentions
-
-#     # Error check: pem should not be in ments
-#     for doc_key in pems: # doc_key: E.g., 'dialind_0'
-#         for pem in pems[doc_key]: # pem: E.g., [2, 4]
-#             assert pem not in ments[doc_key], f'PEM {pem} should not be in ments. Fix this at 010_preprocess_eval_ConEL.ipynb'
-
-#     return pems, ments
