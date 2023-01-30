@@ -3,6 +3,9 @@
 
 from pathlib import Path
 
+import os
+import pytest
+
 from REL.ner import Cmns, Span
 
 
@@ -14,6 +17,9 @@ def compare_spans(a: Span, b: Span, fields=(0, 1, 2)):
         return True
 
 
+@pytest.mark.skipif(
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
+)
 def test_cmns():
     model = Cmns(Path(__file__).parent, "wiki_test", n=5)
     predictions = model.predict("the brown fox jumped over the lazy dog", None)

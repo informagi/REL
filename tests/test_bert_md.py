@@ -4,6 +4,7 @@
 from pathlib import Path
 
 import os
+import pytest
 
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 from transformers import pipeline
@@ -12,6 +13,9 @@ from REL.mention_detection import MentionDetection
 from REL.ner.bert_wrapper import load_bert_ner
 
 
+@pytest.mark.skipif( 
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
+)
 def test_md():
     tagger_ner_name = "bert_base_cased"
     tagger_ner = load_bert_ner("dslim/bert-base-NER")

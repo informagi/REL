@@ -3,12 +3,18 @@
 
 from pathlib import Path
 
+import os
+import pytest
+
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.mention_detection import MentionDetection
 from REL.ner import Cmns
 from REL.utils import process_results
 
 
+@pytest.mark.skipif(
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
+)
 def test_pipeline():
     base_url = Path(__file__).parent
     wiki_subfolder = "wiki_test"

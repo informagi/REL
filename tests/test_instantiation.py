@@ -3,6 +3,8 @@
 
 from pathlib import Path
 
+import os
+import pytest
 import torch
 
 from REL.entity_disambiguation import EntityDisambiguation
@@ -11,6 +13,9 @@ from REL.mulrel_ranker import MulRelRanker, PreRank
 from REL.ner import Cmns
 
 
+@pytest.mark.skipif(
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
+)
 def test_entity_disambiguation_instantiation():
     return EntityDisambiguation(
         Path(__file__).parent,
@@ -22,20 +27,32 @@ def test_entity_disambiguation_instantiation():
     )
 
 
+@pytest.mark.skipif(
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
+)
 def test_cmns_instantiation():
     return Cmns(Path(__file__).parent, "wiki_test")
 
 
+@pytest.mark.skipif(
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
+)
 def test_mention_detection_instantiation():
     return MentionDetection(Path(__file__).parent, "wiki_test")
 
 
+@pytest.mark.skipif(
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
+)
 def test_prerank_instantiation():
     # NOTE: this is basically just a blank constructor; if this fails, something is
     # seriously wrong
     return PreRank({})
 
 
+@pytest.mark.skipif(
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
+)
 def test_mulrel_ranker_instantiation():
     # minimal config to make the constructor run
     config = {

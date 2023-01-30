@@ -4,12 +4,16 @@
 from pathlib import Path
 
 import os
+import pytest
 
 from flair.models import SequenceTagger
 
 from REL.mention_detection import MentionDetection
 
 
+@pytest.mark.skipif(
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
+)
 def test_md():
     # return standard Flair tagger + mention detection object
     tagger_ner_name = "flair"
