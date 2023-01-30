@@ -101,7 +101,8 @@ if not use_server:
     mention_detection = MentionDetection(base_url, wiki_version)
 
     start = time()
-    mentions_dataset, n_mentions = mention_detection.find_mentions(docs, tagger_ner_name, process_sentences, split_docs_value, tagger_ner)
+    mentions_dataset, n_mentions = mention_detection.find_mentions(docs, tagger_ner_name=tagger_ner_name, process_sentences=process_sentences, split_docs_value=split_docs_value, tagger_ner=tagger_ner)
+
     print("MD took: {} seconds".format(round(time() - start, 2)))
 
     # 3. Load ED model.
