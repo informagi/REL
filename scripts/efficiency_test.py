@@ -39,7 +39,7 @@ for i, doc in enumerate(datasets):
         if x["sentence"] not in sentences:
             sentences.append(x["sentence"])
     if len(sentences) == 0:
-        next
+        continue
 
     text = ". ".join([x for x in sentences])
     if len(docs) >= max_docs:
