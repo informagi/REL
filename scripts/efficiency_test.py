@@ -67,13 +67,12 @@ for i, doc in enumerate(datasets):
             print(results.json())
             print("----------------------------")
             try:
-                results_list = []
-                for result in results.json():
-                    results_list.append({ "mention": result[2], "prediction": result[3] }) # Flair + Bert
-                all_results[doc] = results_list
+                results_list = [{"mention": result[2], "prediction": result[3]} for result in results.json()]
             except json.decoder.JSONDecodeError:
                 print("The analysis results are not in json format:", str(results))
-                all_results[doc] = []
+                results_list = []
+
+        all_results[doc] = results_list
 
 if len(all_results) > 0:
     evaluate(all_results)
