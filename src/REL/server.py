@@ -186,18 +186,15 @@ if __name__ == "__main__":
     p.add_argument("--ner-model", default="ner-fast")
     p.add_argument("--bind", "-b", metavar="ADDRESS", default="0.0.0.0")
     p.add_argument("--port", "-p", default=5555, type=int)
-    p.add_argument("--tagger_ner_name", help = "mention detection tagger")
+    p.add_argument("--tagger_ner_name", default="flair", help = "mention detection tagger")
     p.add_argument("--process_sentences", help = "process sentences rather than documents", action="store_true")
-    p.add_argument("--split_docs_value", help = "threshold number of tokens to split document")
+    p.add_argument("--split_docs_value", default="0", help = "threshold number of tokens to split document")
 
     args = p.parse_args()
 
     tagger_ner_name = args.tagger_ner_name
     tagger_ner = set_tagger_ner(tagger_ner_name)
-
-    split_docs_value = 0
-    if args.split_docs_value:
-        split_docs_value = int(args.split_docs_value)
+    split_docs_value = int(args.split_docs_value)
 
     process_sentences = args.process_sentences
 

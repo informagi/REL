@@ -10,12 +10,12 @@ from REL.ner.set_tagger_ner import set_tagger_ner
 from REL.training_datasets import TrainingEvaluationDatasets
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--max_docs", help = "number of documents")
+parser.add_argument("--max_docs", help = "number of documents", default="50")
 parser.add_argument("--process_sentences", help = "process sentences rather than documents", action="store_true")
-parser.add_argument("--split_docs_value", help = "threshold number of tokens to split document")
-parser.add_argument("--tagger_ner_name", help = "mention detection tagger")
+parser.add_argument("--split_docs_value", help = "threshold number of tokens to split document", default="0")
+parser.add_argument("--tagger_ner_name", help = "mention detection tagger", default="flair")
 parser.add_argument("--use_server", help = "use server", action="store_true")
-parser.add_argument("--wiki_version", help = "Wiki version")
+parser.add_argument("--wiki_version", help = "Wiki version", default="wiki_2019")
 args = parser.parse_args()
 
 np.random.seed(seed=42)
@@ -23,20 +23,9 @@ np.random.seed(seed=42)
 base_url = os.path.abspath(os.path.dirname(__file__) + "/../data/")
 process_sentences = args.process_sentences
 
-if args.split_docs_value:
-    split_docs_value = int(args.split_docs_value)
-else:
-    split_docs_value = 0
-
-if args.max_docs:
-    max_docs = int(args.max_docs)
-else:
-    max_docs = 50
-
-if args.wiki_version:
-    wiki_version = args.wiki_version
-else:
-    wiki_version = "wiki_2019"
+split_docs_value = int(args.split_docs_value)
+max_docs = int(args.max_docs)
+wiki_version = args.wiki_version
 
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()["aida_testB"]
 
