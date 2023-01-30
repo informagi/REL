@@ -115,6 +115,7 @@ if not use_server:
     # 4. Entity disambiguation.
     start = time()
     predictions, timing = ed_model.predict(mentions_dataset)
-    print("ED took: {} seconds".format(round(time() - start, 2)))
+    print(f"ED took: {time() - start:.2f} seconds")
+
 
     evaluate(predictions)
