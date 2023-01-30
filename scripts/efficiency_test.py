@@ -13,11 +13,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--max_docs", help = "number of documents")
 parser.add_argument("--process_sentences", help = "process sentences rather than documents", action="store_true")
 parser.add_argument("--split_docs_value", help = "threshold number of tokens to split document")
-parser.add_argument("--use_bert_base_cased", help = "use Bert base cased rather than Flair", action="store_true")
-parser.add_argument("--use_bert_large_cased", help = "use Bert large cased rather than Flair", action="store_true")
-parser.add_argument("--use_bert_base_uncased", help = "use Bert base uncased rather than Flair", action="store_true")
-parser.add_argument("--use_bert_large_uncased", help = "use Bert large uncased rather than Flair", action="store_true")
-parser.add_argument("--use_bert_multilingual", help = "use Bert multilingual rather than Flair", action="store_true")
+parser.add_argument("--tagger_ner_name", help = "mention detection tagger")
 parser.add_argument("--use_server", help = "use server", action="store_true")
 parser.add_argument("--wiki_version", help = "Wiki version")
 args = parser.parse_args()
@@ -45,9 +41,6 @@ else:
 datasets = TrainingEvaluationDatasets(base_url, wiki_version).load()["aida_testB"]
 
 use_server = args.use_server
-tagger_ner, tagger_ner_name = set_tagger_ner(args.use_bert_base_cased, args.use_bert_base_uncased, args.use_bert_large_cased, args.use_bert_large_uncased, args.use_bert_multilingual)
-
-print(f"max_docs={max_docs} wiki_version={wiki_version} tagger_ner_name={tagger_ner_name} process_sentences={process_sentences} split_docs_value={split_docs_value}")
 
 docs = {}
 all_results = {}
@@ -69,6 +62,7 @@ for i, doc in enumerate(datasets):
         docs[doc] = [text, []]
         # Demo script that can be used to query the API.
         if use_server:
+            print(f"max_docs={max_docs} use_server={use_server}")
             myjson = {
                 "text": text,
                 "spans": [
@@ -110,6 +104,10 @@ if not use_server:
     from REL.ner.bert_wrapper import load_bert_ner
 
     flair.device = torch.device("cpu")
+    tagger_ner_name = args.tagger_ner_name
+    tagger_ner = set_tagger_ner(tagger_ner_name)
+
+    print(f"max_docs={max_docs} tagger_ner_name={tagger_ner_name} wiki_version={wiki_version} process_sentences={process_sentences} split_docs_value={split_docs_value}")
 
     mention_detection = MentionDetection(base_url, wiki_version)
 
