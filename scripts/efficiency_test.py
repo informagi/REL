@@ -74,8 +74,9 @@ for i, doc in enumerate(datasets):
 
         all_results[doc] = results_list
 
-if len(all_results) > 0:
+if all_results:
     evaluate(all_results)
+
 
 # --------------------- Now total --------------------------------
 # ------------- RUN SEPARATELY TO BALANCE LOAD--------------------
