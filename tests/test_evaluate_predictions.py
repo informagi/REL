@@ -12,9 +12,9 @@ def test_perfect():
 def test_el_wrong():
     gold_entities = [ [ "1", "1" ] ]
     predicted_entities = [ [ "1", "0" ] ]
-    correct, wrong_md, wrong_el, missed = compare_and_count_entities(gold_entities, predicted_entities)
-    precision_md, recall_md, f1_md, precision_el, recall_el, f1_el = print_scores(correct, wrong_md, wrong_el, missed)
-    assert [precision_md, recall_md, f1_md, precision_el, recall_el, f1_el] == [100, 100, 100, 0, 0, 0], "should be perfect MD and failed EL"
+    counts = compare_and_count_entities(gold_entities, predicted_entities)
+    scores = print_scores(*counts)
+    assert scores == [100, 100, 100, 0, 0, 0], "should be perfect MD and failed EL"
 
 
 def test_md_wrong():
