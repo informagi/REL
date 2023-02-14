@@ -28,7 +28,7 @@ def test_md_wrong():
 def test_combined():
     gold_entities = [ [ "1", "1" ], [ "1", "1" ], [ "2", "2" ] ]
     predicted_entities = [ [ "0", "0" ], [ "0", "1" ], [ "1", "0" ], [ "1", "1" ] ]
-    correct, wrong_md, wrong_el, missed = compare_and_count_entities(gold_entities, predicted_entities)
-    precision_md, recall_md, f1_md, precision_el, recall_el, f1_el = print_scores(correct, wrong_md, wrong_el, missed)
-    assert [precision_md, recall_md, f1_md, precision_el, recall_el, f1_el] == [100/2, 100*2/3, 100*4/7, 100/4, 100/3, 100*2/7], "should be various scores"
+    counts = compare_and_count_entities(gold_entities, predicted_entities)
+    scores = print_scores(*counts)
+    assert scores == [100/2, 100*2/3, 100*4/7, 100/4, 100/3, 100*2/7], "should be various scores"
 
