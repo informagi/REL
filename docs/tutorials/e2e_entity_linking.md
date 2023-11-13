@@ -18,6 +18,7 @@ from REL.ner import Cmns, load_flair_ner
 from REL.server import make_handler
 
 wiki_version = "wiki_2014"
+
 ```
 
 Now that we know which Wikipedia corpus we are using, we need to create a configuration dictionary for our Entity
