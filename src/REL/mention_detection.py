@@ -160,19 +160,6 @@ class MentionDetection(MentionDetectionBase):
         return tokens, token_spans
 
 
-
-    def combine_tokens_to_text(self, token_list):
-        text = ""
-        for token in token_list:
-            if re.search("^##", token):
-                text += re.sub("^##", "", token)
-            elif text == "":
-                text = token
-            else:
-                text += " " + token
-        return text
-
-
     def split_text_in_parts(self, text, split_docs_value, tagger_ner, is_flair):
         """
         Splits text in parts of as most split_docs_value tokens. Texts are split at sentence 
