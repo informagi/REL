@@ -10,9 +10,12 @@ from REL.ner import Cmns, Span
 
 
 def compare_spans(a: Span, b: Span, fields=(0, 1, 2)):
+    if len(a) != len(b):
+        return False
     for f in fields:
-        if a[f] != b[f]:
-            return False
+        for index in range(0, len(a)):
+            if a[index][f] != b[index][f]:
+                return (False, a[index][f], b[index][f])
     else:
         return True
 
@@ -34,4 +37,4 @@ def test_cmns():
         Span("dog", 35, 38, None, None),
     ]
 
-    return compare_spans(predictions, labels)
+    assert compare_spans(predictions, labels) == True

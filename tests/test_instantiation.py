@@ -17,28 +17,28 @@ from REL.ner import Cmns
     os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
 )
 def test_entity_disambiguation_instantiation():
-    return EntityDisambiguation(
+    assert True == bool(EntityDisambiguation(
         Path(__file__).parent,
         "wiki_test",
         {
             "mode": "eval",
             "model_path": Path(__file__).parent / "wiki_test" / "generated" / "model",
         },
-    )
+    ))
 
 
 @pytest.mark.skipif(
     os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
 )
 def test_cmns_instantiation():
-    return Cmns(Path(__file__).parent, "wiki_test")
+    assert True == bool(Cmns(Path(__file__).parent, "wiki_test"))
 
 
 @pytest.mark.skipif(
     os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
 )
 def test_mention_detection_instantiation():
-    return MentionDetection(Path(__file__).parent, "wiki_test")
+    assert True == bool(MentionDetection(Path(__file__).parent, "wiki_test"))
 
 
 @pytest.mark.skipif(
@@ -47,7 +47,7 @@ def test_mention_detection_instantiation():
 def test_prerank_instantiation():
     # NOTE: this is basically just a blank constructor; if this fails, something is
     # seriously wrong
-    return PreRank({})
+    assert True == bool(PreRank({}))
 
 
 @pytest.mark.skipif(
@@ -63,4 +63,4 @@ def test_mulrel_ranker_instantiation():
         "use_local": True,
         "use_pad_ent": True,
     }
-    return MulRelRanker(config, torch.device("cpu"))
+    assert True == bool(MulRelRanker(config, torch.device("cpu")))
