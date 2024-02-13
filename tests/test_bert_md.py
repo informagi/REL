@@ -21,7 +21,7 @@ def test_md():
     tagger_ner = load_bert_ner("dslim/bert-base-NER")
     process_sentences = False
     split_docs_value = 0
-    base_url = os.path.dirname(__file__) + "/../data/"
+    base_url = os.path.dirname(__file__) + "/../src/data/"
     wiki_version = "wiki_2019"
     md = MentionDetection(base_url, wiki_version)
 

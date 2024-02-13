@@ -20,7 +20,7 @@ def test_md():
     tagger_ner = SequenceTagger.load("ner-fast")
     process_sentences = True
     split_docs_value = 0
-    base_url = os.path.dirname(__file__) + "/../data/"
+    base_url = os.path.dirname(__file__) + "/../src/data/"
     wiki_version = "wiki_2019"
     md = MentionDetection(base_url, wiki_version)
 
