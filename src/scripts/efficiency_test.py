@@ -49,6 +49,7 @@ for i, doc in enumerate(datasets):
 
     if len(text.split()) > 200:
         docs[doc] = [text, []]
+        results_list = []
         # Demo script that can be used to query the API.
         if use_server:
             print(f"max_docs={max_docs} use_server={use_server}")
@@ -70,9 +71,9 @@ for i, doc in enumerate(datasets):
                 results_list = [{"mention": result[2], "prediction": result[3]} for result in results.json()]
             except json.decoder.JSONDecodeError:
                 print("The analysis results are not in json format:", str(results))
-                results_list = []
 
-        all_results[doc] = results_list
+        if results_list:
+            all_results[doc] = results_list
 
 if all_results:
     evaluate(all_results)

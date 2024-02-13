@@ -5,7 +5,7 @@ UNUSED = -1
 
 
 def get_gold_data(doc):
-    GOLD_DATA_FILE = "./data/generic/test_datasets/AIDA/AIDA-YAGO2-dataset.tsv"
+    GOLD_DATA_FILE = "./src/data/generic/test_datasets/AIDA/AIDA-YAGO2-dataset.tsv"
     entities = []
 
     in_file = open(GOLD_DATA_FILE, "r")
