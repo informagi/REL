@@ -38,20 +38,18 @@ for i, doc in enumerate(datasets):
     for x in datasets[doc]:
         if x["sentence"] not in sentences:
             sentences.append(x["sentence"])
-    if len(sentences) == 0:
-        continue
-
     text = ". ".join([x for x in sentences])
-    if len(docs) >= max_docs:
-        print(f"length docs is {len(docs)}.")
-        print("====================")
-        break
-
     if len(text.split()) > 200:
         docs[doc] = [text, []]
-        results_list = []
-        # Demo script that can be used to query the API.
-        if use_server:
+    if len(docs) >= max_docs:
+        break
+
+if use_server:
+    for i, doc in enumerate(datasets):
+        text = docs[doc][0]
+        if len(text.split()) > 200:
+            results_list = []
+            # Demo script that can be used to query the API.
             print(f"max_docs={max_docs} use_server={use_server}")
             myjson = {
                 "text": text,
@@ -72,11 +70,16 @@ for i, doc in enumerate(datasets):
             except json.decoder.JSONDecodeError:
                 print("The analysis results are not in json format:", str(results))
 
-        if results_list:
-            all_results[doc] = results_list
+            if results_list:
+                all_results[doc] = results_list
 
-if all_results:
-    evaluate(all_results)
+        if len(docs) >= max_docs:
+            print(f"length docs is {len(docs)}.")
+            print("====================")
+            break
+
+    if all_results:
+        evaluate(all_results)
 
 
 # --------------------- Now total --------------------------------
