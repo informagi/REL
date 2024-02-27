@@ -184,10 +184,15 @@ class DB:
                 "select {} from {} where word = :word".format(column, table_name),
                 {"word": w},
             ).fetchone()
-        try:
-            res = ( e if e is None else json.loads(e[0].decode()) if column == "p_e_m" else e[0] )
-        except Exception:
-            res = ( e if e is None else json.loads("".join(chr(int(x, 2)) for x in e[0].split())) if column == "p_e_m" else e[0] )
+        if not e:
+            res = None
+        elif column == "p_e_m":
+            try:
+                res = json.loads(e[0].decode())
+            except AttributeError:
+                res = json.loads("".join(chr(int(x, 2)) for x in e[0].split()))
+        else:
+            res = e[0]
 
         return res
 
