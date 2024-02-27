@@ -65,6 +65,11 @@ def compare_entities(gold_entities, predicted_entities):
 
 
 def count_entities(gold_entities, predicted_entities, gold_links, predicted_links):
+    """ returns: - correct: number of entities correctly identified and correctly linked
+                 - wrong_md: number of entities identified but wrong
+                 - wrong_el: number of entities correctly identified but incorrectly linked
+                 - missed: number of gold standard entities not found and not linked
+    """
     correct = 0
     wrong_md = 0
     wrong_el = 0
@@ -73,6 +78,7 @@ def count_entities(gold_entities, predicted_entities, gold_links, predicted_link
         if predicted_links[predicted_i] == UNUSED:
             wrong_md += 1
         elif predicted_entities[predicted_i][1] == gold_entities[predicted_links[predicted_i]][1]:
+            # assumption: predicted_entities[predicted_i][0] == gold_entities[predicted_links[predicted_i]][0]
             correct += 1
         else:
             wrong_el += 1
@@ -88,9 +94,10 @@ def compare_and_count_entities(gold_entities, predicted_entities):
 
 
 def compute_md_scores(correct_all, wrong_md_all, wrong_el_all, missed_all):
-    if correct_all + wrong_el_all > 0:
-        precision_md = 100*(correct_all + wrong_el_all) / (correct_all + wrong_el_all + wrong_md_all)
-        recall_md = 100*(correct_all + wrong_el_all) / (correct_all + wrong_el_all + missed_all)
+    correct_md_all = correct_all + wrong_el_all
+    if correct_md_all > 0:
+        precision_md = 100 * correct_md_all / (correct_md_all + wrong_md_all)
+        recall_md = 100 * correct_md_all / (correct_md_all + missed_all)
         f1_md = 2 * precision_md * recall_md / ( precision_md + recall_md )
     else:
         precision_md = 0
@@ -100,6 +107,7 @@ def compute_md_scores(correct_all, wrong_md_all, wrong_el_all, missed_all):
 
 
 def compute_el_scores(correct_all, wrong_md_all, wrong_el_all, missed_all):
+    """ reported el_scores are combined md plus el scores """
     if correct_all > 0:
         precision_el = 100 * correct_all / (correct_all + wrong_md_all + wrong_el_all)
         recall_el = 100 * correct_all / (correct_all + wrong_el_all + missed_all)
