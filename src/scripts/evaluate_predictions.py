@@ -11,15 +11,16 @@ def get_gold_data(doc, base_url):
 
     in_file = open(GOLD_DATA_FILE, "r")
     for line in in_file:
-        if re.search(f"^-DOCSTART- \({doc} ", line):
+        if line.startswith(f"-DOCSTART- ({doc} "):
             break
     for line in in_file:
-        if re.search(f"^-DOCSTART- ", line):
+        if line.startswith(f"-DOCSTART- "):
             break
         fields = line.strip().split("\t")
         if len(fields) > 3:
             if fields[1] == "B":
                 entities.append([fields[2], fields[3]])
+    in_file.close()
     return entities
 
 
