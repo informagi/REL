@@ -79,7 +79,7 @@ if use_server:
             break
 
     if all_results:
-        evaluate(all_results)
+        evaluate(all_results, base_url)
 
 
 # --------------------- Now total --------------------------------
@@ -122,4 +122,4 @@ if not use_server:
     print(f"ED took: {time() - start:.2f} seconds")
 
 
-    evaluate(predictions)
+    evaluate(predictions, base_url)

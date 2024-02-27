@@ -1,11 +1,12 @@
+import os
 import re
 
 
 UNUSED = -1
 
 
-def get_gold_data(doc):
-    GOLD_DATA_FILE = "./src/data/generic/test_datasets/AIDA/AIDA-YAGO2-dataset.tsv"
+def get_gold_data(doc, base_url):
+    GOLD_DATA_FILE = os.path.join(base_url, "generic/test_datasets/AIDA/AIDA-YAGO2-dataset.tsv")
     entities = []
 
     in_file = open(GOLD_DATA_FILE, "r")
@@ -118,13 +119,13 @@ def print_scores(correct_all, wrong_md_all, wrong_el_all, missed_all):
     return precision_md, recall_md, f1_md, precision_el, recall_el, f1_el
 
 
-def evaluate(predictions):
+def evaluate(predictions, base_url):
     correct_all = 0
     wrong_md_all = 0
     wrong_el_all = 0
     missed_all = 0
     for doc in predictions:
-        gold_entities = get_gold_data(doc)
+        gold_entities = get_gold_data(doc, base_url)
         predicted_entities = []
         for mention in predictions[doc]:
             predicted_entities.append([mention["mention"], mention["prediction"]])
