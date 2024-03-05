@@ -8,6 +8,14 @@ from syntok import segmenter
 from REL.mention_detection_base import MentionDetectionBase
 
 
+class Entity:
+    def __init__(self, text, start_position, end_position, score, tag):
+        self.text = text
+        self.start_position = start_position
+        self.end_position = end_position
+        self.score = score
+        self.tag = tag
+
 
 class MentionDetection(MentionDetectionBase):
     """
@@ -131,7 +139,7 @@ class MentionDetection(MentionDetectionBase):
         return res, processed_sentences, splits
 
 
-    def combine_entities(self, ner_results):
+    def combine_entities(self, ner_results, sentence):
         ner_results_out = []
         i = 0
         while i < len(ner_results):
@@ -150,8 +158,9 @@ class MentionDetection(MentionDetectionBase):
                 last_end = ner_results[i+j]["end"]
                 j += 1
             i += j
-        return ner_results_out
-
+        return [ Entity(sentence[entity["start"]: entity["end"]], entity["start"], entity["end"], entity["score"], entity["entity"])
+                 for entity in ner_results_out ]
+ 
 
     def split_sentence_in_bert_tokens(self, sentence, tagger_ner):
         tokenizer_results = tagger_ner.tokenizer([sentence], return_offsets_mapping=True) # warns if sentence is too long (>512)
@@ -249,26 +258,17 @@ class MentionDetection(MentionDetectionBase):
                     offset = 0
                 entity_counter = 0
                 for entity in (
-                    snt.get_spans("ner")
+                    snt.get_spans("ner") # predict with Flair
                     if is_flair
-                    else self.combine_entities(tagger_ner(snt)) # predict with BERT
+                    else self.combine_entities(tagger_ner(snt), sentence) # predict with BERT
                 ):
-                    if not is_flair:
-                        text, start_pos, end_pos, conf, tag = (
-                            sentence[entity["start"]:entity["end"]], # for BERT
-                            entity["start"],
-                            entity["end"],
-                            entity["score"],
-                            entity["entity"],
-                        )
-                    else:
-                        text, start_pos, end_pos, conf, tag = (
-                            entity.text, # for Flair
-                            entity.start_position,
-                            entity.end_position,
-                            entity.score,
-                            entity.tag,
-                        )
+                    text, start_pos, end_pos, conf, tag = (
+                        entity.text,
+                        entity.start_position,
+                        entity.end_position,
+                        entity.score,
+                        entity.tag,
+                    )
                     total_ment += 1
                     m = self.preprocess_mention(text) # m may be different from text
                     cands = self.get_candidates(m)
