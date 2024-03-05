@@ -28,7 +28,7 @@ class MentionDetection(MentionDetectionBase):
         :return: Dictionary with mentions per document.
         """
 
-        dataset, _, _ = self.split_text(dataset, process_sentences, split_docs_value, tagger_ner, re.search("flair", tagger_ner_name))
+        dataset, _, _ = self.split_text(dataset, process_sentences, split_docs_value, tagger_ner)
         results = {}
         total_ment = 0
 
@@ -76,7 +76,7 @@ class MentionDetection(MentionDetectionBase):
         return sentences
 
 
-    def split_text(self, dataset, process_sentences, split_docs_value=0, tagger_ner=None, is_flair=False):
+    def split_text(self, dataset, process_sentences, split_docs_value=0, tagger_ner=None):
         """
         Splits text into sentences with optional spans (format is a requirement for GERBIL usage).
         This behavior is required for the default NER-tagger, which during experiments was experienced
@@ -88,6 +88,7 @@ class MentionDetection(MentionDetectionBase):
         res = {}
         splits = [0]
         processed_sentences = []
+        is_flair = isinstance(tagger_ner, SequenceTagger)
         for doc in dataset:
             text, spans = dataset[doc]
             if process_sentences:
@@ -95,11 +96,11 @@ class MentionDetection(MentionDetectionBase):
                 if split_docs_value > 0:
                     sentences_split = []
                     for sentence in sentences:
-                        split_sentences = self.split_text_in_parts(sentence, split_docs_value, tagger_ner, is_flair)
+                        split_sentences = self.split_text_in_parts(sentence, split_docs_value, tagger_ner)
                         sentences_split.extend(split_sentences)
                     sentences = sentences_split
             elif split_docs_value > 0:
-                sentences = self.split_text_in_parts(text, split_docs_value, tagger_ner, is_flair)
+                sentences = self.split_text_in_parts(text, split_docs_value, tagger_ner)
             else:
                 sentences = [ text ]
             res[doc] = {}
@@ -160,7 +161,7 @@ class MentionDetection(MentionDetectionBase):
         return tokens, token_spans
 
 
-    def split_text_in_parts(self, text, split_docs_value, tagger_ner, is_flair):
+    def split_text_in_parts(self, text, split_docs_value, tagger_ner):
         """
         Splits text in parts of as most split_docs_value tokens. Texts are split at sentence 
         boundaries. If a sentence is longer than the limit it will be split in parts of
@@ -169,6 +170,7 @@ class MentionDetection(MentionDetectionBase):
         sentences = self.split_single(text)
         token_lists = []
         texts = []
+        is_flair = isinstance(tagger_ner, SequenceTagger)
         for sentence in sentences:
             if is_flair:
                 raise Exception("Splitting documents does not work in combination with Flair")
@@ -220,7 +222,7 @@ class MentionDetection(MentionDetectionBase):
         # Verify if Flair, else ngram or custom.
         is_flair = isinstance(tagger_ner, SequenceTagger)
         dataset_sentences_raw, processed_sentences, splits = self.split_text(
-            dataset, process_sentences, split_docs_value, tagger_ner, is_flair
+            dataset, process_sentences, split_docs_value, tagger_ner
         )
         results = {}
         total_ment = 0
