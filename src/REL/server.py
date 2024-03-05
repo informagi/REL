@@ -14,7 +14,7 @@ API_DOC = "API_DOC"
 
 
 
-def make_handler(base_url, wiki_version, ed_model, tagger_ner, tagger_ner_name, process_sentences, split_docs_value=0):
+def make_handler(base_url, wiki_version, ed_model, tagger_ner, process_sentences, split_docs_value=0):
     """
     Class/function combination that is used to setup an API that can be used for e.g. GERBIL evaluation.
     """
@@ -22,7 +22,6 @@ def make_handler(base_url, wiki_version, ed_model, tagger_ner, tagger_ner_name, 
         def __init__(self, *args, **kwargs):
             self.ed_model = ed_model
             self.tagger_ner = tagger_ner
-            self.tagger_ner_name = tagger_ner_name
             self.process_sentences = process_sentences
             self.split_docs_value = split_docs_value
 
@@ -147,7 +146,7 @@ def make_handler(base_url, wiki_version, ed_model, tagger_ner, tagger_ner_name, 
                 # EL
                 processed = {API_DOC: [text, spans]}
                 mentions_dataset, total_ment = self.mention_detection.find_mentions(
-                    processed, self.tagger_ner_name, self.process_sentences, self.split_docs_value, self.tagger_ner
+                    processed, self.process_sentences, self.split_docs_value, self.tagger_ner
                 )
 
             # Disambiguation
@@ -204,7 +203,7 @@ if __name__ == "__main__":
     server_address = (args.bind, args.port)
     server = HTTPServer(
         server_address,
-        make_handler(args.base_url, args.wiki_version, ed_model, tagger_ner, tagger_ner_name, process_sentences, split_docs_value)
+        make_handler(args.base_url, args.wiki_version, ed_model, tagger_ner, process_sentences, split_docs_value)
     )
 
     try:

@@ -28,7 +28,7 @@ def test_pipeline():
     tagger = Cmns(base_url, wiki_subfolder, n=5)
     model = EntityDisambiguation(base_url, wiki_subfolder, config)
 
-    mentions_dataset, total_mentions = md.format_spans(sample, tagger_ner_name="flair", process_sentences=True)
+    mentions_dataset, total_mentions = md.format_spans(sample, process_sentences=True)
 
     predictions, _ = model.predict(mentions_dataset)
     results = process_results(

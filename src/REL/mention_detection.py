@@ -20,7 +20,7 @@ class MentionDetection(MentionDetectionBase):
 
         super().__init__(base_url, wiki_version)
 
-    def format_spans(self, dataset, tagger_ner_name, process_sentences, split_docs_value=0, tagger_ner=None):
+    def format_spans(self, dataset, process_sentences, split_docs_value=0, tagger_ner=None):
         """
         Responsible for formatting given spans into dataset for the ED step. More specifically,
         it returns the mention, its left/right context and a set of candidates.
@@ -209,7 +209,7 @@ class MentionDetection(MentionDetectionBase):
         return result_doc, total_ment
 
 
-    def find_mentions(self, dataset, tagger_ner_name, process_sentences, split_docs_value=0, tagger_ner=None):
+    def find_mentions(self, dataset, process_sentences, split_docs_value=0, tagger_ner=None):
         """
         Responsible for finding mentions given a set of documents in a batch-wise manner. More specifically,
         it returns the mention, its left/right context and a set of candidates.
@@ -253,7 +253,7 @@ class MentionDetection(MentionDetectionBase):
                     if is_flair
                     else self.combine_entities(tagger_ner(snt)) # predict with BERT
                 ):
-                    if re.search("bert", tagger_ner_name):
+                    if not is_flair:
                         text, start_pos, end_pos, conf, tag = (
                             sentence[entity["start"]:entity["end"]], # for BERT
                             entity["start"],
