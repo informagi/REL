@@ -96,8 +96,8 @@ def compare_and_count_entities(gold_entities, predicted_entities):
 def compute_md_scores(correct_all, wrong_md_all, wrong_el_all, missed_all):
     correct_md_all = correct_all + wrong_el_all
     if correct_md_all > 0:
-        precision_md = 100 * correct_md_all / (correct_md_all + wrong_md_all)
-        recall_md = 100 * correct_md_all / (correct_md_all + missed_all)
+        precision_md = correct_md_all / (correct_md_all + wrong_md_all)
+        recall_md = correct_md_all / (correct_md_all + missed_all)
         f1_md = 2 * precision_md * recall_md / ( precision_md + recall_md )
     else:
         precision_md = 0
@@ -109,8 +109,8 @@ def compute_md_scores(correct_all, wrong_md_all, wrong_el_all, missed_all):
 def compute_el_scores(correct_all, wrong_md_all, wrong_el_all, missed_all):
     """ reported el_scores are combined md plus el scores """
     if correct_all > 0:
-        precision_el = 100 * correct_all / (correct_all + wrong_md_all + wrong_el_all)
-        recall_el = 100 * correct_all / (correct_all + wrong_el_all + missed_all)
+        precision_el = correct_all / (correct_all + wrong_md_all + wrong_el_all)
+        recall_el = correct_all / (correct_all + wrong_el_all + missed_all)
         f1_el = 2 * precision_el * recall_el / ( precision_el + recall_el )
     else:
         precision_el = 0.0
@@ -123,8 +123,8 @@ def print_scores(correct_all, wrong_md_all, wrong_el_all, missed_all):
     precision_md, recall_md, f1_md = compute_md_scores(correct_all, wrong_md_all, wrong_el_all, missed_all)
     precision_el, recall_el, f1_el = compute_el_scores(correct_all, wrong_md_all, wrong_el_all, missed_all)
     print("Results: PMD RMD FMD PEL REL FEL: ", end="")
-    print(f"{precision_md:0.1f}% {recall_md:0.1f}% {f1_md:0.1f}% | ",end="")
-    print(f"{precision_el:0.1f}% {recall_el:0.1f}% {f1_el:0.1f}%")
+    print(f"{precision_md:0.1%} {recall_md:0.1%} {f1_md:0.1%} | ",end="")
+    print(f"{precision_el:0.1%} {recall_el:0.1%} {f1_el:0.1%}")
     return precision_md, recall_md, f1_md, precision_el, recall_el, f1_el
 
 

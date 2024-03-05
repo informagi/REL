@@ -1,4 +1,5 @@
 from scripts.evaluate_predictions import compare_and_count_entities, print_scores
+import pytest
 
 
 def test_perfect():
@@ -6,7 +7,7 @@ def test_perfect():
     predicted_entities = [ [ "1", "1" ] ]
     counts = compare_and_count_entities(gold_entities, predicted_entities)
     scores = print_scores(*counts)
-    assert list(scores) == [100, 100, 100, 100, 100, 100], "should be perfect MD and perfect EL"
+    assert list(scores) == [1, 1, 1, 1, 1, 1], "should be perfect MD and perfect EL"
 
 
 def test_el_wrong():
@@ -14,7 +15,7 @@ def test_el_wrong():
     predicted_entities = [ [ "1", "0" ] ]
     counts = compare_and_count_entities(gold_entities, predicted_entities)
     scores = print_scores(*counts)
-    assert list(scores) == [100, 100, 100, 0, 0, 0], "should be perfect MD and failed EL"
+    assert list(scores) == [1, 1, 1, 0, 0, 0], "should be perfect MD and failed EL"
 
 
 def test_md_wrong():
@@ -30,5 +31,7 @@ def test_combined():
     predicted_entities = [ [ "0", "0" ], [ "0", "1" ], [ "1", "0" ], [ "1", "1" ] ]
     counts = compare_and_count_entities(gold_entities, predicted_entities)
     scores = print_scores(*counts)
-    assert list(scores) == [100/2, 100*2/3, 100*4/7, 100/4, 100/3, 100*2/7], "should be various scores"
+    target_scores = [1/2, 2/3, 4/7, 1/4, 1/3, 2/7]
+    for index in range(0, len(scores)):
+        assert pytest.approx(scores[index], 0.0001) == target_scores[index], "should be various scores"
 
