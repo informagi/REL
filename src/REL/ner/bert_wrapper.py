@@ -7,5 +7,5 @@ def load_bert_ner(path_or_url):
         model = AutoModelForTokenClassification.from_pretrained(path_or_url)
         return pipeline("ner", model=model, tokenizer=tokenizer)
     except Exception:
-        pass
+        raise SystemExit(f"cannot load Bert named entity recognition module from {path_or_url}")
     return
