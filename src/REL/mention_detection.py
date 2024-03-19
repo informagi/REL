@@ -151,7 +151,7 @@ class MentionDetection(MentionDetectionBase):
                                                  re.search("^I", ner_results[i+j]["entity"]) and
                                                  re.sub("^..", "", ner_results[i+j]["entity"]) == re.sub("^..", "", ner_results[i]["entity"]))):
                 if ner_results[i+j]["start"] == last_end:
-                    ner_results_out[-1]["word"] += re.sub("^##", "", ner_results[i+j]["word"])
+                    ner_results_out[-1]["word"] += ner_results[i+j]["word"].removeprefix("##")
                 else:
                     ner_results_out[-1]["word"] += " " + ner_results[i+j]["word"]
                 ner_results_out[-1]["end"] = ner_results[i+j]["end"]
