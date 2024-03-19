@@ -14,12 +14,11 @@ from REL.mention_detection import MentionDetection
 @pytest.mark.skipif(
     os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
 )
-def test_md():
+def test_md(base_url):
     # return standard Flair tagger + mention detection object
     tagger_ner = SequenceTagger.load("ner-fast")
     process_sentences = True
     split_docs_value = 0
-    base_url = os.path.dirname(__file__) + "/../src/data/"
     wiki_version = "wiki_2019"
     md = MentionDetection(base_url, wiki_version)
 

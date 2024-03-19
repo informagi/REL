@@ -16,11 +16,10 @@ from REL.ner.bert_wrapper import load_bert_ner
 @pytest.mark.skipif( 
     os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
 )
-def test_md():
+def test_md(base_url):
     tagger_ner = load_bert_ner("dslim/bert-base-NER")
     process_sentences = False
     split_docs_value = 0
-    base_url = os.path.dirname(__file__) + "/../src/data/"
     wiki_version = "wiki_2019"
     md = MentionDetection(base_url, wiki_version)
 
