@@ -3,7 +3,6 @@ from scripts.evaluate_predictions import evaluate
 import json
 import numpy as np
 import os
-import re
 import requests
 
 from REL.ner.set_tagger_ner import set_tagger_ner

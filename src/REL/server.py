@@ -1,7 +1,6 @@
 import json
 import numpy
 import os
-import re
 from http.server import BaseHTTPRequestHandler
 
 from flair.models import SequenceTagger

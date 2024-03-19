@@ -1,5 +1,4 @@
 import os
-import re
 
 
 UNUSED = -1

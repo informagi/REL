@@ -1,4 +1,3 @@
-import re
 import sys
 from termcolor import colored
 from flair.data import Sentence
@@ -148,8 +147,8 @@ class MentionDetection(MentionDetectionBase):
             j = 1
             while i + j < len(ner_results) and (ner_results[i+j]["start"] == last_end or
                                                 (ner_results[i+j]["start"] == last_end + 1 and 
-                                                 re.search("^I", ner_results[i+j]["entity"]) and
-                                                 re.sub("^..", "", ner_results[i+j]["entity"]) == re.sub("^..", "", ner_results[i]["entity"]))):
+                                                 ner_results[i+j]["entity"].startswith("I") and
+                                                 ner_results[i+j]["entity"][2:] == ner_results[i]["entity"][2:])):
                 if ner_results[i+j]["start"] == last_end:
                     ner_results_out[-1]["word"] += ner_results[i+j]["word"].removeprefix("##")
                 else:
@@ -205,12 +204,13 @@ class MentionDetection(MentionDetectionBase):
 
 
     def prune_word_internal_mentions(self, raw_text, result_doc, total_ment):
+        """ remove entities which are part of a larger word """
         to_be_deleted = []
         for i in range(0, len(result_doc)):
             start_pos = result_doc[i]["pos"]
             end_pos = result_doc[i]["end_pos"]
-            if ((i > 0 and re.search("[a-zA-Z]", raw_text[start_pos-1])) or
-                (end_pos < len(raw_text) and re.search("[a-zA-Z]", raw_text[end_pos]))):
+            if ((i > 0 and raw_text[start_pos-1].isalpha()) or
+                (end_pos < len(raw_text) and raw_text[end_pos].isalpha())):
                 to_be_deleted.append(i)
         total_ment -= len(to_be_deleted)
         while len(to_be_deleted) > 0:
