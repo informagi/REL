@@ -248,10 +248,6 @@ class MentionDetection(MentionDetectionBase):
             for (idx_sent, (sentence, ground_truth_sentence)), snt in zip(
                 contents.items(), sentences
             ):
-
-                # Only include offset if using Flair.
-                # if is_flair:
-                # 20220607: no always include
                 offset = raw_text.find(sentence, cum_sent_length)
                 if offset < 0:
                     print(colored(f"sentence not found in text: cannot happen: {sentence}", "red"), file=sys.stderr)
