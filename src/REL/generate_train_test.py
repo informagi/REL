@@ -7,12 +7,12 @@ from REL.mention_detection_base import MentionDetectionBase
 from REL.utils import modify_uppercase_phrase, split_in_words_mention
 
 
-
 class GenTrainingTest(MentionDetectionBase):
     """
     Class responsible for formatting WNED and AIDA datasets that are required for ED local evaluation and training.
     Inherits overlapping functions from the Mention Detection class.
     """
+
     def __init__(self, base_url, wiki_version, wikipedia):
         self.wned_path = os.path.join(base_url, "generic/test_datasets/wned-datasets/")
         self.aida_path = os.path.join(base_url, "generic/test_datasets/AIDA/")

@@ -4,11 +4,11 @@ from urllib.parse import unquote
 from REL.utils import first_letter_to_uppercase, trim1
 
 
-
 class Wikipedia:
     """
     Class responsible for loading Wikipedia files. Required when filling sqlite3 database with e.g. p(e|m) index.
     """
+
     def __init__(self, base_url, wiki_version):
         self.base_url = base_url + wiki_version
         # if include_wiki_id_name:

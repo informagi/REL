@@ -18,6 +18,7 @@ from REL.ner import Cmns, load_flair_ner
 from REL.server import make_handler
 
 wiki_version = "wiki_2014"
+
 ```
 
 Now that we know which Wikipedia corpus we are using, we need to create a configuration dictionary for our Entity
@@ -98,14 +99,14 @@ Alternatively, one may choose to integrate the package into an existing pipeline
 with inputting multiple documents at the same time. This can especially be useful when batch loading multiple documents
 using their own or our Mention Detection system. To do this we once more import the required packages and define the folder name that contains our Wikipedia corpus files.
 
- ```python
+```python
 from REL.mention_detection import MentionDetection
 from REL.utils import process_results
 from REL.entity_disambiguation import EntityDisambiguation
 from REL.ner import Cmns, load_flair_ner
 
 wiki_version = "wiki_2014"
- ```
+```
 
 The code below serves as an example as to how users should format their dataset. This should obviously be replaced
 and should not be used in production, although the outcome is the `input_text` variable that will be used throughout this

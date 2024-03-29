@@ -197,7 +197,15 @@ def make_handler(base_url, wiki_version, models, tagger_ner, argss, logger):
                     "context_right": m["context"][1].lower(),
                 }
                 data_to_link.append(temp)
-            _, _, _, _, _, predictions, scores, = main_dense.run(
+            (
+                _,
+                _,
+                _,
+                _,
+                _,
+                predictions,
+                scores,
+            ) = main_dense.run(
                 self.argss, self.logger, *self.model, test_data=data_to_link
             )
 

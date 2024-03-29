@@ -13,7 +13,6 @@ PORT = "80"
 
 
 def main(filename):
-
     fi = open(filename, "r")
     document = {
         "text": "",

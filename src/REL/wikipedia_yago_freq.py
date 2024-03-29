@@ -8,12 +8,12 @@ from REL.db.generic import GenericLookup
 from REL.utils import first_letter_to_uppercase, trim1, unicode2ascii
 
 
-
 class WikipediaYagoFreq:
     """
-    Class responsible for processing Wikipedia dumps. Performs computations to obtain the p(e|m) index and counts 
+    Class responsible for processing Wikipedia dumps. Performs computations to obtain the p(e|m) index and counts
     overall occurrences of mentions.
     """
+
     def __init__(self, base_url, wiki_version, wikipedia):
         self.base_url = base_url
         self.wiki_version = wiki_version

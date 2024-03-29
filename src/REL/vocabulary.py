@@ -14,11 +14,11 @@ BRACKETS = {
 }
 
 
-
 class Vocabulary:
     """
     Class that creates a Vocabulary object that is used to store references to Embeddings.
     """
+
     unk_token = UNK_TOKEN
 
     def __init__(self):

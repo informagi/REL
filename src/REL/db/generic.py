@@ -119,7 +119,6 @@ class GenericLookup(DB):
 
     def load_wiki(self, p_e_m_index, mention_total_freq, batch_size=5000, reset=False):
         if reset:
-
             self.clear()
 
         batch = []

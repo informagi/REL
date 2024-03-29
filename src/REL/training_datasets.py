@@ -5,7 +5,7 @@ import pickle
 class TrainingEvaluationDatasets:
     """
     Class responsible for loading training/evaluation datasets for local ED.
-    
+
     Reading dataset from CoNLL dataset, extracted by https://github.com/dalab/deep-ed/
     """
 
@@ -32,7 +32,6 @@ class TrainingEvaluationDatasets:
             "wned-msnbc",
             "wned-wikipedia",
         ]:
-
             print("Loading {}".format(ds))
             datasets[ds] = self.__read_pickle_file(
                 os.path.join(self.base_url, "generated/test_train_data/", f"{ds}.pkl")

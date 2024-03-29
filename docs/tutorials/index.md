@@ -12,5 +12,6 @@ The remainder of the tutorials are optional and for users who wish to e.g. train
 3. [Evaluate on GERBIL.](evaluate_gerbil/)
 4. [Deploy REL for a new Wikipedia corpus](deploy_REL_new_wiki/):
 5. [Reproducing our results](reproducing_our_results/)
-6. [REL as systemd service](systemd_instructions/)
+6. [REL server](server/)
 7. [Notes on using custom models](custom_models/)
+7. [Conversational entity linking](conversations/)

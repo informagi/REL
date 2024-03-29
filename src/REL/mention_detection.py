@@ -20,6 +20,7 @@ class MentionDetection(MentionDetectionBase):
     """
     Class responsible for mention detection.
     """
+
     def __init__(self, base_url, wiki_version):
         self.cnt_exact = 0
         self.cnt_partial = 0
@@ -27,7 +28,7 @@ class MentionDetection(MentionDetectionBase):
 
         super().__init__(base_url, wiki_version)
 
-    def format_spans(self, dataset, process_sentences, split_docs_value=0, tagger_ner=None):
+    def format_spans(self, dataset, process_sentences=True, split_docs_value=0, tagger_ner=None):
         """
         Responsible for formatting given spans into dataset for the ED step. More specifically,
         it returns the mention, its left/right context and a set of candidates.

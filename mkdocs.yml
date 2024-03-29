@@ -2,14 +2,16 @@ site_name: "REL: Radboud Entity Linker"
 
 nav:
   - Home: index.md
+  - API: server_api.md
   - Tutorials:
     - tutorials/how_to_get_started.md
     - tutorials/e2e_entity_linking.md
     - tutorials/evaluate_gerbil.md
     - tutorials/deploy_REL_new_wiki.md
     - tutorials/reproducing_our_results.md
-    - tutorials/systemd_instructions.md
+    - tutorials/server.md
     - tutorials/custom_models.md
+    - tutorials/conversations.md
   - Python API reference:
     - api/entity_disambiguation.md
     - api/generate_train_test.md
@@ -72,11 +74,10 @@ plugins:
         - https://numpy.org/doc/stable/objects.inv
         - https://docs.scipy.org/doc/scipy/objects.inv
         - https://pandas.pydata.org/docs/objects.inv
-        selection:
+        options:
           docstring_style: sphinx
           docstring_options:
             ignore_init_summary: yes
-        rendering:
           show_submodules: no
           show_source: true
           docstring_section_style: list
@@ -85,6 +86,6 @@ plugins:
           merge_init_into_class: yes
 
 watch:
-  - REL/
+  - src/REL/
   - docs/
   - README.md

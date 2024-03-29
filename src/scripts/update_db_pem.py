@@ -1,5 +1,5 @@
-import sqlite3
 import argparse
+import sqlite3
 
 
 def convert(a):
@@ -11,7 +11,9 @@ def convert_db(db):
     cur = con.cursor()
     cur2 = con.cursor()
 
-    cur.execute("CREATE TABLE IF NOT EXISTS wiki2(word TEXT PRIMARY KEY, p_e_m BLOB, lower TEXT, freq INTEGER)")
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS wiki2(word TEXT PRIMARY KEY, p_e_m BLOB, lower TEXT, freq INTEGER)"
+    )
     cur.execute("SELECT word, p_e_m, lower, freq FROM wiki")
 
     cur2.execute("BEGIN TRANSACTION")
@@ -33,10 +35,7 @@ def convert_db(db):
     cur.execute("COMMIT")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        'db',
-        help='Path to database to convert'
-    )
-    convert_db(vars(parser.parse_args())['db'])
+    parser.add_argument("db", help="Path to database to convert")
+    convert_db(vars(parser.parse_args())["db"])

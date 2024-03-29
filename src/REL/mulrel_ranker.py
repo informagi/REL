@@ -4,12 +4,12 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 
-
 class PreRank(torch.nn.Module):
     """
     PreRank class is used for preranking entities for a given mention by multiplying entity vectors with
     word vectors
     """
+
     def __init__(self, config, embeddings=None):
         super(PreRank, self).__init__()
         self.config = config

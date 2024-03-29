@@ -3266,7 +3266,6 @@ minFileSize = 200 * 1024
 
 
 def main():
-
     parser = argparse.ArgumentParser(
         prog=os.path.basename(sys.argv[0]),
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -3405,7 +3404,7 @@ def main():
 
     try:
         power = "kmg".find(args.bytes[-1].lower()) + 1
-        file_size = int(args.bytes[:-1]) * 1024 ** power
+        file_size = int(args.bytes[:-1]) * 1024**power
         if file_size < minFileSize:
             raise ValueError()
     except ValueError:

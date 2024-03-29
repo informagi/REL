@@ -138,7 +138,9 @@ def split_in_words(inputstr):
     Same with U.S.
     """
     tokenizer = RegexpTokenizer(r"\w+")
-    return [anyascii_cached(w) for w in tokenizer.tokenize(inputstr)]  # #inputstr.split()]#
+    return [
+        anyascii_cached(w) for w in tokenizer.tokenize(inputstr)
+    ]  # #inputstr.split()]#
 
 
 def split_in_words_mention(inputstr):
