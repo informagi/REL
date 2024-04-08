@@ -3,9 +3,8 @@ import re
 from flair.models import SequenceTagger
 from REL.ner.bert_wrapper import load_bert_ner
 
-
 taggers_ner = {
-    "flair": "ner-fast",
+    "flair": "flair/ner-english-fast",
     "bert_base_cased": "dslim/bert-base-NER",
     "bert_base_uncased": "dslim/bert-base-NER-uncased",
     "bert_large_cased": "dslim/bert-large-NER",

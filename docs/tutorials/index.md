@@ -9,9 +9,10 @@ The remainder of the tutorials are optional and for users who wish to e.g. train
 
 1. [How to get started (project folder and structure).](how_to_get_started/)
 2. [End-to-End Entity Linking.](e2e_entity_linking/)
-3. [Evaluate on GERBIL.](evaluate_gerbil/)
-4. [Deploy REL for a new Wikipedia corpus](deploy_REL_new_wiki/):
-5. [Reproducing our results](reproducing_our_results/)
-6. [REL server](server/)
-7. [Notes on using custom models](custom_models/)
-7. [Conversational entity linking](conversations/)
+3. [Mention Detection models.](ner/)
+4. [Evaluate on GERBIL.](evaluate_gerbil/)
+5. [Deploy REL for a new Wikipedia corpus](deploy_REL_new_wiki/):
+6. [Reproducing our results](reproducing_our_results/)
+7. [REL server](server/)
+8. [Notes on using custom models](custom_models/)
+9. [Conversational entity linking](conversations/)
