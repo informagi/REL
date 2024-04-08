@@ -20,7 +20,7 @@ model, you can only use a local filepath.
 
 NER and ED models that we provide as part of REL can be loaded easily using
 aliases.  Available models are listed
-[on the REL repository](https://github.com/informagi/REL/tree/master/REL/models/models.json).
+[on the REL repository](https://github.com/informagi/REL/tree/master/src/REL/models/models.json).
 All models that need to be downloaded from the web are cached for subsequent
 use.
 
