@@ -8,3 +8,4 @@ pydantic
 segtok
 torch
 uvicorn
+scipy<=1.12.0
