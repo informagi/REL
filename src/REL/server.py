@@ -1,289 +1,213 @@
-from typing import Annotated, List, Literal, Optional, Tuple, Union
+import json
+import numpy
+import os
+from http.server import BaseHTTPRequestHandler
 
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
+from flair.models import SequenceTagger
 
-from REL.response_handler import ResponseHandler
+from REL.mention_detection import MentionDetection
+from REL.utils import process_results
+from REL.ner.set_tagger_ner import set_tagger_ner
 
-DEBUG = False
-
-app = FastAPI()
-
-
-Span = Tuple[int, int]
+API_DOC = "API_DOC"
 
 
-class NamedEntityConfig(BaseModel):
-    """Config for named entity linking. For more information, see
-    <https://rel.readthedocs.io/en/latest/tutorials/e2e_entity_linking/>
+
+def make_handler(base_url, wiki_version, ed_model, tagger_ner, process_sentences, split_docs_value=0):
     """
+    Class/function combination that is used to setup an API that can be used for e.g. GERBIL evaluation.
+    """
+    class GetHandler(BaseHTTPRequestHandler):
+        def __init__(self, *args, **kwargs):
+            self.ed_model = ed_model
+            self.tagger_ner = tagger_ner
+            self.process_sentences = process_sentences
+            self.split_docs_value = split_docs_value
 
-    text: str = Field(..., description="Text for entity linking or disambiguation.")
-    spans: Optional[List[Span]] = Field(
-        None,
-        description=(
+            self.base_url = base_url
+            self.wiki_version = wiki_version
+
+            self.custom_ner = not isinstance(tagger_ner, SequenceTagger)
+            self.mention_detection = MentionDetection(base_url, wiki_version)
+
+            super().__init__(*args, **kwargs)
+
+        def do_GET(self):
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(
+                bytes(
+                    json.dumps(
+                        {
+                            "schemaVersion": 1,
+                            "label": "status",
+                            "message": "up",
+                            "color": "green",
+                        }
+                    ),
+                    "utf-8",
+                )
+            )
+            return
+
+        def do_HEAD(self):
+            # send bad request response code
+            self.send_response(400)
+            self.end_headers()
+            self.wfile.write(bytes(json.dumps([]), "utf-8"))
+            return
+
+        def solve_floats(self, data):
+            data_new = []
+            for data_set in data:
+                data_set_new_list = []
+                for data_el in data_set:
+                    if isinstance(data_el, numpy.float32):
+                        data_el = float(data_el)
+                    data_set_new_list.append(data_el)
+                data_new.append(data_set_new_list)
+            return data_new
+
+        def do_POST(self):
             """
-For EL: the spans field needs to be set to an empty list. 
+            Returns response.
 
-For ED: spans should consist of a list of tuples, where each tuple refers to 
-the start position and length of a mention.
+            :return:
+            """
+            try:
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                self.send_response(200)
+                self.end_headers()
 
-This is used when mentions are already identified and disambiguation is only 
-needed. Each tuple represents start position and length of mention (in 
-characters); e.g.,  `[(0, 8), (15,11)]` for mentions 'Nijmegen' and 
-'Netherlands' in text 'Nijmegen is in the Netherlands'.
-"""
-        ),
-    )
-    tagger: Literal[
-        "ner-fast",
-        "ner-fast-with-lowercase",
-    ] = Field("ner-fast", description="NER tagger to use.")
+                text, spans = self.read_json(post_data)
+                response = self.generate_response(text, spans)
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "text": "If you're going to try, go all the way - Charles Bukowski.",
-                "spans": [(41, 16)],
-                "tagger": "ner-fast",
-            }
-        }
+                self.wfile.write(bytes(json.dumps(self.solve_floats(response)), "utf-8"))
+            except Exception as e:
+                print(f"Encountered exception: {repr(e)}")
+                self.send_response(400)
+                self.end_headers()
+                self.wfile.write(bytes(json.dumps([]), "utf-8"))
+            return
 
-    def response(self):
-        """Return response for request."""
-        handler = handlers[self.tagger]
-        response = handler.generate_response(text=self.text, spans=self.spans)
-        return response
+        def read_json(self, post_data):
+            """
+            Reads input JSON message.
 
+            :return: document text and spans.
+            """
 
-class NamedEntityConceptConfig(BaseModel):
-    """Config for named entity linking. Not yet implemented."""
+            data = json.loads(post_data.decode("utf-8"))
+            text = data["text"]
+            text = text.replace("&amp;", "&")
 
-    def response(self):
-        """Return response for request."""
-        response = JSONResponse(
-            content={"msg": "Mode `ne_concept` has not been implemeted."},
-            status_code=501,
-        )
-        return response
+            # GERBIL sends dictionary, users send list of lists.
+            if "spans" in data:
+                try:
+                    spans = [list(d.values()) for d in data["spans"]]
+                except Exception:
+                    spans = data["spans"]
+                    pass
+            else:
+                spans = []
 
+            return text, spans
 
-class ConversationTurn(BaseModel):
-    """Specify turns in a conversation. Each turn has a `speaker`
-    and an `utterance`."""
+        def convert_bert_result(self, result):
+            new_result = {}
+            for doc_key in result:
+                new_result[doc_key] = []
+                for mention_data in result[doc_key]:
+                    new_result[doc_key].append(list(mention_data))
+                    new_result[doc_key][-1][2], new_result[doc_key][-1][3] =\
+                        new_result[doc_key][-1][3], new_result[doc_key][-1][2]
+                    new_result[doc_key][-1] = tuple(new_result[doc_key][-1])
+            return new_result
 
-    speaker: Literal["USER", "SYSTEM"] = Field(
-        ..., description="Speaker for this turn, must be one of `USER` or `SYSTEM`."
-    )
-    utterance: str = Field(..., description="Input utterance to be annotated.")
+        def generate_response(self, text, spans):
+            """
+            Generates response for API. Can be either ED only or EL, meaning end-to-end.
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "speaker": "USER",
-                "utterance": "I am allergic to tomatoes but we have a lot of famous Italian restaurants here in London.",
-            }
-        }
+            :return: list of tuples for each entity found.
+            """
 
+            if len(text) == 0:
+                return []
 
-class ConversationConfig(BaseModel):
-    """Config for conversational entity linking. For more information:
-    <https://rel.readthedocs.io/en/latest/tutorials/conversations/>.
-    """
+            if len(spans) > 0:
+                # ED.
+                processed = {API_DOC: [text, spans]}
+                mentions_dataset, total_ment = self.mention_detection.format_spans(
+                    processed
+                )
+            else:
+                # EL
+                processed = {API_DOC: [text, spans]}
+                mentions_dataset, total_ment = self.mention_detection.find_mentions(
+                    processed, self.process_sentences, self.split_docs_value, self.tagger_ner
+                )
 
-    text: List[ConversationTurn] = Field(
-        ..., description="Conversation as list of turns between two speakers."
-    )
-    tagger: Literal["default",] = Field("default", description="NER tagger to use.")
+            # Disambiguation
+            predictions, timing = self.ed_model.predict(mentions_dataset)
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "text": (
-                    {
-                        "speaker": "USER",
-                        "utterance": "I am allergic to tomatoes but we have a lot of famous Italian restaurants here in London.",
-                    },
-                    {
-                        "speaker": "SYSTEM",
-                        "utterance": "Some people are allergic to histamine in tomatoes.",
-                    },
-                    {
-                        "speaker": "USER",
-                        "utterance": "Talking of food, can you recommend me a restaurant in my city for our anniversary?",
-                    },
-                ),
-                "tagger": "default",
-            }
-        }
+            # Process result.
+            result = process_results(
+                mentions_dataset,
+                predictions,
+                processed,
+                include_offset=False if ((len(spans) > 0) or self.custom_ner) else True,
+            )
+            # result = self.convert_bert_result(result)
 
-    def response(self):
-        """Return response for request."""
-        text = self.dict()["text"]
-        conv_handler = conv_handlers[self.tagger]
-        response = conv_handler.annotate(text)
-        return response
+            # Singular document.
+            if len(result) > 0:
+                return [*result.values()][0]
 
+            return []
 
-class TurnAnnotation(BaseModel):
-    __root__: List[Union[int, str]] = Field(
-        ...,
-        min_items=4,
-        max_items=4,
-        description="""
-The 4 values of the annotation represent the start index of the word, 
-length of the word, the annotated word, and the prediction.
-""",
-    )
-
-    class Config:
-        schema_extra = {"example": [82, 6, "London", "London"]}
-
-
-class SystemResponse(ConversationTurn):
-    """Return input when the speaker equals 'SYSTEM'."""
-
-    speaker: str = "SYSTEM"
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "speaker": "SYSTEM",
-                "utterance": "Some people are allergic to histamine in tomatoes.",
-            },
-        }
-
-
-class UserResponse(ConversationTurn):
-    """Return annotations when the speaker equals 'USER'."""
-
-    speaker: str = "USER"
-    annotations: List[TurnAnnotation] = Field(..., description="List of annotations.")
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "speaker": "USER",
-                "utterance": "I am allergic to tomatoes but we have a lot of famous Italian restaurants here in London.",
-                "annotations": [
-                    [17, 8, "tomatoes", "Tomato"],
-                    [54, 19, "Italian restaurants", "Italian_cuisine"],
-                    [82, 6, "London", "London"],
-                ],
-            },
-        }
-
-
-TurnResponse = Union[UserResponse, SystemResponse]
-
-
-class NEAnnotation(BaseModel):
-    """Annotation for named entity linking."""
-
-    __root__: List[Union[int, str, float]] = Field(
-        ...,
-        min_items=7,
-        max_items=7,
-        description="""
-The 7 values of the annotation represent the 
-start index, end index, the annotated word, prediction, ED confidence, MD confidence, and tag.
-""",
-    )
-
-    class Config:
-        schema_extra = {
-            "example": [41, 16, "Charles Bukowski", "Charles_Bukowski", 0, 0, "NULL"]
-        }
-
-
-class StatusResponse(BaseModel):
-    schemaVersion: int
-    label: str
-    message: str
-    color: str
-
-
-@app.get("/", response_model=StatusResponse)
-def server_status():
-    """Returns server status."""
-    return {
-        "schemaVersion": 1,
-        "label": "status",
-        "message": "up",
-        "color": "green",
-    }
-
-
-@app.post("/", response_model=List[NEAnnotation])
-@app.post("/ne", response_model=List[NEAnnotation])
-def named_entity_linking(config: NamedEntityConfig):
-    """Submit your text here for entity disambiguation or linking.
-
-    The REL annotation mode can be selected by changing the path.
-    use `/` or `/ne/` for annotating regular text with named
-    entities (default), `/ne_concept/` for regular text with both concepts and
-    named entities, and `/conv/` for conversations with both concepts and
-    named entities.
-    """
-    if DEBUG:
-        return []
-    return config.response()
-
-
-@app.post("/conv", response_model=List[TurnResponse])
-def conversational_entity_linking(config: ConversationConfig):
-    """Submit your text here for conversational entity linking."""
-    if DEBUG:
-        return []
-    return config.response()
-
-
-@app.post("/ne_concept", response_model=List[NEAnnotation])
-def conceptual_named_entity_linking(config: NamedEntityConceptConfig):
-    """Submit your text here for conceptual entity disambiguation or linking."""
-    if DEBUG:
-        return []
-    return config.response()
+    return GetHandler
 
 
 if __name__ == "__main__":
     import argparse
+    from http.server import HTTPServer
 
-    import uvicorn
+    from REL.entity_disambiguation import EntityDisambiguation
+    from REL.ner.flair_wrapper import load_flair_ner
+    from REL.ner.bert_wrapper import load_bert_ner
 
     p = argparse.ArgumentParser()
-    p.add_argument("base_url")
-    p.add_argument("wiki_version")
+    p.add_argument("--base_url", default=os.path.abspath(os.path.dirname(__file__) + "/../data/"))
+    p.add_argument("--wiki_version", default="wiki_2019")
     p.add_argument("--ed-model", default="ed-wiki-2019")
-    p.add_argument("--ner-model", default="ner-fast", nargs="+")
+    p.add_argument("--ner-model", default="ner-fast")
     p.add_argument("--bind", "-b", metavar="ADDRESS", default="0.0.0.0")
     p.add_argument("--port", "-p", default=5555, type=int)
+    p.add_argument("--tagger_ner_name", default="flair", help = "mention detection tagger")
+    p.add_argument("--process_sentences", help = "process sentences rather than documents", action="store_true")
+    p.add_argument("--split_docs_value", action="store", type=int, default=0, help = "threshold number of tokens to split document")
+
     args = p.parse_args()
 
-    if not DEBUG:
-        from REL.crel.conv_el import ConvEL
-        from REL.entity_disambiguation import EntityDisambiguation
-        from REL.ner import load_flair_ner
+    tagger_ner_name = args.tagger_ner_name
+    tagger_ner = set_tagger_ner(tagger_ner_name)
+    split_docs_value = args.split_docs_value
 
-        ed_model = EntityDisambiguation(
-            args.base_url,
-            args.wiki_version,
-            {"mode": "eval", "model_path": args.ed_model},
-        )
+    process_sentences = args.process_sentences
 
-        handlers = {}
+    ed_model = EntityDisambiguation(
+        args.base_url, args.wiki_version, {"mode": "eval", "model_path": args.ed_model}
+    )
+    server_address = (args.bind, args.port)
+    server = HTTPServer(
+        server_address,
+        make_handler(args.base_url, args.wiki_version, ed_model, tagger_ner, process_sentences, split_docs_value)
+    )
 
-        for ner_model_name in args.ner_model:
-            print("Loading NER model:", ner_model_name)
-            ner_model = load_flair_ner(ner_model_name)
-            handler = ResponseHandler(
-                args.base_url, args.wiki_version, ed_model, ner_model
-            )
-            handlers[ner_model_name] = handler
+    try:
+        print("Ready for listening.")
+        server.serve_forever()
+    except KeyboardInterrupt:
+        exit(0)
 
-        conv_handlers = {
-            "default": ConvEL(args.base_url, args.wiki_version, ed_model=ed_model)
-        }
-
-    uvicorn.run(app, port=args.port, host=args.bind)

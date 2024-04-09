@@ -210,7 +210,7 @@ class CorefDataset(Dataset):
                 example[0],
                 use_fast=False,
                 add_special_tokens=True,
-                pad_to_max_length=True,
+                padding='longest',
                 max_length=max_length,
                 return_attention_mask=True,
                 return_tensors="pt",

@@ -7,13 +7,15 @@ on:
             - main
     pull_request:
         branches: [ main ]
+    workflow_dispatch:
+
 
 jobs:
     build:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                python-version: [3.7, 3.8]
+                python-version: [3.9]
 
         steps:
             - uses: actions/checkout@v3
@@ -40,4 +42,4 @@ jobs:
             
             - name: Test with pytest
               run: |
-                  pytest -W ignore
+                  pytest tests

@@ -1,8 +1,19 @@
+import sys
+from termcolor import colored
 from flair.data import Sentence
 from flair.models import SequenceTagger
-from segtok.segmenter import split_single
+from syntok import segmenter
 
 from REL.mention_detection_base import MentionDetectionBase
+
+
+class Entity:
+    def __init__(self, text, start_position, end_position, score, tag):
+        self.text = text
+        self.start_position = start_position
+        self.end_position = end_position
+        self.score = score
+        self.tag = tag
 
 
 class MentionDetection(MentionDetectionBase):
@@ -17,7 +28,7 @@ class MentionDetection(MentionDetectionBase):
 
         super().__init__(base_url, wiki_version)
 
-    def format_spans(self, dataset):
+    def format_spans(self, dataset, process_sentences=True, split_docs_value=0, tagger_ner=None):
         """
         Responsible for formatting given spans into dataset for the ED step. More specifically,
         it returns the mention, its left/right context and a set of candidates.
@@ -25,7 +36,7 @@ class MentionDetection(MentionDetectionBase):
         :return: Dictionary with mentions per document.
         """
 
-        dataset, _, _ = self.split_text(dataset)
+        dataset, _, _ = self.split_text(dataset, process_sentences, split_docs_value, tagger_ner)
         results = {}
         total_ment = 0
 
@@ -40,7 +51,7 @@ class MentionDetection(MentionDetectionBase):
 
                     # end_pos = start_pos + length
                     # ngram = text[start_pos:end_pos]
-                    mention = self.preprocess_mention(ngram)
+                    mention = self.preprocess_mention(ngram) # mention may be different from ngram
                     left_ctxt, right_ctxt = self.get_ctxt(
                         start_pos, end_pos, idx_sent, sentence, sentences_doc
                     )
@@ -62,7 +73,18 @@ class MentionDetection(MentionDetectionBase):
             results[doc] = results_doc
         return results, total_ment
 
-    def split_text(self, dataset, is_flair=False):
+
+    def split_single(self, text):
+        sentences_as_token_lists = segmenter.analyze(text)
+        sentences = []
+        for paragraph in sentences_as_token_lists:
+            for sentence in paragraph:
+                tokens = [ str(token) for token in sentence ]
+                sentences.append("".join(tokens))
+        return sentences
+
+
+    def split_text(self, dataset, process_sentences, split_docs_value=0, tagger_ner=None):
         """
         Splits text into sentences with optional spans (format is a requirement for GERBIL usage).
         This behavior is required for the default NER-tagger, which during experiments was experienced
@@ -74,9 +96,21 @@ class MentionDetection(MentionDetectionBase):
         res = {}
         splits = [0]
         processed_sentences = []
+        is_flair = isinstance(tagger_ner, SequenceTagger)
         for doc in dataset:
             text, spans = dataset[doc]
-            sentences = split_single(text)
+            if process_sentences:
+                sentences = self.split_single(text)
+                if split_docs_value > 0:
+                    sentences_split = []
+                    for sentence in sentences:
+                        split_sentences = self.split_text_in_parts(sentence, split_docs_value, tagger_ner)
+                        sentences_split.extend(split_sentences)
+                    sentences = sentences_split
+            elif split_docs_value > 0:
+                sentences = self.split_text_in_parts(text, split_docs_value, tagger_ner)
+            else:
+                sentences = [ text ]
             res[doc] = {}
 
             i = 0
@@ -104,28 +138,109 @@ class MentionDetection(MentionDetectionBase):
             splits.append(splits[-1] + i)
         return res, processed_sentences, splits
 
-    def find_mentions(self, dataset, tagger=None):
+
+    def combine_entities(self, ner_results, sentence):
+        ner_results_out = []
+        i = 0
+        while i < len(ner_results):
+            last_end = ner_results[i]["end"]
+            ner_results_out.append(dict(ner_results[i]))
+            j = 1
+            while i + j < len(ner_results) and (ner_results[i+j]["start"] == last_end or
+                                                (ner_results[i+j]["start"] == last_end + 1 and 
+                                                 ner_results[i+j]["entity"].startswith("I") and
+                                                 ner_results[i+j]["entity"][2:] == ner_results[i]["entity"][2:])):
+                if ner_results[i+j]["start"] == last_end:
+                    ner_results_out[-1]["word"] += ner_results[i+j]["word"].removeprefix("##")
+                else:
+                    ner_results_out[-1]["word"] += " " + ner_results[i+j]["word"]
+                ner_results_out[-1]["end"] = ner_results[i+j]["end"]
+                last_end = ner_results[i+j]["end"]
+                j += 1
+            i += j
+        return [ Entity(sentence[entity["start"]: entity["end"]], entity["start"], entity["end"], entity["score"], entity["entity"])
+                 for entity in ner_results_out ]
+ 
+
+    def split_sentence_in_bert_tokens(self, sentence, tagger_ner):
+        tokenizer_results = tagger_ner.tokenizer([sentence], return_offsets_mapping=True) # warns if sentence is too long (>512)
+        input_ids = tokenizer_results["input_ids"][0]
+        token_spans = tokenizer_results["offset_mapping"][0]
+        tokens = [ tagger_ner.tokenizer.decode(token_id) for token_id in input_ids ]
+        return tokens, token_spans
+
+
+    def split_text_in_parts(self, text, split_docs_value, tagger_ner):
+        """
+        Splits text in parts of as most split_docs_value tokens. Texts are split at sentence 
+        boundaries. If a sentence is longer than the limit it will be split in parts of
+        maximally split_docs_value tokens.
+        """
+        sentences = self.split_single(text)
+        token_lists = []
+        texts = []
+        is_flair = isinstance(tagger_ner, SequenceTagger)
+        for sentence in sentences:
+            if is_flair:
+                raise Exception("Splitting documents does not work in combination with Flair")
+            sentence_tokens, token_spans = self.split_sentence_in_bert_tokens(sentence, tagger_ner)
+            if len(token_lists) == 0 or (len(token_lists[-1]) + len(sentence_tokens)) > split_docs_value:
+                token_lists.append([])
+                texts.append("")
+            token_lists[-1].extend(sentence_tokens)
+            if texts[-1] == "":
+                texts[-1] = sentence
+            else:
+                texts[-1] += sentence
+            first_split_point = 0
+            while len(token_lists[-1]) > split_docs_value:
+                token_lists.append(list(token_lists[-1]))
+                token_lists[-2] = token_lists[-2][:split_docs_value]
+                token_lists[-1] = token_lists[-1][split_docs_value:]
+                second_split_point = token_spans[-len(token_lists[-1])][0]
+                texts[-1] = sentence[first_split_point:second_split_point]
+                texts.append(sentence[second_split_point:])
+                first_split_point = second_split_point
+        return texts
+
+
+    def prune_word_internal_mentions(self, raw_text, result_doc, total_ment):
+        """ remove entities which are part of a larger word """
+        to_be_deleted = []
+        for i in range(0, len(result_doc)):
+            start_pos = result_doc[i]["pos"]
+            end_pos = result_doc[i]["end_pos"]
+            if ((i > 0 and raw_text[start_pos-1].isalpha()) or
+                (end_pos < len(raw_text) and raw_text[end_pos].isalpha())):
+                to_be_deleted.append(i)
+        total_ment -= len(to_be_deleted)
+        while len(to_be_deleted) > 0:
+            result_doc.pop(to_be_deleted.pop(-1))
+        return result_doc, total_ment
+
+
+    def find_mentions(self, dataset, process_sentences, split_docs_value=0, tagger_ner=None):
         """
         Responsible for finding mentions given a set of documents in a batch-wise manner. More specifically,
         it returns the mention, its left/right context and a set of candidates.
         :return: Dictionary with mentions per document.
         """
-        if tagger is None:
+        if tagger_ner is None:
             raise Exception(
                 "No NER tagger is set, but you are attempting to perform Mention Detection.."
             )
         # Verify if Flair, else ngram or custom.
-        is_flair = isinstance(tagger, SequenceTagger)
+        is_flair = isinstance(tagger_ner, SequenceTagger)
         dataset_sentences_raw, processed_sentences, splits = self.split_text(
-            dataset, is_flair
+            dataset, process_sentences, split_docs_value, tagger_ner
         )
         results = {}
         total_ment = 0
         if is_flair:
-            tagger.predict(processed_sentences)
+            tagger_ner.predict(processed_sentences) # predict with Flair
         for i, doc in enumerate(dataset_sentences_raw):
-            contents = dataset_sentences_raw[doc]
             raw_text = dataset[doc][0]
+            contents = dataset_sentences_raw[doc]
             sentences_doc = [v[0] for v in contents.values()]
             sentences = processed_sentences[splits[i] : splits[i + 1]]
             result_doc = []
@@ -134,14 +249,15 @@ class MentionDetection(MentionDetectionBase):
             for (idx_sent, (sentence, ground_truth_sentence)), snt in zip(
                 contents.items(), sentences
             ):
-                # Only include offset if using Flair.
-                if is_flair:
-                    offset = raw_text.find(sentence, cum_sent_length)
-
+                offset = raw_text.find(sentence, cum_sent_length)
+                if offset < 0:
+                    print(colored(f"sentence not found in text: cannot happen: {sentence}", "red"), file=sys.stderr)
+                    offset = 0
+                entity_counter = 0
                 for entity in (
-                    snt.get_spans("ner")
+                    snt.get_spans("ner") # predict with Flair
                     if is_flair
-                    else tagger.predict(snt, processed_sentences)
+                    else self.combine_entities(tagger_ner(snt), sentence) # predict with BERT
                 ):
                     text, start_pos, end_pos, conf, tag = (
                         entity.text,
@@ -151,7 +267,7 @@ class MentionDetection(MentionDetectionBase):
                         entity.tag,
                     )
                     total_ment += 1
-                    m = self.preprocess_mention(text)
+                    m = self.preprocess_mention(text) # m may be different from text
                     cands = self.get_candidates(m)
                     if len(cands) == 0:
                         continue
@@ -161,7 +277,7 @@ class MentionDetection(MentionDetectionBase):
                         start_pos, end_pos, idx_sent, sentence, sentences_doc
                     )
                     res = {
-                        "mention": m,
+                        "mention": text, # 20230113 was m
                         "context": (left_ctxt, right_ctxt),
                         "candidates": cands,
                         "gold": ["NONE"],
@@ -175,5 +291,6 @@ class MentionDetection(MentionDetectionBase):
                     }
                     result_doc.append(res)
                 cum_sent_length += len(sentence) + (offset - cum_sent_length)
+            result_doc, total_ment = self.prune_word_internal_mentions(raw_text, result_doc, total_ment)
             results[doc] = result_doc
         return results, total_ment

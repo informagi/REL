@@ -3,17 +3,26 @@
 
 from pathlib import Path
 
+import os
+import pytest
+
 from REL.ner import Cmns, Span
 
 
 def compare_spans(a: Span, b: Span, fields=(0, 1, 2)):
+    if len(a) != len(b):
+        return False
     for f in fields:
-        if a[f] != b[f]:
-            return False
+        for index in range(0, len(a)):
+            if a[index][f] != b[index][f]:
+                return (False, a[index][f], b[index][f])
     else:
         return True
 
 
+@pytest.mark.skipif(
+    os.getenv("GITHUB_ACTIONS")=='true', reason="No way of testing this on Github actions."
+)
 def test_cmns():
     model = Cmns(Path(__file__).parent, "wiki_test", n=5)
     predictions = model.predict("the brown fox jumped over the lazy dog", None)
@@ -28,4 +37,4 @@ def test_cmns():
         Span("dog", 35, 38, None, None),
     ]
 
-    return compare_spans(predictions, labels)
+    assert compare_spans(predictions, labels) == True

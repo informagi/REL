@@ -5,6 +5,20 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/radboud-el)](https://pypi.org/project/radboud-el/) 
 [![PyPI](https://img.shields.io/pypi/v/radboud-el.svg?style=flat)](https://pypi.org/project/radboud-el/)
 
+---
+
+Example tests:
+
+* Flair: `python3 scripts/efficiency_test.py --process_sentences` 
+* Bert: `python3 scripts/efficiency_test.py --use_bert_base_uncased --split_docs_value 500`
+* Server (slower):
+    * `python3 src/REL/server.py --use_bert_base_uncased --split_docs_value 500 --ed-model ed-wiki-2019 data wiki_2019`
+    * `python3 scripts/efficiency_test.py --use_server`
+
+Needs installation of REL documents in directory `doc` (`ed-wiki-2019`,  `generic`  and `wiki_2019`)
+
+---
+
 REL is a modular Entity Linking package that is provided as a Python package as well as a web API. REL has various meanings -  one might first notice that it stands for relation, which is a suiting name for the problems that can be tackled with this package. Additionally, in Dutch a 'rel' means a disturbance of the public order, which is exactly what we aim to achieve with the release of this package.
 
 REL utilizes *English* Wikipedia as a knowledge base and can be used for the following tasks:
